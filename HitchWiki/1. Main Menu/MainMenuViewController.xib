@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainMenuViewController" customModule="HitchWiki" customModuleProvider="target">
+            <connections>
+                <outlet property="pagesTableView" destination="cXN-o5-JWb" id="ca2-me-t2d"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <searchBar contentMode="redraw" placeholder="Type a city or a country..." translatesAutoresizingMaskIntoConstraints="NO" id="Mqm-fP-NSV">
+                    <rect key="frame" x="0.0" y="97" width="414" height="56"/>
+                    <textInputTraits key="textInputTraits"/>
+                </searchBar>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HitchWiki" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QaT-3C-zBb">
+                    <rect key="frame" x="0.0" y="44" width="414" height="48"/>
+                    <fontDescription key="fontDescription" name="Noteworthy-Bold" family="Noteworthy" pointSize="30"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="cXN-o5-JWb">
+                    <rect key="frame" x="0.0" y="153" width="414" height="709"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="TDg-1H-0Cm"/>
+                        <outlet property="delegate" destination="-1" id="e5t-Px-QZk"/>
+                    </connections>
+                </tableView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="Mqm-fP-NSV" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="0PC-TQ-8Mf"/>
+                <constraint firstItem="QaT-3C-zBb" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="0hf-1S-4yd"/>
+                <constraint firstItem="Mqm-fP-NSV" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="11J-kg-UBm"/>
+                <constraint firstItem="Mqm-fP-NSV" firstAttribute="top" secondItem="QaT-3C-zBb" secondAttribute="bottom" constant="5" id="JF9-XE-HCP"/>
+                <constraint firstItem="QaT-3C-zBb" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="PgX-mB-1lZ"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="cXN-o5-JWb" secondAttribute="bottom" id="QNx-7K-6kg"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="QaT-3C-zBb" secondAttribute="trailing" id="RyG-9b-ClR"/>
+                <constraint firstItem="cXN-o5-JWb" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="m8H-OG-shH"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="cXN-o5-JWb" secondAttribute="trailing" id="oLf-qU-QBx"/>
+                <constraint firstItem="cXN-o5-JWb" firstAttribute="top" secondItem="Mqm-fP-NSV" secondAttribute="bottom" id="uwW-5i-I7N"/>
+            </constraints>
+            <point key="canvasLocation" x="132" y="132"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
