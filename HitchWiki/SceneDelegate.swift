@@ -17,7 +17,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window = UIWindow(windowScene: windowScene)
         let mainMenuViewController = MainMenuViewController()
-        window.rootViewController = mainMenuViewController
+        let navigationController = UINavigationController(rootViewController: mainMenuViewController)
+        navigationController.navigationBar.backIndicatorImage = UIImage(systemName: "chevron.backward.circle.fill")
+        navigationController.navigationBar.backIndicatorTransitionMaskImage = UIImage(systemName: "chevron.backward.circle.fill")
+        window.rootViewController = navigationController
         self.window = window
         window.makeKeyAndVisible()
     }

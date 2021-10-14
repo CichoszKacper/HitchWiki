@@ -11,6 +11,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainMenuViewController" customModule="HitchWiki" customModuleProvider="target">
             <connections>
                 <outlet property="pagesTableView" destination="cXN-o5-JWb" id="ca2-me-t2d"/>
+                <outlet property="searchBar" destination="Mqm-fP-NSV" id="7fn-zd-GcY"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -22,6 +23,9 @@
                 <searchBar contentMode="redraw" placeholder="Type a city or a country..." translatesAutoresizingMaskIntoConstraints="NO" id="Mqm-fP-NSV">
                     <rect key="frame" x="0.0" y="97" width="414" height="56"/>
                     <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="72C-lc-egc"/>
+                    </connections>
                 </searchBar>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HitchWiki" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QaT-3C-zBb">
                     <rect key="frame" x="0.0" y="44" width="414" height="48"/>
