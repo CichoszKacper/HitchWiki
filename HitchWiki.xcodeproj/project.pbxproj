@@ -3,10 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B05D2AE27159E6C00EE0033 /* PageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B05D2AC27159E6C00EE0033 /* PageDetailViewController.swift */; };
+		4B05D2AF27159E6C00EE0033 /* PageDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B05D2AD27159E6C00EE0033 /* PageDetailViewController.xib */; };
+		4B05D2B32715F02100EE0033 /* UIApplicaitionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B05D2B22715F02100EE0033 /* UIApplicaitionExtension.swift */; };
 		4B4FCD782709B68500BC520E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD772709B68500BC520E /* AppDelegate.swift */; };
 		4B4FCD7A2709B68500BC520E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD792709B68500BC520E /* SceneDelegate.swift */; };
 		4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */; };
@@ -20,9 +23,13 @@
 		4B87E7562713525700C73578 /* PageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B87E7542713525700C73578 /* PageTableViewCell.swift */; };
 		4B87E7572713525700C73578 /* PageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B87E7552713525700C73578 /* PageTableViewCell.xib */; };
 		4B87E75A2713556500C73578 /* hitchwiki.json in Resources */ = {isa = PBXBuildFile; fileRef = 4B87E7592713556500C73578 /* hitchwiki.json */; };
+		4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 4B89024A2717499F00C8C4B1 /* Algorithms */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B05D2AC27159E6C00EE0033 /* PageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailViewController.swift; sourceTree = "<group>"; };
+		4B05D2AD27159E6C00EE0033 /* PageDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageDetailViewController.xib; sourceTree = "<group>"; };
+		4B05D2B22715F02100EE0033 /* UIApplicaitionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicaitionExtension.swift; sourceTree = "<group>"; };
 		4B4FCD742709B68500BC520E /* HitchWiki.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HitchWiki.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4FCD772709B68500BC520E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B4FCD792709B68500BC520E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -45,12 +52,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B05D2AB27159DDC00EE0033 /* 2. Page */ = {
+			isa = PBXGroup;
+			children = (
+				4B05D2AC27159E6C00EE0033 /* PageDetailViewController.swift */,
+				4B05D2AD27159E6C00EE0033 /* PageDetailViewController.xib */,
+			);
+			path = "2. Page";
+			sourceTree = "<group>";
+		};
+		4B05D2B12715EFDD00EE0033 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4B05D2B22715F02100EE0033 /* UIApplicaitionExtension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		4B4FCD6B2709B68500BC520E = {
 			isa = PBXGroup;
 			children = (
@@ -71,8 +96,10 @@
 			isa = PBXGroup;
 			children = (
 				4B87E7592713556500C73578 /* hitchwiki.json */,
-				4B87E74D27134E9C00C73578 /* Networking */,
 				4B4FCD8E2709B90A00BC520E /* 1. Main Menu */,
+				4B05D2AB27159DDC00EE0033 /* 2. Page */,
+				4B87E74D27134E9C00C73578 /* Networking */,
+				4B05D2B12715EFDD00EE0033 /* Extensions */,
 				4B4FCD772709B68500BC520E /* AppDelegate.swift */,
 				4B4FCD792709B68500BC520E /* SceneDelegate.swift */,
 				4B4FCD832709B68500BC520E /* Assets.xcassets */,
@@ -128,6 +155,9 @@
 			dependencies = (
 			);
 			name = HitchWiki;
+			packageProductDependencies = (
+				4B89024A2717499F00C8C4B1 /* Algorithms */,
+			);
 			productName = HitchWiki;
 			productReference = 4B4FCD742709B68500BC520E /* HitchWiki.app */;
 			productType = "com.apple.product-type.application";
@@ -155,6 +185,9 @@
 				Base,
 			);
 			mainGroup = 4B4FCD6B2709B68500BC520E;
+			packageReferences = (
+				4B8902492717499F00C8C4B1 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+			);
 			productRefGroup = 4B4FCD752709B68500BC520E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -173,6 +206,7 @@
 				4B87E75A2713556500C73578 /* hitchwiki.json in Resources */,
 				4B4FCD922709B93400BC520E /* MainMenuViewController.xib in Resources */,
 				4B87E7572713525700C73578 /* PageTableViewCell.xib in Resources */,
+				4B05D2AF27159E6C00EE0033 /* PageDetailViewController.xib in Resources */,
 				4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -187,10 +221,12 @@
 				4B87E75227134F1900C73578 /* DataModel.swift in Sources */,
 				4B87E74F27134EAF00C73578 /* NetworkManager.swift in Sources */,
 				4B87E7562713525700C73578 /* PageTableViewCell.swift in Sources */,
+				4B05D2AE27159E6C00EE0033 /* PageDetailViewController.swift in Sources */,
 				4B4FCD912709B93400BC520E /* MainMenuViewController.swift in Sources */,
 				4B4FCD782709B68500BC520E /* AppDelegate.swift in Sources */,
 				4B4FCD942709B94700BC520E /* MainMenuViewModel.swift in Sources */,
 				4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */,
+				4B05D2B32715F02100EE0033 /* UIApplicaitionExtension.swift in Sources */,
 				4B4FCD7A2709B68500BC520E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -260,7 +296,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -315,7 +351,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -385,6 +421,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4B8902492717499F00C8C4B1 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B89024A2717499F00C8C4B1 /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B8902492717499F00C8C4B1 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */ = {
