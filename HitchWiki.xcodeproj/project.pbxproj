@@ -18,6 +18,15 @@
 		4B4FCD912709B93400BC520E /* MainMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD8F2709B93400BC520E /* MainMenuViewController.swift */; };
 		4B4FCD922709B93400BC520E /* MainMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD902709B93400BC520E /* MainMenuViewController.xib */; };
 		4B4FCD942709B94700BC520E /* MainMenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD932709B94700BC520E /* MainMenuViewModel.swift */; };
+		4B797D7927186FDE006E3F17 /* PageDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D7827186FDE006E3F17 /* PageDetailViewModel.swift */; };
+		4B797D7B27187A0C006E3F17 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D7A27187A0C006E3F17 /* StringExtension.swift */; };
+		4B797D7D27187A2F006E3F17 /* UIViewExtenstion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D7C27187A2F006E3F17 /* UIViewExtenstion.swift */; };
+		4B797D7F27187A4D006E3F17 /* NSAttributedStringExtenstion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D7E27187A4D006E3F17 /* NSAttributedStringExtenstion.swift */; };
+		4B797D8127187BA2006E3F17 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D8027187BA1006E3F17 /* UILabelExtension.swift */; };
+		4B797D832718EE39006E3F17 /* UITapGestureRecognizerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D822718EE39006E3F17 /* UITapGestureRecognizerExtension.swift */; };
+		4B797D862719B79A006E3F17 /* ViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D852719B79A006E3F17 /* ViewModelProtocol.swift */; };
+		4B797D882719B7BF006E3F17 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D872719B7BF006E3F17 /* ViewModel.swift */; };
+		4B797D8A2719B80D006E3F17 /* ModelledViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D892719B80D006E3F17 /* ModelledViewController.swift */; };
 		4B87E74F27134EAF00C73578 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B87E74E27134EAF00C73578 /* NetworkManager.swift */; };
 		4B87E75227134F1900C73578 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B87E75127134F1900C73578 /* DataModel.swift */; };
 		4B87E7562713525700C73578 /* PageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B87E7542713525700C73578 /* PageTableViewCell.swift */; };
@@ -40,6 +49,15 @@
 		4B4FCD8F2709B93400BC520E /* MainMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuViewController.swift; sourceTree = "<group>"; };
 		4B4FCD902709B93400BC520E /* MainMenuViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenuViewController.xib; sourceTree = "<group>"; };
 		4B4FCD932709B94700BC520E /* MainMenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuViewModel.swift; sourceTree = "<group>"; };
+		4B797D7827186FDE006E3F17 /* PageDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailViewModel.swift; sourceTree = "<group>"; };
+		4B797D7A27187A0C006E3F17 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
+		4B797D7C27187A2F006E3F17 /* UIViewExtenstion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtenstion.swift; sourceTree = "<group>"; };
+		4B797D7E27187A4D006E3F17 /* NSAttributedStringExtenstion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedStringExtenstion.swift; sourceTree = "<group>"; };
+		4B797D8027187BA1006E3F17 /* UILabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
+		4B797D822718EE39006E3F17 /* UITapGestureRecognizerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITapGestureRecognizerExtension.swift; sourceTree = "<group>"; };
+		4B797D852719B79A006E3F17 /* ViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocol.swift; sourceTree = "<group>"; };
+		4B797D872719B7BF006E3F17 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		4B797D892719B80D006E3F17 /* ModelledViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelledViewController.swift; sourceTree = "<group>"; };
 		4B87E74E27134EAF00C73578 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		4B87E75127134F1900C73578 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		4B87E7542713525700C73578 /* PageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageTableViewCell.swift; sourceTree = "<group>"; };
@@ -64,6 +82,7 @@
 			children = (
 				4B05D2AC27159E6C00EE0033 /* PageDetailViewController.swift */,
 				4B05D2AD27159E6C00EE0033 /* PageDetailViewController.xib */,
+				4B797D7827186FDE006E3F17 /* PageDetailViewModel.swift */,
 			);
 			path = "2. Page";
 			sourceTree = "<group>";
@@ -72,6 +91,11 @@
 			isa = PBXGroup;
 			children = (
 				4B05D2B22715F02100EE0033 /* UIApplicaitionExtension.swift */,
+				4B797D7A27187A0C006E3F17 /* StringExtension.swift */,
+				4B797D7C27187A2F006E3F17 /* UIViewExtenstion.swift */,
+				4B797D7E27187A4D006E3F17 /* NSAttributedStringExtenstion.swift */,
+				4B797D8027187BA1006E3F17 /* UILabelExtension.swift */,
+				4B797D822718EE39006E3F17 /* UITapGestureRecognizerExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -95,6 +119,7 @@
 		4B4FCD762709B68500BC520E /* HitchWiki */ = {
 			isa = PBXGroup;
 			children = (
+				4B797D842719B787006E3F17 /* MVVM */,
 				4B87E7592713556500C73578 /* hitchwiki.json */,
 				4B4FCD8E2709B90A00BC520E /* 1. Main Menu */,
 				4B05D2AB27159DDC00EE0033 /* 2. Page */,
@@ -119,6 +144,16 @@
 				4B4FCD932709B94700BC520E /* MainMenuViewModel.swift */,
 			);
 			path = "1. Main Menu";
+			sourceTree = "<group>";
+		};
+		4B797D842719B787006E3F17 /* MVVM */ = {
+			isa = PBXGroup;
+			children = (
+				4B797D852719B79A006E3F17 /* ViewModelProtocol.swift */,
+				4B797D872719B7BF006E3F17 /* ViewModel.swift */,
+				4B797D892719B80D006E3F17 /* ModelledViewController.swift */,
+			);
+			path = MVVM;
 			sourceTree = "<group>";
 		};
 		4B87E74D27134E9C00C73578 /* Networking */ = {
@@ -218,15 +253,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B797D7F27187A4D006E3F17 /* NSAttributedStringExtenstion.swift in Sources */,
 				4B87E75227134F1900C73578 /* DataModel.swift in Sources */,
 				4B87E74F27134EAF00C73578 /* NetworkManager.swift in Sources */,
 				4B87E7562713525700C73578 /* PageTableViewCell.swift in Sources */,
+				4B797D7927186FDE006E3F17 /* PageDetailViewModel.swift in Sources */,
 				4B05D2AE27159E6C00EE0033 /* PageDetailViewController.swift in Sources */,
 				4B4FCD912709B93400BC520E /* MainMenuViewController.swift in Sources */,
+				4B797D832718EE39006E3F17 /* UITapGestureRecognizerExtension.swift in Sources */,
+				4B797D8127187BA2006E3F17 /* UILabelExtension.swift in Sources */,
+				4B797D7D27187A2F006E3F17 /* UIViewExtenstion.swift in Sources */,
+				4B797D8A2719B80D006E3F17 /* ModelledViewController.swift in Sources */,
+				4B797D882719B7BF006E3F17 /* ViewModel.swift in Sources */,
 				4B4FCD782709B68500BC520E /* AppDelegate.swift in Sources */,
 				4B4FCD942709B94700BC520E /* MainMenuViewModel.swift in Sources */,
+				4B797D7B27187A0C006E3F17 /* StringExtension.swift in Sources */,
 				4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */,
 				4B05D2B32715F02100EE0033 /* UIApplicaitionExtension.swift in Sources */,
+				4B797D862719B79A006E3F17 /* ViewModelProtocol.swift in Sources */,
 				4B4FCD7A2709B68500BC520E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
