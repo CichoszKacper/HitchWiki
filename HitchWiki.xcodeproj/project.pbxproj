@@ -10,6 +10,10 @@
 		4B05D2AE27159E6C00EE0033 /* PageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B05D2AC27159E6C00EE0033 /* PageDetailViewController.swift */; };
 		4B05D2AF27159E6C00EE0033 /* PageDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B05D2AD27159E6C00EE0033 /* PageDetailViewController.xib */; };
 		4B05D2B32715F02100EE0033 /* UIApplicaitionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B05D2B22715F02100EE0033 /* UIApplicaitionExtension.swift */; };
+		4B215DE027AB49F9001D0044 /* ActionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B215DDF27AB49F9001D0044 /* ActionManager.swift */; };
+		4B215DE227AB53BD001D0044 /* UITableViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B215DE127AB53BD001D0044 /* UITableViewExtension.swift */; };
+		4B215DE427AB5499001D0044 /* UITextViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B215DE327AB5499001D0044 /* UITextViewExtension.swift */; };
+		4B215DE627AB54D9001D0044 /* NSMutableAttributedStringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B215DE527AB54D9001D0044 /* NSMutableAttributedStringExtension.swift */; };
 		4B4FCD782709B68500BC520E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD772709B68500BC520E /* AppDelegate.swift */; };
 		4B4FCD7A2709B68500BC520E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD792709B68500BC520E /* SceneDelegate.swift */; };
 		4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */; };
@@ -39,6 +43,10 @@
 		4B05D2AC27159E6C00EE0033 /* PageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailViewController.swift; sourceTree = "<group>"; };
 		4B05D2AD27159E6C00EE0033 /* PageDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageDetailViewController.xib; sourceTree = "<group>"; };
 		4B05D2B22715F02100EE0033 /* UIApplicaitionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicaitionExtension.swift; sourceTree = "<group>"; };
+		4B215DDF27AB49F9001D0044 /* ActionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionManager.swift; sourceTree = "<group>"; };
+		4B215DE127AB53BD001D0044 /* UITableViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableViewExtension.swift; sourceTree = "<group>"; };
+		4B215DE327AB5499001D0044 /* UITextViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextViewExtension.swift; sourceTree = "<group>"; };
+		4B215DE527AB54D9001D0044 /* NSMutableAttributedStringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSMutableAttributedStringExtension.swift; sourceTree = "<group>"; };
 		4B4FCD742709B68500BC520E /* HitchWiki.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HitchWiki.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4FCD772709B68500BC520E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B4FCD792709B68500BC520E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -96,6 +104,9 @@
 				4B797D7E27187A4D006E3F17 /* NSAttributedStringExtenstion.swift */,
 				4B797D8027187BA1006E3F17 /* UILabelExtension.swift */,
 				4B797D822718EE39006E3F17 /* UITapGestureRecognizerExtension.swift */,
+				4B215DE127AB53BD001D0044 /* UITableViewExtension.swift */,
+				4B215DE327AB5499001D0044 /* UITextViewExtension.swift */,
+				4B215DE527AB54D9001D0044 /* NSMutableAttributedStringExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -131,6 +142,7 @@
 				4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */,
 				4B4FCD882709B68500BC520E /* Info.plist */,
 				4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */,
+				4B215DDF27AB49F9001D0044 /* ActionManager.swift */,
 			);
 			path = HitchWiki;
 			sourceTree = "<group>";
@@ -259,11 +271,15 @@
 				4B87E7562713525700C73578 /* PageTableViewCell.swift in Sources */,
 				4B797D7927186FDE006E3F17 /* PageDetailViewModel.swift in Sources */,
 				4B05D2AE27159E6C00EE0033 /* PageDetailViewController.swift in Sources */,
+				4B215DE227AB53BD001D0044 /* UITableViewExtension.swift in Sources */,
+				4B215DE427AB5499001D0044 /* UITextViewExtension.swift in Sources */,
+				4B215DE627AB54D9001D0044 /* NSMutableAttributedStringExtension.swift in Sources */,
 				4B4FCD912709B93400BC520E /* MainMenuViewController.swift in Sources */,
 				4B797D832718EE39006E3F17 /* UITapGestureRecognizerExtension.swift in Sources */,
 				4B797D8127187BA2006E3F17 /* UILabelExtension.swift in Sources */,
 				4B797D7D27187A2F006E3F17 /* UIViewExtenstion.swift in Sources */,
 				4B797D8A2719B80D006E3F17 /* ModelledViewController.swift in Sources */,
+				4B215DE027AB49F9001D0044 /* ActionManager.swift in Sources */,
 				4B797D882719B7BF006E3F17 /* ViewModel.swift in Sources */,
 				4B4FCD782709B68500BC520E /* AppDelegate.swift in Sources */,
 				4B4FCD942709B94700BC520E /* MainMenuViewModel.swift in Sources */,

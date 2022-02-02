@@ -84,11 +84,3 @@ extension MainMenuViewController: UISearchBarDelegate {
         self.viewModel.update?(.mainMenu)
     }
 }
-
-public extension UITableView {
-    func reloadOnMainThread() {
-        Thread.runOnMain {
-            self.reloadData()
-        }
-    }
-}
