@@ -11,15 +11,16 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     
     var pages: [Page]?
     var page: Page?
-    var infoboxValuesArray: [String]?
-    var updatedInfoboxValuesArray: [String]?
+    private var infoboxValuesArray: [String]?
+    private var updatedInfoboxValuesArray: [String]?
+    var descriptionClickableValuesArray: [String]?
     var newDictionary: [String:[String:Bool]] = [:]
-    var pageDescriptionText: String?
     var pageDescriptionAttributedString: NSAttributedString?
     
     var stringToBeCalled: String?
     var labelToBeCalled: UILabel?
     var pageToBeCalled: Page?
+    let regexSquareBrackets = "\\[\\[((.*?)\\]\\])"
     
     // MARK: - Updates
     var update: ((PageDetailViewModel.UpdateType) -> Void)?
@@ -32,6 +33,7 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         
     }
 
+    // MARK: - Public Methods
     func passPage(page: Page, allPages: [Page]) {
         self.page = page
         self.pages = allPages
@@ -46,12 +48,6 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         self.cleanDescription(description: description, page: page)
     }
     
-//    func checkIfInfoboxExist() -> [String] {
-//        if let unwrappedInfoboxArray = self.updatedInfoboxValuesArray?.contains(":") {
-//            return unwrappedInfoboxArray
-//        }
-//    }
-    
     public func loadData() {
         NetworkManager().readLocalData(forName: "hitchwiki") { [weak self] result in
             switch result {
@@ -64,12 +60,61 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         }
     }
     
+    public func addTapGestureToPartOfString(label: UILabel, stringToBeCalled: String) {
+        self.setUpDataForClickableLabel(string: stringToBeCalled, label: label)
+        let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(tappedOnLabel(_:)))
+        label.lineBreakMode = .byWordWrapping
+        label.isUserInteractionEnabled = true
+        tapGesture.numberOfTouchesRequired = 1
+        label.addGestureRecognizer(tapGesture)
+    }
+    
+    public func interactWithURL(pageName: String) -> Bool {
+        guard let allPages = self.pages,
+              let pageNameDecoded = pageName.removingPercentEncoding else {
+                  return false
+              }
+        var shouldRedirect = false
+        var correctPageName = self.removeBracketsFromHyperlinks(pageNameDecoded: pageNameDecoded)
+        if self.checkIfClickable(string: correctPageName) {
+            self.pages?.forEach({ page in
+                if page.title.lowercased() == correctPageName.lowercased() {
+                    shouldRedirect = ((page.redirect?.title.isEmpty) == nil)
+                    if shouldRedirect {
+                        ActionManager().pushViewController(page: page, allPages: allPages)
+                    } else {
+                        correctPageName = page.redirect!.title
+                    }
+                }
+            })
+            if !shouldRedirect {
+                self.pages?.forEach({ page in
+                    if page.title.lowercased() == correctPageName.lowercased() {
+                        ActionManager().pushViewController(page: page, allPages: allPages)
+                    }
+                })
+            }
+            return true
+        }
+        // TODO: Create a default view saying that the page for this location is not set up yet
+        return true
+    }
+    
+    // MARK: - Private Methods
     private func cleanInfobox(description: String) {
-        guard let startingIndex = description.firstIndex(of: "{"), let endingIndex = description.firstIndex(of: "}") else {
+        var finalDescription = description
+        if description.contains("IsIn|Romania") {
+            if let startingIndexToRemove = description.firstIndex(of: "{"),
+               let endingIndexToRemove = description.firstIndex(of: "}") {
+                finalDescription.removeSubrange(startingIndexToRemove...endingIndexToRemove)
+                finalDescription.removeFirst()
+            }
+        }
+        guard let startingIndex = finalDescription.firstIndex(of: "{"), let endingIndex = finalDescription.firstIndex(of: "}") else {
             return
         }
-        
-        let infoboxDescription = description[startingIndex...endingIndex]
+
+        let infoboxDescription = finalDescription[startingIndex...endingIndex]
         let rows = infoboxDescription.dropFirst().dropLast().split(separator: "|")
         let infoboxDictionary = rows.dropFirst().reduce(into: [String:String]()) {
             guard let index = $1.firstIndex(of: "=") else {
@@ -84,23 +129,22 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         self.infoboxValuesArray = ["country","language","capital","pop","currency"]
         self.updatedInfoboxValuesArray = self.infoboxValuesArray
         for (key,value) in infoboxDictionary {
-            for (index, item) in self.infoboxValuesArray!.enumerated() {
-                if key.lowercased() == item.lowercased() {
-                    var updatedValue = value.replacingOccurrences(of: "[[", with: "")
-                    updatedValue = updatedValue.replacingOccurrences(of: "]]", with: "")
-                    updatedValue = updatedValue.replacingOccurrences(of: "of ", with: "")
-                    self.updatedInfoboxValuesArray![index] = self.updatedInfoboxValuesArray![index].replacingOccurrences(of: "pop", with: "population")
-                    self.updatedInfoboxValuesArray![index] = self.updatedInfoboxValuesArray![index].capitalized
-                    if checkIfClickable(string: updatedValue) {
-                        self.newDictionary.updateValue([updatedValue:true], forKey: self.updatedInfoboxValuesArray![index])
-                    } else {
-                        self.newDictionary.updateValue([updatedValue:false], forKey: self.updatedInfoboxValuesArray![index])
+            if let infoboxValuesArray = self.infoboxValuesArray {
+                for (index, item) in infoboxValuesArray.enumerated() {
+                    if key.lowercased() == item.lowercased() {
+                        var updatedValue = value.replacingOccurrences(of: "[[", with: "")
+                        updatedValue = updatedValue.replacingOccurrences(of: "]]", with: "")
+                        updatedValue = updatedValue.replacingOccurrences(of: "of ", with: "")
+                        self.updatedInfoboxValuesArray![index] = self.updatedInfoboxValuesArray![index].replacingOccurrences(of: "pop", with: "population")
+                        self.updatedInfoboxValuesArray![index] = self.updatedInfoboxValuesArray![index].capitalized
+                        if checkIfClickable(string: updatedValue) {
+                            self.newDictionary.updateValue([updatedValue:true], forKey: self.updatedInfoboxValuesArray![index])
+                        } else {
+                            self.newDictionary.updateValue([updatedValue:false], forKey: self.updatedInfoboxValuesArray![index])
+                        }
                     }
                 }
             }
-        }
-        for (k,v) in self.newDictionary {
-            print("\(k): \(v)")
         }
     }
     
@@ -126,22 +170,18 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         editedDescription.replaceSubrange(startingIndex...endingIndex, with: "")
         editedDescription = editedDescription.replacingOccurrences(of: "__TOC__", with: "")
         editedDescription = editedDescription.replacingOccurrences(of: "__NOTOC__", with: "")
+        editedDescription = editedDescription.replacingOccurrences(of: "|", with: "]][[")
         
         // Clean data from [[File]] and [[User]]
-//        var updated = editedDescription.replacingOccurrences(of: "\\[\\[File:[^\\]]+\\]\\]", with: "", options: .regularExpression)
-//        updated = updated.replacingOccurrences(of: "\\[\\[User[^\\]]+\\]\\]", with: "", options: .regularExpression)
+        var updated = editedDescription.replacingOccurrences(of: "\\[\\[File:[^\\]]+\\]\\]", with: "", options: .regularExpression)
+        updated = updated.replacingOccurrences(of: "\\[\\[Category[^\\]]+\\]\\]", with: "", options: .regularExpression)
+        updated = updated.replacingOccurrences(of: "\\[\\[User[^\\]]+\\]\\]", with: "", options: .regularExpression)
+        
+        self.descriptionClickableValuesArray = matchesForRegexInText(regex: regexSquareBrackets, text: updated)
         
         // Make the title in text bold and remove the triple quotation on it
         self.pageDescriptionAttributedString = editedDescription.withBoldText(text: "'''\(page.title)'''")
         self.pageDescriptionAttributedString = self.pageDescriptionAttributedString?.stringWithString(stringToReplace: "'''\(page.title)'''", replacedWithString: "\(page.title)")
-    }
-    
-    public func checkIfShouldMakeClickable(value: Bool, string: String) -> Bool {
-        if value && self.page?.title.lowercased() != string.lowercased() {
-            return true
-        } else {
-            return false
-        }
     }
     
     private func setUpDataForClickableLabel(string: String, label: UILabel) {
@@ -154,15 +194,6 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         })
     }
     
-    public func addTapGestureToPartOfString(label: UILabel, stringToBeCalled: String) {
-        self.setUpDataForClickableLabel(string: stringToBeCalled, label: label)
-        let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(tappedOnLabel(_:)))
-        label.lineBreakMode = .byWordWrapping
-        label.isUserInteractionEnabled = true
-        tapGesture.numberOfTouchesRequired = 1
-        label.addGestureRecognizer(tapGesture)
-    }
-    
     @objc func tappedOnLabel(_ gesture: UITapGestureRecognizer) {
         guard let label = self.labelToBeCalled,
               let stringToBeCalled = self.stringToBeCalled,
@@ -172,10 +203,26 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         }
         
         if gesture.didTapAttributedString(stringToBeCalled, in: label) {
-            let pageDetailViewController = PageDetailViewController(viewModel: PageDetailViewModel())
-            pageDetailViewController.populatePage(page: page, allPages: allPages)
-            pageDetailViewController.modalPresentationStyle = .fullScreen
-            UIApplication.topViewController()?.navigationController?.pushViewController(pageDetailViewController, animated: true)
+            ActionManager().pushViewController(page: page, allPages: allPages)
         }
     }
+    
+    private func matchesForRegexInText(regex: String, text: String) -> [String] {
+        do {
+            let regex = try NSRegularExpression(pattern: regex, options: [])
+            let nsString = text as NSString
+            let results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
+            return results.map { nsString.substring(with: $0.range)}
+        } catch let error as NSError {
+            print("invalid regex: \(error.localizedDescription)")
+            return []
+        }}
+    
+    private func removeBracketsFromHyperlinks(pageNameDecoded: String) -> String {
+        var editedPageName = pageNameDecoded.replacingOccurrences(of: "[[", with: "")
+        editedPageName = editedPageName.replacingOccurrences(of: "]]", with: "")
+        return editedPageName
+    }
 }
+
+

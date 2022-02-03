@@ -26,6 +26,7 @@ class MainMenuViewModel: ViewModel, ViewModelProtocol {
         
     }
     
+    // MARK: - Public Methods
     public func searchBarClicked() {
         self.update?(.search)
     }
@@ -48,11 +49,15 @@ class MainMenuViewModel: ViewModel, ViewModelProtocol {
         }
     }
     
-    func moveToPageScreen(indexRow: Int) {
+    public func moveToPageScreen(indexRow: Int) {
         let page = self.filteredPages[indexRow]
-        let pageDetailViewController = PageDetailViewController(viewModel: PageDetailViewModel())
-        pageDetailViewController.populatePage(page: page, allPages: self.pages)
-        pageDetailViewController.modalPresentationStyle = .fullScreen
-        UIApplication.topViewController()?.navigationController?.pushViewController(pageDetailViewController, animated: true)
+        if let pageRedirectTitle = page.redirect?.title {
+            self.pages.forEach({ page in
+                if page.title.lowercased() == pageRedirectTitle.lowercased() {
+                    ActionManager().pushViewController(page: page, allPages: self.pages)
+                }
+            })
+        }
+        ActionManager().pushViewController(page: page, allPages: self.pages)
     }
 }
