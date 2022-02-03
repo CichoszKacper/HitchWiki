@@ -78,12 +78,14 @@ class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
         }
         
         guard let pageDescriptionAttributedString = self.viewModel.pageDescriptionAttributedString,
-              let descriptionClickableValuesArray = self.viewModel.descriptionClickableValuesArray else {
-                  return
-              }
+              let descriptionClickableValuesArray = self.viewModel.descriptionClickableValuesArray,
+              let sections = self.viewModel.sections,
+              let subsections = self.viewModel.subsections else {
+            return
+        }
         
         // Add description
-        self.pageDescriptionTextField.addHyperLinksToText(originalText: pageDescriptionAttributedString, hyperLinks: descriptionClickableValuesArray)
+        self.pageDescriptionTextField.addHyperLinksAndSectionsToText(originalText: pageDescriptionAttributedString, hyperLinks: descriptionClickableValuesArray, sections: sections, subsections: subsections)
         //Add blue colour to the hyperlink in infobox
         if let stringToBeCalled = self.viewModel.stringToBeCalled {
             self.viewModel.labelToBeCalled?.set(color: .systemBlue, on: [stringToBeCalled])

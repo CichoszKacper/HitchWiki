@@ -13,6 +13,8 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     var page: Page?
     private var infoboxValuesArray: [String]?
     private var updatedInfoboxValuesArray: [String]?
+    var sections: [String]?
+    var subsections: [String]?
     var descriptionClickableValuesArray: [String]?
     var newDictionary: [String:[String:Bool]] = [:]
     var pageDescriptionAttributedString: NSAttributedString?
@@ -21,6 +23,8 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     var labelToBeCalled: UILabel?
     var pageToBeCalled: Page?
     let regexSquareBrackets = "\\[\\[((.*?)\\]\\])"
+    let regexSections = "\\=\\=(.*?)\\=\\="
+    let regexSubsections = "\\=\\=\\=\\=(.*?)\\=\\=\\=\\="
     
     // MARK: - Updates
     var update: ((PageDetailViewModel.UpdateType) -> Void)?
@@ -148,16 +152,6 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         }
     }
     
-    private func checkIfClickable(string: String) -> Bool{
-        var clickable = false
-        self.pages?.forEach({ page in
-            if page.title.lowercased().contains(string.lowercased()) {
-                clickable = true
-            }
-        })
-        return clickable
-    }
-    
     private func cleanDescription(description: String, page: Page) {
         guard let startingIndex = description.firstIndex(of: "{"), let indexToSetEnding = description.firstIndex(of: "}")  else {
             return
@@ -173,15 +167,27 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         editedDescription = editedDescription.replacingOccurrences(of: "|", with: "]][[")
         
         // Clean data from [[File]] and [[User]]
-        var updated = editedDescription.replacingOccurrences(of: "\\[\\[File:[^\\]]+\\]\\]", with: "", options: .regularExpression)
-        updated = updated.replacingOccurrences(of: "\\[\\[Category[^\\]]+\\]\\]", with: "", options: .regularExpression)
-        updated = updated.replacingOccurrences(of: "\\[\\[User[^\\]]+\\]\\]", with: "", options: .regularExpression)
+        var updatedDescription = editedDescription.replacingOccurrences(of: "\\[\\[File:[^\\]]+\\]\\]", with: "", options: .regularExpression)
+        updatedDescription = updatedDescription.replacingOccurrences(of: "\\[\\[Category[^\\]]+\\]\\]", with: "", options: .regularExpression)
+        updatedDescription = updatedDescription.replacingOccurrences(of: "\\[\\[User[^\\]]+\\]\\]", with: "", options: .regularExpression)
         
-        self.descriptionClickableValuesArray = matchesForRegexInText(regex: regexSquareBrackets, text: updated)
+        self.descriptionClickableValuesArray = matchesForRegexInText(regex: regexSquareBrackets, text: updatedDescription)
+        self.sections = matchesForRegexInText(regex: regexSections, text: updatedDescription)
+        self.subsections = matchesForRegexInText(regex: regexSubsections, text: updatedDescription)
         
         // Make the title in text bold and remove the triple quotation on it
-        self.pageDescriptionAttributedString = editedDescription.withBoldText(text: "'''\(page.title)'''")
+        self.pageDescriptionAttributedString = updatedDescription.withBoldText(text: "'''\(page.title)'''")
         self.pageDescriptionAttributedString = self.pageDescriptionAttributedString?.stringWithString(stringToReplace: "'''\(page.title)'''", replacedWithString: "\(page.title)")
+    }
+    
+    private func checkIfClickable(string: String) -> Bool{
+        var clickable = false
+        self.pages?.forEach({ page in
+            if page.title.lowercased().contains(string.lowercased()) {
+                clickable = true
+            }
+        })
+        return clickable
     }
     
     private func setUpDataForClickableLabel(string: String, label: UILabel) {

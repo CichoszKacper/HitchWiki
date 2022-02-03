@@ -9,20 +9,25 @@ import UIKit
 
 extension UITextView {
     
-    func addHyperLinksToText(originalText: NSAttributedString, hyperLinks: [String]) {
+    func addHyperLinksAndSectionsToText(originalText: NSAttributedString, hyperLinks: [String], sections: [String], subsections: [String]) {
         let style = NSMutableParagraphStyle()
         style.alignment = .left
         let attributedOriginalText = NSMutableAttributedString(attributedString: originalText)
         for hyperLink in hyperLinks {
             attributedOriginalText.setHyperlinkForAllOccurances(hyperLink)
         }
-        
-        self.linkTextAttributes = [
-            NSAttributedString.Key.foregroundColor: UIColor.systemBlue,
-            NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue,
-        ]
+        for section in sections {
+            attributedOriginalText.setSection(section)
+        }
+        for subsection in subsections {
+            attributedOriginalText.setSubsection(subsection)
+        }
+        self.linkTextAttributes = [:]
         var updatedString = attributedOriginalText.stringWithString(stringToReplace: "[[", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "]]", replacedWithString: "")
+        updatedString = updatedString.stringWithString(stringToReplace: "====", replacedWithString: "")
+        updatedString = updatedString.stringWithString(stringToReplace: "===", replacedWithString: "")
+        updatedString = updatedString.stringWithString(stringToReplace: "==", replacedWithString: "")
         self.attributedText = updatedString
     }
 }
