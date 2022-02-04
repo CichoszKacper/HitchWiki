@@ -16,8 +16,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        let mainMenuViewController = MainMenuViewController(viewModel: MainMenuViewModel())
-        let navigationController = UINavigationController(rootViewController: mainMenuViewController)
+        let tabBarController = TabBarController()
+        let navigationController = NavigationController(rootViewController: tabBarController)
         navigationController.navigationBar.backIndicatorImage = UIImage(systemName: "chevron.backward.circle.fill")
         navigationController.navigationBar.backIndicatorTransitionMaskImage = UIImage(systemName: "chevron.backward.circle.fill")
         window.rootViewController = navigationController

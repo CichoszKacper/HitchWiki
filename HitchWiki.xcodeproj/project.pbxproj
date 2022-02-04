@@ -14,6 +14,10 @@
 		4B215DE227AB53BD001D0044 /* UITableViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B215DE127AB53BD001D0044 /* UITableViewExtension.swift */; };
 		4B215DE427AB5499001D0044 /* UITextViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B215DE327AB5499001D0044 /* UITextViewExtension.swift */; };
 		4B215DE627AB54D9001D0044 /* NSMutableAttributedStringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B215DE527AB54D9001D0044 /* NSMutableAttributedStringExtension.swift */; };
+		4B3857E027AC94BF00CABD81 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3857DE27AC94BF00CABD81 /* TabBarController.swift */; };
+		4B3857E527AC972A00CABD81 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3857E427AC972A00CABD81 /* NavigationController.swift */; };
+		4B3857E927ACA78C00CABD81 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3857E727ACA78C00CABD81 /* SettingsViewController.swift */; };
+		4B3857EA27ACA78C00CABD81 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B3857E827ACA78C00CABD81 /* SettingsViewController.xib */; };
 		4B4FCD782709B68500BC520E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD772709B68500BC520E /* AppDelegate.swift */; };
 		4B4FCD7A2709B68500BC520E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD792709B68500BC520E /* SceneDelegate.swift */; };
 		4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */; };
@@ -47,6 +51,10 @@
 		4B215DE127AB53BD001D0044 /* UITableViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableViewExtension.swift; sourceTree = "<group>"; };
 		4B215DE327AB5499001D0044 /* UITextViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextViewExtension.swift; sourceTree = "<group>"; };
 		4B215DE527AB54D9001D0044 /* NSMutableAttributedStringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSMutableAttributedStringExtension.swift; sourceTree = "<group>"; };
+		4B3857DE27AC94BF00CABD81 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		4B3857E427AC972A00CABD81 /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		4B3857E727ACA78C00CABD81 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		4B3857E827ACA78C00CABD81 /* SettingsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsViewController.xib; sourceTree = "<group>"; };
 		4B4FCD742709B68500BC520E /* HitchWiki.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HitchWiki.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4FCD772709B68500BC520E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B4FCD792709B68500BC520E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -111,6 +119,24 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		4B3857DD27AC94A500CABD81 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				4B3857DE27AC94BF00CABD81 /* TabBarController.swift */,
+				4B3857E427AC972A00CABD81 /* NavigationController.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		4B3857E627ACA76900CABD81 /* 3. Settings */ = {
+			isa = PBXGroup;
+			children = (
+				4B3857E727ACA78C00CABD81 /* SettingsViewController.swift */,
+				4B3857E827ACA78C00CABD81 /* SettingsViewController.xib */,
+			);
+			path = "3. Settings";
+			sourceTree = "<group>";
+		};
 		4B4FCD6B2709B68500BC520E = {
 			isa = PBXGroup;
 			children = (
@@ -130,10 +156,12 @@
 		4B4FCD762709B68500BC520E /* HitchWiki */ = {
 			isa = PBXGroup;
 			children = (
+				4B3857DD27AC94A500CABD81 /* Navigation */,
 				4B797D842719B787006E3F17 /* MVVM */,
 				4B87E7592713556500C73578 /* hitchwiki.json */,
 				4B4FCD8E2709B90A00BC520E /* 1. Main Menu */,
 				4B05D2AB27159DDC00EE0033 /* 2. Page */,
+				4B3857E627ACA76900CABD81 /* 3. Settings */,
 				4B87E74D27134E9C00C73578 /* Networking */,
 				4B05D2B12715EFDD00EE0033 /* Extensions */,
 				4B4FCD772709B68500BC520E /* AppDelegate.swift */,
@@ -254,6 +282,7 @@
 				4B4FCD922709B93400BC520E /* MainMenuViewController.xib in Resources */,
 				4B87E7572713525700C73578 /* PageTableViewCell.xib in Resources */,
 				4B05D2AF27159E6C00EE0033 /* PageDetailViewController.xib in Resources */,
+				4B3857EA27ACA78C00CABD81 /* SettingsViewController.xib in Resources */,
 				4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -272,8 +301,10 @@
 				4B797D7927186FDE006E3F17 /* PageDetailViewModel.swift in Sources */,
 				4B05D2AE27159E6C00EE0033 /* PageDetailViewController.swift in Sources */,
 				4B215DE227AB53BD001D0044 /* UITableViewExtension.swift in Sources */,
+				4B3857E527AC972A00CABD81 /* NavigationController.swift in Sources */,
 				4B215DE427AB5499001D0044 /* UITextViewExtension.swift in Sources */,
 				4B215DE627AB54D9001D0044 /* NSMutableAttributedStringExtension.swift in Sources */,
+				4B3857E027AC94BF00CABD81 /* TabBarController.swift in Sources */,
 				4B4FCD912709B93400BC520E /* MainMenuViewController.swift in Sources */,
 				4B797D832718EE39006E3F17 /* UITapGestureRecognizerExtension.swift in Sources */,
 				4B797D8127187BA2006E3F17 /* UILabelExtension.swift in Sources */,
@@ -286,6 +317,7 @@
 				4B797D7B27187A0C006E3F17 /* StringExtension.swift in Sources */,
 				4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */,
 				4B05D2B32715F02100EE0033 /* UIApplicaitionExtension.swift in Sources */,
+				4B3857E927ACA78C00CABD81 /* SettingsViewController.swift in Sources */,
 				4B797D862719B79A006E3F17 /* ViewModelProtocol.swift in Sources */,
 				4B4FCD7A2709B68500BC520E /* SceneDelegate.swift in Sources */,
 			);
