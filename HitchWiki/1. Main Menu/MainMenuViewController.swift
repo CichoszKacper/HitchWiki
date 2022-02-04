@@ -16,6 +16,7 @@ class MainMenuViewController: ModelledViewController<MainMenuViewModel> {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.pagesTableView.register(UINib(nibName: "PageTableViewCell", bundle: nil), forCellReuseIdentifier: "PageTableViewCell")
+        self.title = "Home"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -67,6 +68,7 @@ extension MainMenuViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         guard !searchText.isEmpty else {
             self.viewModel.filteredPages = self.viewModel.pages
+            searchBar.resignFirstResponder()
             return
         }
         
