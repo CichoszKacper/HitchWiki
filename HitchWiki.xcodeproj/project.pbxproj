@@ -124,6 +124,7 @@
 			children = (
 				4B3857DE27AC94BF00CABD81 /* TabBarController.swift */,
 				4B3857E427AC972A00CABD81 /* NavigationController.swift */,
+				4B215DDF27AB49F9001D0044 /* ActionManager.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -170,7 +171,6 @@
 				4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */,
 				4B4FCD882709B68500BC520E /* Info.plist */,
 				4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */,
-				4B215DDF27AB49F9001D0044 /* ActionManager.swift */,
 			);
 			path = HitchWiki;
 			sourceTree = "<group>";

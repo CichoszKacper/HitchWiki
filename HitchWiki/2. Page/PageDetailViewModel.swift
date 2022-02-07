@@ -15,6 +15,8 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     private var updatedInfoboxValuesArray: [String]?
     var sections: [String]?
     var subsections: [String]?
+    var boldTextArray: [String]?
+    var italicTextArray: [String]?
     var descriptionClickableValuesArray: [String]?
     var newDictionary: [String:[String:Bool]] = [:]
     var pageDescriptionAttributedString: NSAttributedString?
@@ -24,7 +26,9 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     var pageToBeCalled: Page?
     let regexSquareBrackets = "\\[\\[((.*?)\\]\\])"
     let regexSections = "\\=\\=(.*?)\\=\\="
-    let regexSubsections = "\\=\\=\\=\\=(.*?)\\=\\=\\=\\="
+    let regexSubsections = "\\=\\=\\=(.*?)\\=\\=\\="
+    let regexBoldText = "\'\'\'(.*?)\'\'\'"
+    let regexItalicText = "\'\'(.*?)\'\'"
     
     // MARK: - Updates
     var update: ((PageDetailViewModel.UpdateType) -> Void)?
@@ -170,10 +174,13 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         var updatedDescription = editedDescription.replacingOccurrences(of: "\\[\\[File:[^\\]]+\\]\\]", with: "", options: .regularExpression)
         updatedDescription = updatedDescription.replacingOccurrences(of: "\\[\\[Category[^\\]]+\\]\\]", with: "", options: .regularExpression)
         updatedDescription = updatedDescription.replacingOccurrences(of: "\\[\\[User[^\\]]+\\]\\]", with: "", options: .regularExpression)
+        updatedDescription = updatedDescription.replacingOccurrences(of: "(?s)(\\=\\= Nomadwiki).*", with: "", options: .regularExpression)
         
         self.descriptionClickableValuesArray = matchesForRegexInText(regex: regexSquareBrackets, text: updatedDescription)
         self.sections = matchesForRegexInText(regex: regexSections, text: updatedDescription)
         self.subsections = matchesForRegexInText(regex: regexSubsections, text: updatedDescription)
+        self.italicTextArray = matchesForRegexInText(regex: regexItalicText, text: updatedDescription)
+        self.boldTextArray = matchesForRegexInText(regex: regexBoldText, text: updatedDescription)
         
         // Make the title in text bold and remove the triple quotation on it
         self.pageDescriptionAttributedString = updatedDescription.withBoldText(text: "'''\(page.title)'''")
