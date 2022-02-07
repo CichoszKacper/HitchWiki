@@ -9,7 +9,7 @@ import UIKit
 
 extension UITextView {
     
-    func addHyperLinksAndSectionsToText(originalText: NSAttributedString, hyperLinks: [String], sections: [String], subsections: [String]) {
+    func addHyperLinksAndSectionsToText(originalText: NSAttributedString, hyperLinks: [String], sections: [String], subsections: [String], boldText: [String], italicText: [String]) {
         let style = NSMutableParagraphStyle()
         style.alignment = .left
         let attributedOriginalText = NSMutableAttributedString(attributedString: originalText)
@@ -22,12 +22,20 @@ extension UITextView {
         for subsection in subsections {
             attributedOriginalText.setSubsection(subsection)
         }
+        for text in italicText {
+            attributedOriginalText.setItalicText(text)
+        }
+        for text in boldText {
+            attributedOriginalText.setBoldText(text)
+        }
         self.linkTextAttributes = [:]
         var updatedString = attributedOriginalText.stringWithString(stringToReplace: "[[", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "]]", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "====", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "===", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "==", replacedWithString: "")
+        updatedString = updatedString.stringWithString(stringToReplace: "'''", replacedWithString: "")
+        updatedString = updatedString.stringWithString(stringToReplace: "''", replacedWithString: "")
         self.attributedText = updatedString
     }
 }

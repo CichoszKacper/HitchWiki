@@ -50,7 +50,7 @@ class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
             // Populate the labels with information stored in dictionary
             for (key, group) in self.viewModel.newDictionary {
                 self.setUpInfoboxLayout()
-                for (subKey, value) in group {
+                for (subKey, _) in group {
                     self.infoboxLabelsCollection.forEach { label in
                         guard let labelIdentifier = label.accessibilityIdentifier else {
                             return
@@ -80,12 +80,14 @@ class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
         guard let pageDescriptionAttributedString = self.viewModel.pageDescriptionAttributedString,
               let descriptionClickableValuesArray = self.viewModel.descriptionClickableValuesArray,
               let sections = self.viewModel.sections,
-              let subsections = self.viewModel.subsections else {
+              let subsections = self.viewModel.subsections,
+              let boldText = self.viewModel.boldTextArray,
+              let italicText = self.viewModel.italicTextArray else {
             return
         }
         
         // Add description
-        self.pageDescriptionTextField.addHyperLinksAndSectionsToText(originalText: pageDescriptionAttributedString, hyperLinks: descriptionClickableValuesArray, sections: sections, subsections: subsections)
+        self.pageDescriptionTextField.addHyperLinksAndSectionsToText(originalText: pageDescriptionAttributedString, hyperLinks: descriptionClickableValuesArray, sections: sections, subsections: subsections, boldText: boldText, italicText: italicText)
         //Add blue colour to the hyperlink in infobox
         if let stringToBeCalled = self.viewModel.stringToBeCalled {
             self.viewModel.labelToBeCalled?.set(color: .systemBlue, on: [stringToBeCalled])
@@ -100,6 +102,7 @@ class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
     }
 }
 
+// MARK: - UITextViewDelegate
 extension PageDetailViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         return self.viewModel.interactWithURL(pageName: URL.absoluteString)
