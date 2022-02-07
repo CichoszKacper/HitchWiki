@@ -28,6 +28,7 @@ extension UITextView {
         for text in boldText {
             attributedOriginalText.setBoldText(text)
         }
+        attributedOriginalText.setBulletpointColor("*", color: UIColor.systemTeal)
         self.linkTextAttributes = [:]
         var updatedString = attributedOriginalText.stringWithString(stringToReplace: "[[", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "]]", replacedWithString: "")
@@ -36,6 +37,7 @@ extension UITextView {
         updatedString = updatedString.stringWithString(stringToReplace: "==", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "'''", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "''", replacedWithString: "")
+        updatedString = updatedString.stringWithString(stringToReplace: "*", replacedWithString: "•")
         self.attributedText = updatedString
     }
 }

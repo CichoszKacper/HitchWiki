@@ -181,4 +181,28 @@ extension NSMutableAttributedString{
             }
         }
     }
+    
+    func setBulletpointColor(_ textToFind: String, color: UIColor) {
+        let style = NSMutableParagraphStyle()
+        style.alignment = .left
+        let inputLength = self.string.count
+        let searchLength = textToFind.count
+        var range = NSRange(location: 0, length: self.length)
+        
+        while (range.location != NSNotFound) {
+            range = (self.string as NSString).range(of: textToFind, options: [], range: range)
+            if (range.location != NSNotFound) {
+                self.addAttribute(NSAttributedString.Key.font,
+                                  value: UIFont.boldSystemFont(ofSize: 35),
+                                  range: NSRange(location: range.location,
+                                                 length: searchLength))
+                self.addAttribute(NSAttributedString.Key.foregroundColor,
+                                  value: color,
+                                  range: NSRange(location: range.location,
+                                                 length: searchLength))
+                range = NSRange(location: range.location + range.length,
+                                length: inputLength - (range.location + range.length))
+            }
+        }
+    }
 }
