@@ -46,6 +46,38 @@ extension NSMutableAttributedString{
         self.mutableString.replacingOccurrences(of: "]]", with: "")
     }
     
+    func setURLForAllOccurances(_ textToFind: String, link: String, description: String) {
+        let style = NSMutableParagraphStyle()
+        style.alignment = .left
+        let inputLength = self.string.count
+        let searchLength = textToFind.count
+        var range = NSRange(location: 0, length: self.length)
+        
+        while (range.location != NSNotFound) {
+            range = (self.string as NSString).range(of: textToFind, options: [], range: range)
+            if (range.location != NSNotFound) {
+                self.addAttribute(NSAttributedString.Key.link,
+                                  value: link,
+                                  range: NSRange(location: range.location,
+                                                 length: searchLength))
+                self.addAttribute(NSAttributedString.Key.paragraphStyle,
+                                  value: style,
+                                  range: NSRange(location: range.location,
+                                                 length: searchLength))
+                self.addAttribute(NSAttributedString.Key.font,
+                                  value: UIFont.boldSystemFont(ofSize: 20),
+                                  range: NSRange(location: range.location,
+                                                 length: searchLength))
+                self.addAttribute(NSAttributedString.Key.foregroundColor,
+                                  value: UIColor.systemBlue,
+                                  range: NSRange(location: range.location,
+                                                 length: searchLength))
+                range = NSRange(location: range.location + range.length,
+                                length: inputLength - (range.location + range.length))
+            }
+        }
+    }
+    
     func setSection(_ textToFind: String) {
         let style = NSMutableParagraphStyle()
         style.alignment = .left

@@ -13,6 +13,8 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     var page: Page?
     private var infoboxValuesArray: [String]?
     private var updatedInfoboxValuesArray: [String]?
+    var urlArray: [String]?
+    var urlDictionary: [String:[String:String]] = [:]
     var sections: [String]?
     var subsections: [String]?
     var boldTextArray: [String]?
@@ -29,6 +31,7 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     let regexSubsections = "\\=\\=\\=(.*?)\\=\\=\\="
     let regexBoldText = "\'\'\'(.*?)\'\'\'"
     let regexItalicText = "\'\'(.*?)\'\'"
+    let regexURL = "\\[(http(.*?)\\])"
     
     // MARK: - Updates
     var update: ((PageDetailViewModel.UpdateType) -> Void)?
@@ -181,6 +184,8 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         self.subsections = matchesForRegexInText(regex: regexSubsections, text: updatedDescription)
         self.italicTextArray = matchesForRegexInText(regex: regexItalicText, text: updatedDescription)
         self.boldTextArray = matchesForRegexInText(regex: regexBoldText, text: updatedDescription)
+        self.urlArray = matchesForRegexInText(regex: regexURL, text: updatedDescription)
+        self.fixURLs()
         
         // Make the title in text bold and remove the triple quotation on it
         self.pageDescriptionAttributedString = updatedDescription.withBoldText(text: "'''\(page.title)'''")
@@ -235,6 +240,24 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         var editedPageName = pageNameDecoded.replacingOccurrences(of: "[[", with: "")
         editedPageName = editedPageName.replacingOccurrences(of: "]]", with: "")
         return editedPageName
+    }
+    
+    
+    /// Fixing the URLs by adding them into the dictionary with [ORIGINAL VERSION: [LINK : DESCRIPTION]]
+    private func fixURLs() {
+        guard let urlArray = self.urlArray else {
+            return
+        }
+
+        for url in urlArray {
+            var editedURL = url.replacingOccurrences(of: "[", with: "")
+            editedURL = editedURL.replacingOccurrences(of: "]", with: "")
+            editedURL = editedURL.replacingOccurrences(of: "http:", with: "https:")
+            let link = editedURL.stringBefore(" ")
+            var linkDescription = editedURL.stringAfter(" ")
+            linkDescription = linkDescription + " 🔗"
+            self.urlDictionary.updateValue([link:linkDescription], forKey: url)
+        }
     }
 }
 
