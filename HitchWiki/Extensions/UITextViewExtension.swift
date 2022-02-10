@@ -34,10 +34,11 @@ extension UITextView {
             attributedOriginalText.setBoldText(text)
         }
         attributedOriginalText.setBulletpointColor("*", color: UIColor.systemTeal)
+        attributedOriginalText.setBulletpointColor("**", color: UIColor.systemRed)
         self.linkTextAttributes = [:]
         var updatedString = attributedOriginalText.stringWithString(stringToReplace: "[[", replacedWithString: "")
         for (url,group) in urls {
-            for (link, description) in group {
+            for (_, description) in group {
                 updatedString = updatedString.stringWithString(stringToReplace: url, replacedWithString: description)
             }
         }
@@ -47,6 +48,7 @@ extension UITextView {
         updatedString = updatedString.stringWithString(stringToReplace: "==", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "'''", replacedWithString: "")
         updatedString = updatedString.stringWithString(stringToReplace: "''", replacedWithString: "")
+        updatedString = updatedString.stringWithString(stringToReplace: "**", replacedWithString: "     -")
         updatedString = updatedString.stringWithString(stringToReplace: "*", replacedWithString: "•")
         self.attributedText = updatedString
     }
