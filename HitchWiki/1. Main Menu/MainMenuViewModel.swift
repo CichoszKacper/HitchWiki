@@ -50,14 +50,24 @@ class MainMenuViewModel: ViewModel, ViewModelProtocol {
     }
     
     public func moveToPageScreen(indexRow: Int) {
-        let page = self.filteredPages[indexRow]
-        if let pageRedirectTitle = page.redirect?.title {
+        var shouldRedirect = false
+        var clickedPage = self.filteredPages[indexRow].title
+        self.pages.forEach({ page in
+            if page.title.lowercased() == clickedPage.lowercased() {
+                shouldRedirect = ((page.redirect?.title.isEmpty) == nil)
+                if shouldRedirect {
+                    ActionManager().pushViewController(page: page, allPages: self.pages)
+                } else {
+                    clickedPage = page.redirect!.title
+                }
+            }
+        })
+        if !shouldRedirect {
             self.pages.forEach({ page in
-                if page.title.lowercased() == pageRedirectTitle.lowercased() {
+                if page.title.lowercased() == clickedPage.lowercased() {
                     ActionManager().pushViewController(page: page, allPages: self.pages)
                 }
             })
         }
-        ActionManager().pushViewController(page: page, allPages: self.pages)
     }
 }
