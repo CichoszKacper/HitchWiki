@@ -9,8 +9,9 @@ import UIKit
 
 class PageDetailViewModel: ViewModel, ViewModelProtocol {    
     
-    var pages: [Page]?
+    var pages = [Page]()
     var page: Page?
+    var filteredPages = [Page]()
     private var infoboxValuesArray: [String]?
     private var updatedInfoboxValuesArray: [String]?
     var urlArray: [String]?
@@ -37,6 +38,7 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     var update: ((PageDetailViewModel.UpdateType) -> Void)?
     enum UpdateType {
         case page
+        case search
     }
     
     var error: ((PageDetailViewModel.ErrorType) -> Void)?
@@ -81,27 +83,26 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     }
     
     public func interactWithURL(pageName: String) -> Bool {
-        guard let allPages = self.pages,
-              let pageNameDecoded = pageName.removingPercentEncoding else {
+        guard let pageNameDecoded = pageName.removingPercentEncoding else {
                   return false
               }
         var shouldRedirect = false
         var correctPageName = self.removeBracketsFromHyperlinks(pageNameDecoded: pageNameDecoded)
         if self.checkIfClickable(string: correctPageName) {
-            self.pages?.forEach({ page in
+            self.pages.forEach({ page in
                 if page.title.lowercased() == correctPageName.lowercased() {
                     shouldRedirect = ((page.redirect?.title.isEmpty) == nil)
                     if shouldRedirect {
-                        ActionManager().pushViewController(page: page, allPages: allPages)
+                        ActionManager().pushViewController(page: page, allPages: self.pages)
                     } else {
                         correctPageName = page.redirect!.title
                     }
                 }
             })
             if !shouldRedirect {
-                self.pages?.forEach({ page in
+                self.pages.forEach({ page in
                     if page.title.lowercased() == correctPageName.lowercased() {
-                        ActionManager().pushViewController(page: page, allPages: allPages)
+                        ActionManager().pushViewController(page: page, allPages: self.pages)
                     }
                 })
             }
@@ -109,6 +110,10 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         }
         // TODO: Create a default view saying that the page for this location is not set up yet
         return true
+    }
+    
+    public func searchBarClicked() {
+        self.update?(.search)
     }
     
     // MARK: - Private Methods
@@ -194,7 +199,7 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     
     private func checkIfClickable(string: String) -> Bool{
         var clickable = false
-        self.pages?.forEach({ page in
+        self.pages.forEach({ page in
             if page.title.lowercased().contains(string.lowercased()) {
                 clickable = true
             }
@@ -205,7 +210,7 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     private func setUpDataForClickableLabel(string: String, label: UILabel) {
         self.stringToBeCalled = string
         self.labelToBeCalled = label
-        self.pages?.forEach({ page in
+        self.pages.forEach({ page in
             if page.title == self.stringToBeCalled {
                 self.pageToBeCalled = page
             }
@@ -215,13 +220,12 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     @objc func tappedOnLabel(_ gesture: UITapGestureRecognizer) {
         guard let label = self.labelToBeCalled,
               let stringToBeCalled = self.stringToBeCalled,
-              let page = self.pageToBeCalled,
-              let allPages = self.pages else {
+              let page = self.pageToBeCalled else {
             return
         }
         
         if gesture.didTapAttributedString(stringToBeCalled, in: label) {
-            ActionManager().pushViewController(page: page, allPages: allPages)
+            ActionManager().pushViewController(page: page, allPages: self.pages)
         }
     }
     

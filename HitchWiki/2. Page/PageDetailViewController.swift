@@ -6,9 +6,9 @@
 //
 
 import UIKit
-import Algorithms
 
 class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
+    @IBOutlet weak var pageView: UIView!
     @IBOutlet weak var pageDescriptionTextField: UITextView!
     @IBOutlet weak var informationLabel: UILabel!
     @IBOutlet weak var infoboxView: UIView!
@@ -18,11 +18,17 @@ class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
     @IBOutlet weak var populationLabel: UILabel!
     @IBOutlet weak var currencyLabel: UILabel!
     @IBOutlet var infoboxLabelsCollection: [UILabel]!
+    @IBOutlet weak var searchTableView: UITableView!
+    
+    var searchBar = UISearchBar()
+    var searchBarContainer: SearchBarContainerView?
+    var searchBarButtonItem: UIBarButtonItem?
     
     // MARK: - Life Cycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.loadData()
+        self.hideSearchBar()
     }
     
     override func viewDidLoad() {
@@ -30,12 +36,19 @@ class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
         self.navigationItem.title = self.viewModel.page?.title
         self.navigationItem.title = self.navigationItem.title?.uppercased()
         self.navigationController?.isNavigationBarHidden = false
+        self.searchTableView.register(UINib(nibName: "PageTableViewCell", bundle: nil), forCellReuseIdentifier: "PageTableViewCell")
+        self.setUpSearchBar()
     }
     
     override func updateView(_ type: PageDetailViewModel.UpdateType) {
         switch type {
         case .page:
-            print("chuj")
+            self.searchTableView.isHidden = true
+            self.pageView.isHidden = false
+        case .search:
+            self.searchTableView.isHidden = false
+            self.pageView.isHidden = true
+            self.searchTableView.reloadOnMainThread()
         }
     }
     
@@ -100,12 +113,98 @@ class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
         self.informationLabel.layer.cornerRadius = 5
         self.informationLabel.layer.masksToBounds = true
     }
+    
+    @objc func seachBarIconTapped() {
+        self.showSearchBar(searchBar: self.searchBar)
+    }
+    
+    private func setUpSearchBar() {
+        self.searchBar.delegate = self
+        self.searchBar.searchBarStyle = .minimal
+        self.searchBar.showsCancelButton = true
+        self.searchBarContainer = SearchBarContainerView(customSearchBar: self.searchBar)
+        self.searchBarContainer?.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
+        self.searchBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(seachBarIconTapped))
+        self.navigationItem.rightBarButtonItem = self.searchBarButtonItem
+    }
+    
+    private func showSearchBar(searchBar : UISearchBar) {
+        guard let searchBarContainer = self.searchBarContainer else {
+            return
+        }
+        
+        searchBarContainer.alpha = 0
+        navigationItem.titleView = searchBarContainer
+        navigationItem.setRightBarButton(nil, animated: true)
+        
+        UIView.animate(withDuration: 0.5, animations: {
+            searchBarContainer.alpha = 1
+        }, completion: { finished in
+            searchBarContainer.searchBar.becomeFirstResponder()
+        })
+    }
+    
+    private func hideSearchBar() {
+        guard let searchBarButtonItem = self.searchBarButtonItem else {
+            return
+        }
+        
+        self.searchBarContainer?.searchBar.text = nil
+        self.navigationItem.setRightBarButton(searchBarButtonItem, animated: true)
+        self.navigationItem.titleView = .none
+        self.viewModel.update?(.page)
+    }
 }
 
 // MARK: - UITextViewDelegate
 extension PageDetailViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         return self.viewModel.interactWithURL(pageName: URL.absoluteString)
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension PageDetailViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        self.viewModel.filteredPages.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PageTableViewCell", for: indexPath) as! PageTableViewCell
+        cell.populateCell(page: self.viewModel.filteredPages[indexPath.row])
+        return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension PageDetailViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.viewModel.moveToPageScreen(indexRow: indexPath.row,
+                                        pages: self.viewModel.pages,
+                                        filteredPages: self.viewModel.filteredPages)
+    }
+}
+
+// MARK: - UISearchBarDelegate
+extension PageDetailViewController: UISearchBarDelegate {
+    
+    // Extension to SearchBar to search through the list of pages
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.viewModel.searchBarClicked()
+        guard !searchText.isEmpty else {
+            self.viewModel.filteredPages = self.viewModel.pages
+            searchBar.resignFirstResponder()
+            return
+        }
+        
+        self.viewModel.filteredPages = self.viewModel.pages.filter { ($0.title.lowercased().starts(with: searchText.lowercased()))}
+        self.searchTableView.reloadOnMainThread()
+        // TODO: Allow user to search when page contains searched text, not only starts with
+//        self.filteredPages = self.pages.filter { ($0.title.lowercased().contains(searchText.lowercased()))}
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.hideSearchBar()
     }
 }
 

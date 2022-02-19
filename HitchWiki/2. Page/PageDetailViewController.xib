@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -18,7 +18,9 @@
                 <outlet property="infoboxView" destination="glo-YB-9LE" id="eDO-zM-HMW"/>
                 <outlet property="informationLabel" destination="KwD-E4-6Ll" id="z5H-GW-YHl"/>
                 <outlet property="pageDescriptionTextField" destination="CRS-h6-oXy" id="kCB-B8-h2g"/>
+                <outlet property="pageView" destination="iww-mn-TQh" id="MJx-41-PpU"/>
                 <outlet property="populationLabel" destination="LQb-rd-6hP" id="7ea-nk-2wa"/>
+                <outlet property="searchTableView" destination="84Z-NI-gTg" id="VVe-gG-n3R"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
                 <outletCollection property="infoboxLabelsCollection" destination="uCn-eY-IWV" collectionClass="NSMutableArray" id="cf6-yO-bed"/>
                 <outletCollection property="infoboxLabelsCollection" destination="LQb-rd-6hP" collectionClass="NSMutableArray" id="w4u-22-mpL"/>
@@ -132,14 +134,26 @@
                         <constraint firstItem="iww-mn-TQh" firstAttribute="top" secondItem="H0R-Oe-uNh" secondAttribute="top" id="xLA-vO-S2n"/>
                     </constraints>
                 </scrollView>
+                <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="84Z-NI-gTg">
+                    <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="oN3-N1-6aP"/>
+                        <outlet property="delegate" destination="-1" id="6fC-to-m2M"/>
+                    </connections>
+                </tableView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="H0R-Oe-uNh" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="4E2-Zy-Bop"/>
                 <constraint firstAttribute="bottom" secondItem="H0R-Oe-uNh" secondAttribute="bottom" id="DGf-xy-rOE"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="84Z-NI-gTg" secondAttribute="trailing" id="OdG-bE-yPg"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="H0R-Oe-uNh" secondAttribute="trailing" id="P3A-9j-7hR"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="84Z-NI-gTg" secondAttribute="bottom" id="UIj-2P-PQr"/>
+                <constraint firstItem="84Z-NI-gTg" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="Yu1-fD-vht"/>
                 <constraint firstItem="iww-mn-TQh" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="dCp-uc-aQ1"/>
+                <constraint firstItem="84Z-NI-gTg" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="wJj-O7-VSX"/>
                 <constraint firstItem="H0R-Oe-uNh" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="yjU-iy-uDJ"/>
             </constraints>
             <point key="canvasLocation" x="505.79710144927537" y="117.85714285714285"/>
