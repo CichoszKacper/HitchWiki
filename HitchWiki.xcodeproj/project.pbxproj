@@ -41,6 +41,7 @@
 		4B87E7572713525700C73578 /* PageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B87E7552713525700C73578 /* PageTableViewCell.xib */; };
 		4B87E75A2713556500C73578 /* hitchwiki.json in Resources */ = {isa = PBXBuildFile; fileRef = 4B87E7592713556500C73578 /* hitchwiki.json */; };
 		4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 4B89024A2717499F00C8C4B1 /* Algorithms */; };
+		4BAC7AAC27C065A1004AEF84 /* SearchBarContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAC7AAB27C065A1004AEF84 /* SearchBarContainerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +80,7 @@
 		4B87E7542713525700C73578 /* PageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageTableViewCell.swift; sourceTree = "<group>"; };
 		4B87E7552713525700C73578 /* PageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageTableViewCell.xib; sourceTree = "<group>"; };
 		4B87E7592713556500C73578 /* hitchwiki.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hitchwiki.json; sourceTree = "<group>"; };
+		4BAC7AAB27C065A1004AEF84 /* SearchBarContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarContainerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +173,7 @@
 				4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */,
 				4B4FCD882709B68500BC520E /* Info.plist */,
 				4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */,
+				4BAC7AAB27C065A1004AEF84 /* SearchBarContainerView.swift */,
 			);
 			path = HitchWiki;
 			sourceTree = "<group>";
@@ -294,6 +297,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BAC7AAC27C065A1004AEF84 /* SearchBarContainerView.swift in Sources */,
 				4B797D7F27187A4D006E3F17 /* NSAttributedStringExtenstion.swift in Sources */,
 				4B87E75227134F1900C73578 /* DataModel.swift in Sources */,
 				4B87E74F27134EAF00C73578 /* NetworkManager.swift in Sources */,

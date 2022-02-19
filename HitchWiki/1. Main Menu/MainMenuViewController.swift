@@ -23,8 +23,9 @@ class MainMenuViewController: ModelledViewController<MainMenuViewModel> {
         super.viewWillAppear(animated)
         self.navigationController?.isNavigationBarHidden = true
         self.viewModel.loadData()
+        self.viewModel.update?(.mainMenu)
+        self.searchBar.text = nil
     }
-    
     
     override func updateView(_ type: MainMenuViewModel.UpdateType) {
         switch type {
@@ -66,6 +67,7 @@ extension MainMenuViewController: UISearchBarDelegate {
     
     // Extension to SearchBar to search through the list of pages
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.viewModel.searchBarClicked()
         guard !searchText.isEmpty else {
             self.viewModel.filteredPages = self.viewModel.pages
             searchBar.resignFirstResponder()
@@ -76,10 +78,6 @@ extension MainMenuViewController: UISearchBarDelegate {
         self.pagesTableView.reloadOnMainThread()
         // TODO: Allow user to search when page contains searched text, not only starts with
 //        self.filteredPages = self.pages.filter { ($0.title.lowercased().contains(searchText.lowercased()))}
-    }
-    
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        self.viewModel.searchBarClicked()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
