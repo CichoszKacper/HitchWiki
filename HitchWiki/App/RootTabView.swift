@@ -14,7 +14,7 @@ struct RootTabView: View {
                 HomeView()
             }
             Tab(AppTab.map.title, systemImage: AppTab.map.systemImage, value: AppTab.map) {
-                PlaceholderTabView(tab: .map)
+                MapTabView()
             }
             Tab(AppTab.saved.title, systemImage: AppTab.saved.systemImage, value: AppTab.saved) {
                 PlaceholderTabView(tab: .saved)

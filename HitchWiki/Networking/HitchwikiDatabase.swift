@@ -90,6 +90,31 @@ struct PageRecord: Hashable, Sendable {
     }
 }
 
+/// Something with coordinates to show on the map: a page (city, service station, country...) or a hitchhiking spot.
+struct MapPoint: Identifiable, Hashable, Sendable {
+    enum Kind: String, Sendable {
+        case page
+        case spot
+    }
+
+    let kind: Kind
+    /// Page id or spot row id.
+    let rowID: Int64
+    /// Page title, or for a spot the heading it was written under.
+    let title: String
+    /// The page this point belongs to (the page itself, or the page the spot is on).
+    let pageTitle: String
+    let infoboxType: String?
+    let latitude: Double
+    let longitude: Double
+
+    var id: String { "\(self.kind.rawValue)-\(self.rowID)" }
+
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
+    }
+}
+
 enum DatabaseError: Error {
     case missingFile
     case cannotOpen(String)
@@ -214,6 +239,61 @@ final class HitchwikiDatabase: @unchecked Sendable {
                           infoboxFields: fields, sections: sections, spots: spots)
     }
 
+    // MARK: - Map
+
+    /// Pages with coordinates plus spots, ranked so zooming out keeps the most useful ones:
+    /// countries, then places, then service stations, then spots.
+    private static let mapPointsSQL = """
+        SELECT 'page' AS kind, id AS row_id, title, title AS page_title, infobox_type AS type, lat, lng,
+               CASE WHEN infobox_type = 'country' THEN 0 WHEN infobox_type = 'servicestation' THEN 2 ELSE 1 END AS priority
+        FROM pages WHERE lat IS NOT NULL AND lng IS NOT NULL
+        UNION ALL
+        SELECT 'spot', s.rowid, s.section, p.title, NULL, s.lat, s.lng, 3
+        FROM spots s JOIN pages p ON p.id = s.page_id
+        """
+
+    /// Points inside a latitude/longitude box, at most `limit` of them.
+    func mapPoints(minLatitude: Double, maxLatitude: Double, minLongitude: Double, maxLongitude: Double,
+                   limit: Int) throws -> [MapPoint] {
+        let sql = """
+            SELECT kind, row_id, title, page_title, type, lat, lng FROM (\(Self.mapPointsSQL))
+            WHERE lat BETWEEN ?1 AND ?2 AND lng BETWEEN ?3 AND ?4
+            ORDER BY priority, row_id LIMIT ?5
+            """
+        return try self.query(sql, [minLatitude, maxLatitude, minLongitude, maxLongitude, limit], map: Self.mapPoint)
+    }
+
+    /// The closest places, service stations and spots to a location (countries and regions are left out),
+    /// searching up to ~1.5° away. Nearest first.
+    func nearestMapPoints(latitude: Double, longitude: Double, limit: Int) throws -> [MapPoint] {
+        // A degree of longitude gets shorter away from the equator.
+        let longitudeScale = max(cos(latitude * .pi / 180), 0.01)
+        let sql = """
+            SELECT kind, row_id, title, page_title, type, lat, lng FROM (\(Self.mapPointsSQL))
+            WHERE lat BETWEEN ?1 - 1.5 AND ?1 + 1.5 AND lng BETWEEN ?2 - ?3 AND ?2 + ?3
+              AND (type IS NULL OR type NOT IN ('country', 'region'))
+            ORDER BY (lat - ?1) * (lat - ?1) + (lng - ?2) * (lng - ?2) * ?4
+            LIMIT ?5
+            """
+        return try self.query(sql, [latitude, longitude, 1.5 / longitudeScale, longitudeScale * longitudeScale, limit],
+                              map: Self.mapPoint)
+    }
+
+    private static func mapPoint(_ statement: OpaquePointer) -> MapPoint {
+        let kind = MapPoint.Kind(rawValue: Self.text(statement, 0) ?? "") ?? .page
+        var title = Self.text(statement, 2) ?? ""
+        if kind == .spot {
+            // Spots store their heading path ("Hitchhiking out > West > Option 1"): keep the last heading.
+            title = title.components(separatedBy: " > ").last ?? title
+            if title.isEmpty {
+                title = "Hitchhiking spot"
+            }
+        }
+        return MapPoint(kind: kind, rowID: Self.int(statement, 1), title: title, pageTitle: Self.text(statement, 3) ?? "",
+                        infoboxType: Self.text(statement, 4),
+                        latitude: Self.double(statement, 5) ?? 0, longitude: Self.double(statement, 6) ?? 0)
+    }
+
     // MARK: - SQLite helpers
 
     private static let transient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
@@ -233,6 +313,8 @@ final class HitchwikiDatabase: @unchecked Sendable {
                     sqlite3_bind_int64(statement, index, value)
                 case let value as Int:
                     sqlite3_bind_int64(statement, index, Int64(value))
+                case let value as Double:
+                    sqlite3_bind_double(statement, index, value)
                 case let value as String:
                     sqlite3_bind_text(statement, index, value, -1, Self.transient)
                 default:

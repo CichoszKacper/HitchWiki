@@ -2,7 +2,7 @@
 //  AppTab.swift
 //  HitchWiki
 //
-//  The tabs in the bottom bar. Everything except Home is a placeholder for now:
+//  The tabs in the bottom bar. Saved and Profile are placeholders for now:
 //  rename them / change their icons here.
 //
 
