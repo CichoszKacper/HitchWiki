@@ -46,6 +46,7 @@ struct MapTabView: View {
             }
         }
         .environment(self.router)
+        .opensPageLinks(with: self.router)
         // Use GPS only while the map is on screen.
         .onAppear {
             self.location.start()
@@ -63,7 +64,8 @@ struct MapTabView: View {
     @ViewBuilder
     private var bottomPanel: some View {
         if let point = self.viewModel.selectedPoint {
-            MapPointCard(point: point, distance: self.viewModel.distance(to: point)) {
+            MapPointCard(point: point, distance: self.viewModel.distance(to: point),
+                         spotDetails: self.viewModel.selectedSpotDetails) {
                 self.viewModel.clearSelection()
             }
             .padding(.horizontal, Theme.screenPadding)

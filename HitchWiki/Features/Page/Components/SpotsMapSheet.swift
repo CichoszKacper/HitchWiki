@@ -11,16 +11,20 @@ import MapKit
 struct SpotsMapSheet: View {
     let title: String
     let spots: [PageSpot]
+    /// The page's sections, to show each spot's directions.
+    let sections: [PageSection]
 
     @State private var position: MapCameraPosition
     @State private var selectedSpotID: Int?
     @Environment(\.dismiss) private var dismiss
+    @Environment(Router.self) private var router
 
     private static let spotSpan = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
 
-    init(title: String, spots: [PageSpot], mapFrame: MapFrame?, focus: PageSpot? = nil) {
+    init(title: String, spots: [PageSpot], sections: [PageSection], mapFrame: MapFrame?, focus: PageSpot? = nil) {
         self.title = title
         self.spots = spots
+        self.sections = sections
         if let focus {
             self._position = State(initialValue: .region(MKCoordinateRegion(center: focus.coordinate, span: Self.spotSpan)))
         } else if let mapFrame {
@@ -52,7 +56,9 @@ struct SpotsMapSheet: View {
             }
             .safeAreaInset(edge: .bottom) {
                 if let spot = self.selectedSpot {
-                    SpotDetailCard(spot: spot)
+                    SpotDetailCard(spot: spot, pageTitle: self.title,
+                                   section: self.sections.first { $0.path == spot.sectionPath })
+                        .id(spot.id)
                         .padding()
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
@@ -68,6 +74,10 @@ struct SpotsMapSheet: View {
             }
             .navigationTitle(self.title)
             .navigationBarTitleDisplayMode(.inline)
+            // A link in the directions closes the map and opens the page underneath.
+            .opensPageLinks(with: self.router) {
+                self.dismiss()
+            }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
@@ -79,36 +89,41 @@ struct SpotsMapSheet: View {
     }
 }
 
-/// The selected spot: where it is written on the page, and directions in Apple Maps.
+/// The selected spot: its name, the wiki's directions, and directions in Apple Maps.
 struct SpotDetailCard: View {
     let spot: PageSpot
+    let pageTitle: String
+    /// The section the spot was written in.
+    let section: PageSection?
 
     var body: some View {
-        HStack(spacing: 14) {
-            Image(systemName: "hand.thumbsup.fill")
-                .font(.title3)
-                .foregroundStyle(.white)
-                .frame(width: 44, height: 44)
-                .background(Color.accentColor.gradient, in: .circle)
-            VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 14) {
+                Image(systemName: "hand.thumbsup.fill")
+                    .font(.title3)
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+                    .background(Color.accentColor.gradient, in: .circle)
                 Text(self.spot.name)
                     .font(.headline)
                     .lineLimit(2)
-                Text(String(format: "%.5f, %.5f", self.spot.latitude, self.spot.longitude))
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(.secondary)
+                Spacer(minLength: 0)
+                Button {
+                    let item = MKMapItem(placemark: MKPlacemark(coordinate: self.spot.coordinate))
+                    item.name = self.spot.name
+                    item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault])
+                } label: {
+                    Label("Go", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
+                        .font(.subheadline.weight(.semibold))
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
             }
-            Spacer(minLength: 0)
-            Button {
-                let item = MKMapItem(placemark: MKPlacemark(coordinate: self.spot.coordinate))
-                item.name = self.spot.name
-                item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault])
-            } label: {
-                Label("Go", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
-                    .font(.subheadline.weight(.semibold))
+            if let section = self.section {
+                SpotDetailsView(pageTitle: self.pageTitle,
+                                headings: Array(self.spot.sectionPath.components(separatedBy: " > ").dropLast()),
+                                text: section.text, links: section.links)
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
         }
         .padding(14)
         .background(.regularMaterial, in: .rect(cornerRadius: Theme.cornerRadius, style: .continuous))

@@ -11,6 +11,8 @@ import MapKit
 struct MapPointCard: View {
     let point: MapPoint
     let distance: CLLocationDistance?
+    /// Directions, for hitchhiking spots.
+    var spotDetails: SpotDetails?
     var onClose: () -> Void
 
     var body: some View {
@@ -45,6 +47,16 @@ struct MapPointCard: View {
                 }
                 .buttonStyle(.pressable)
                 .accessibilityLabel("Close")
+            }
+
+            if let details = self.spotDetails {
+                SpotDetailsView(pageTitle: details.pageTitle, headings: Array(details.headings.dropLast()),
+                                text: details.text, links: details.links)
+                    .id(details.spotID)   // collapse "Show more" again for the next spot
+                    .transition(.opacity)
+            } else if self.point.kind == .spot {
+                ProgressView()
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             HStack(spacing: 10) {

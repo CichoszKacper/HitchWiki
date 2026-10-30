@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4BDB0F010000000000000002 /* SpotDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0F010000000000000001 /* SpotDetailsView.swift */; };
 		4BDB0E010000000000000003 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000002 /* MapTabView.swift */; };
 		4BDB0E010000000000000005 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000004 /* MapViewModel.swift */; };
 		4BDB0E010000000000000007 /* MapPoint+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000006 /* MapPoint+Style.swift */; };
@@ -48,6 +49,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4BDB0F010000000000000001 /* SpotDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailsView.swift; sourceTree = "<group>"; };
 		4BDB0E010000000000000002 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
 		4BDB0E010000000000000004 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		4BDB0E010000000000000006 /* MapPoint+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapPoint+Style.swift"; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 			children = (
 				4BDB0C01000000000000002D /* LinkedText.swift */,
 				4BDB0D010000000000000001 /* FlowLayout.swift */,
+				4BDB0F010000000000000001 /* SpotDetailsView.swift */,
 				4BDB0C01000000000000002F /* CollapsibleCard.swift */,
 				4BDB0C010000000000000031 /* FactChip.swift */,
 				4BDB0C010000000000000033 /* PressableButtonStyle.swift */,
@@ -354,6 +357,7 @@
 				4BDB0C01000000000000002B /* PageLink+URL.swift in Sources */,
 				4BDB0C01000000000000002E /* LinkedText.swift in Sources */,
 				4BDB0D010000000000000002 /* FlowLayout.swift in Sources */,
+				4BDB0F010000000000000002 /* SpotDetailsView.swift in Sources */,
 				4BDB0C010000000000000030 /* CollapsibleCard.swift in Sources */,
 				4BDB0C010000000000000032 /* FactChip.swift in Sources */,
 				4BDB0C010000000000000034 /* PressableButtonStyle.swift in Sources */,

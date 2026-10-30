@@ -37,16 +37,10 @@ struct PageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackgroundVisibility(self.showsNavigationBar ? .visible : .hidden, for: .navigationBar)
         // Links in the text: Hitchwiki pages open in this stack, websites in Safari.
-        .environment(\.openURL, OpenURLAction { url in
-            guard let title = PageLink.pageTitle(from: url) else {
-                return .systemAction
-            }
-            self.router.open(page: title)
-            return .handled
-        })
+        .opensPageLinks(with: self.router)
         .sheet(item: self.$mapSheet) { request in
             SpotsMapSheet(title: request.content.title, spots: request.content.record.spots,
-                          mapFrame: request.content.mapFrame, focus: request.focus)
+                          sections: request.content.record.sections, mapFrame: request.content.mapFrame, focus: request.focus)
                 .presentationDragIndicator(.visible)
         }
         .task {

@@ -29,3 +29,18 @@ final class Router {
         self.path = NavigationPath()
     }
 }
+
+extension View {
+    /// Links in Text below this view: Hitchwiki pages open in `router`'s stack, websites in Safari.
+    /// - Parameter beforeOpeningPage: e.g. dismiss a sheet first.
+    func opensPageLinks(with router: Router, beforeOpeningPage: (() -> Void)? = nil) -> some View {
+        self.environment(\.openURL, OpenURLAction { url in
+            guard let title = PageLink.pageTitle(from: url) else {
+                return .systemAction
+            }
+            beforeOpeningPage?()
+            router.open(page: title)
+            return .handled
+        })
+    }
+}

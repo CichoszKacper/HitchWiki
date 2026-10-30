@@ -28,6 +28,8 @@ final class MapViewModel {
     private(set) var points = [MapPoint]()
     private(set) var nearby = [NearbyPoint]()
     private(set) var selectedPoint: MapPoint?
+    /// Directions for the selected point when it's a hitchhiking spot.
+    private(set) var selectedSpotDetails: SpotDetails?
 
     private static let europe = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50, longitude: 12),
                                                    span: MKCoordinateSpan(latitudeDelta: 22, longitudeDelta: 22))
@@ -35,6 +37,7 @@ final class MapViewModel {
     @ObservationIgnored private let database: HitchwikiDatabase?
     @ObservationIgnored private var loadTask: Task<Void, Never>?
     @ObservationIgnored private var nearbyTask: Task<Void, Never>?
+    @ObservationIgnored private var detailsTask: Task<Void, Never>?
     @ObservationIgnored private var nearbyOrigin: CLLocation?
 
     init(database: HitchwikiDatabase? = HitchwikiDatabase.shared) {
@@ -101,6 +104,33 @@ final class MapViewModel {
             ?? self.nearby.first { $0.id == self.selectedID }?.point
         withAnimation(Theme.spring) {
             self.selectedPoint = self.selectedID == nil ? nil : (point ?? self.selectedPoint)
+        }
+        self.loadDetails(for: self.selectedPoint)
+    }
+
+    private func loadDetails(for point: MapPoint?) {
+        guard let point, point.kind == .spot else {
+            self.detailsTask?.cancel()
+            self.selectedSpotDetails = nil
+            return
+        }
+        guard self.selectedSpotDetails?.spotID != point.rowID else {
+            return
+        }
+        self.detailsTask?.cancel()
+        self.selectedSpotDetails = nil
+        let database = self.database
+        let rowID = point.rowID
+        self.detailsTask = Task {
+            let details = await Task.detached(priority: .userInitiated) {
+                try? database?.spotDetails(rowID: rowID)
+            }.value
+            guard !Task.isCancelled else {
+                return
+            }
+            withAnimation(Theme.spring) {
+                self.selectedSpotDetails = details
+            }
         }
     }
 

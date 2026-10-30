@@ -115,6 +115,18 @@ struct MapPoint: Identifiable, Hashable, Sendable {
     }
 }
 
+/// What the wiki says about one hitchhiking spot: the text of the section it was written in.
+struct SpotDetails: Hashable, Sendable {
+    let spotID: Int64
+    let pageTitle: String
+    /// Headings from the top of the page down to the spot, e.g.
+    /// ["Hitchhiking out", "West towards Łódź, Poznań", "Option 1, S8 onramp"].
+    let headings: [String]
+    /// How to get there and hitch from there.
+    let text: String
+    let links: [PageLink]
+}
+
 enum DatabaseError: Error {
     case missingFile
     case cannotOpen(String)
@@ -277,6 +289,37 @@ final class HitchwikiDatabase: @unchecked Sendable {
             """
         return try self.query(sql, [latitude, longitude, 1.5 / longitudeScale, longitudeScale * longitudeScale, limit],
                               map: Self.mapPoint)
+    }
+
+    func spotDetails(rowID: Int64) throws -> SpotDetails? {
+        let spotSQL = "SELECT s.page_id, p.title, s.section, s.description FROM spots s JOIN pages p ON p.id = s.page_id WHERE s.rowid = ?"
+        guard let spot = try self.query(spotSQL, [rowID], map: { statement in
+            (pageID: Self.int(statement, 0), pageTitle: Self.text(statement, 1) ?? "",
+             path: Self.text(statement, 2) ?? "", description: Self.text(statement, 3) ?? "")
+        }).first else {
+            return nil
+        }
+        let headings = spot.path.components(separatedBy: " > ").filter { !$0.isEmpty }
+
+        // The section the spot was written in, with its links. Fall back to the stored plain description.
+        let sectionSQL = "SELECT idx, text FROM sections WHERE page_id = ? AND path = ? ORDER BY idx LIMIT 1"
+        guard let section = try self.query(sectionSQL, [spot.pageID, spot.path], map: { statement in
+            (index: Self.int(statement, 0), text: Self.text(statement, 1) ?? "")
+        }).first, !section.text.isEmpty else {
+            return SpotDetails(spotID: rowID, pageTitle: spot.pageTitle, headings: headings, text: spot.description, links: [])
+        }
+        let linkSQL = "SELECT start, length, target, url FROM section_links WHERE page_id = ? AND section_idx = ? AND in_heading = 0 ORDER BY start"
+        let links = try self.query(linkSQL, [spot.pageID, section.index]) { statement -> PageLink? in
+            let range = NSRange(location: Int(Self.int(statement, 0)), length: Int(Self.int(statement, 1)))
+            if let target = Self.text(statement, 2) {
+                return PageLink(range: range, destination: .page(target))
+            }
+            if let address = Self.text(statement, 3), let url = URL(string: address) {
+                return PageLink(range: range, destination: .url(url))
+            }
+            return nil
+        }.compactMap { $0 }
+        return SpotDetails(spotID: rowID, pageTitle: spot.pageTitle, headings: headings, text: section.text, links: links)
     }
 
     private static func mapPoint(_ statement: OpaquePointer) -> MapPoint {
