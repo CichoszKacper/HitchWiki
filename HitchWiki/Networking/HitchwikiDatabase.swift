@@ -7,17 +7,18 @@
 //
 
 import Foundation
+import CoreLocation
 import SQLite3
 
 /// A row in the list of pages.
-struct PageSummary {
+struct PageSummary: Identifiable, Hashable, Sendable {
     let id: Int64
     let title: String
 }
 
 /// A link inside a heading or a section's text.
-struct PageLink {
-    enum Destination {
+struct PageLink: Hashable, Sendable {
+    enum Destination: Hashable, Sendable {
         /// Another Hitchwiki article, by title (redirects already followed).
         case page(String)
         case url(URL)
@@ -29,22 +30,64 @@ struct PageLink {
 }
 
 /// A heading and the plain text below it. Level 0 is the text before the first heading.
-struct PageSection {
+struct PageSection: Identifiable, Hashable, Sendable {
+    /// Position of the section on the page.
+    let id: Int
     let level: Int
     let title: String
+    /// Headings above and including this one, e.g. "Hitchhiking out > West towards Berlin > Option 1".
+    let path: String
     let text: String
     var titleLinks: [PageLink] = []
     var links: [PageLink] = []
 }
 
+/// A hitchhiking spot from a {{Coords}} on the page, with the section it was written in.
+struct PageSpot: Identifiable, Hashable, Sendable {
+    let id: Int
+    /// Matches `PageSection.path`.
+    let sectionPath: String
+    let latitude: Double
+    let longitude: Double
+
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
+    }
+}
+
+/// One infobox row, e.g. capital = Warsaw.
+struct InfoboxField: Hashable, Sendable {
+    let name: String
+    let value: String
+    /// Pages linked from the value, as written on the wiki (not yet resolved).
+    let links: [String]
+}
+
 /// Everything the page screen shows.
-struct PageRecord {
+struct PageRecord: Hashable, Sendable {
     let id: Int64
     let title: String
+    /// "country", "location", "polish location"... (whatever follows "Infobox" in the template name)
     let infoboxType: String?
-    /// Infobox values by field name as written on the wiki, e.g. "country", "capital", "pop".
-    let infobox: [String: String]
+    let country: String?
+    let latitude: Double?
+    let longitude: Double?
+    /// Infobox rows in the order they are written on the wiki.
+    let infoboxFields: [InfoboxField]
     let sections: [PageSection]
+    let spots: [PageSpot]
+
+    /// Infobox values by field name, e.g. "country", "capital", "pop".
+    var infobox: [String: String] {
+        Dictionary(self.infoboxFields.map { ($0.name, $0.value) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    var coordinate: CLLocationCoordinate2D? {
+        guard let latitude = self.latitude, let longitude = self.longitude else {
+            return nil
+        }
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
 }
 
 enum DatabaseError: Error {
@@ -53,7 +96,8 @@ enum DatabaseError: Error {
     case query(String)
 }
 
-final class HitchwikiDatabase {
+/// Safe to use from any thread: every query runs on one serial queue.
+final class HitchwikiDatabase: @unchecked Sendable {
     static let shared: HitchwikiDatabase? = {
         do {
             return try HitchwikiDatabase(name: "hitchwiki")
@@ -74,6 +118,7 @@ final class HitchwikiDatabase {
         guard sqlite3_open_v2(url.path, &self.db, SQLITE_OPEN_READONLY, nil) == SQLITE_OK else {
             let message = String(cString: sqlite3_errmsg(self.db))
             sqlite3_close(self.db)
+            self.db = nil   // deinit closes it again otherwise
             throw DatabaseError.cannotOpen(message)
         }
     }
@@ -114,21 +159,26 @@ final class HitchwikiDatabase {
     }
 
     func page(titled title: String) throws -> PageRecord? {
-        guard let resolved = try self.resolveTitle(title),
-              let row = try self.query("SELECT id, title, infobox_type FROM pages WHERE title = ?", [resolved], map: {
-                  (id: Self.int($0, 0), title: Self.text($0, 1) ?? "", type: Self.text($0, 2))
-              }).first else {
+        guard let resolved = try self.resolveTitle(title) else {
+            return nil
+        }
+        let pageSQL = "SELECT id, title, infobox_type, country, lat, lng FROM pages WHERE title = ? COLLATE NOCASE"
+        guard let row = try self.query(pageSQL, [resolved], map: { statement in
+            (id: Self.int(statement, 0), title: Self.text(statement, 1) ?? "", type: Self.text(statement, 2),
+             country: Self.text(statement, 3), latitude: Self.double(statement, 4), longitude: Self.double(statement, 5))
+        }).first else {
             return nil
         }
 
-        var infobox = [String: String]()
-        try self.query("SELECT name, value FROM infobox_fields WHERE page_id = ?", [row.id]) {
-            (Self.text($0, 0) ?? "", Self.text($0, 1) ?? "")
-        }.forEach { infobox[$0.0] = $0.1 }
-
-        var sections = try self.query("SELECT level, title, text FROM sections WHERE page_id = ? ORDER BY idx", [row.id]) {
-            PageSection(level: Int(Self.int($0, 0)), title: Self.text($0, 1) ?? "", text: Self.text($0, 2) ?? "")
+        let fields = try self.query("SELECT name, value, links FROM infobox_fields WHERE page_id = ? ORDER BY rowid", [row.id]) {
+            InfoboxField(name: Self.text($0, 0) ?? "", value: Self.text($0, 1) ?? "", links: Self.stringArray(Self.text($0, 2)))
         }
+
+        var sections = try self.query("SELECT idx, level, title, path, text FROM sections WHERE page_id = ? ORDER BY idx", [row.id]) {
+            PageSection(id: Int(Self.int($0, 0)), level: Int(Self.int($0, 1)), title: Self.text($0, 2) ?? "",
+                        path: Self.text($0, 3) ?? "", text: Self.text($0, 4) ?? "")
+        }
+        let indexByID = Dictionary(sections.enumerated().map { ($0.element.id, $0.offset) }, uniquingKeysWith: { first, _ in first })
 
         let linkSQL = "SELECT section_idx, in_heading, start, length, target, url FROM section_links WHERE page_id = ? ORDER BY section_idx, start"
         let links = try self.query(linkSQL, [row.id]) { statement -> (section: Int, inHeading: Bool, link: PageLink)? in
@@ -143,14 +193,25 @@ final class HitchwikiDatabase {
             }
             return (Int(Self.int(statement, 0)), Self.int(statement, 1) != 0, PageLink(range: range, destination: destination))
         }
-        for case let (section, inHeading, link)? in links where sections.indices.contains(section) {
+        for case let (sectionID, inHeading, link)? in links {
+            guard let index = indexByID[sectionID] else {
+                continue
+            }
             if inHeading {
-                sections[section].titleLinks.append(link)
+                sections[index].titleLinks.append(link)
             } else {
-                sections[section].links.append(link)
+                sections[index].links.append(link)
             }
         }
-        return PageRecord(id: row.id, title: row.title, infoboxType: row.type, infobox: infobox, sections: sections)
+
+        let spots = try self.query("SELECT rowid, section, lat, lng FROM spots WHERE page_id = ? ORDER BY rowid", [row.id]) {
+            PageSpot(id: Int(Self.int($0, 0)), sectionPath: Self.text($0, 1) ?? "",
+                     latitude: Self.double($0, 2) ?? 0, longitude: Self.double($0, 3) ?? 0)
+        }
+
+        return PageRecord(id: row.id, title: row.title, infoboxType: row.type, country: row.country,
+                          latitude: row.latitude, longitude: row.longitude,
+                          infoboxFields: fields, sections: sections, spots: spots)
     }
 
     // MARK: - SQLite helpers
@@ -197,10 +258,23 @@ final class HitchwikiDatabase {
         sqlite3_column_int64(statement, column)
     }
 
+    private static func double(_ statement: OpaquePointer, _ column: Int32) -> Double? {
+        sqlite3_column_type(statement, column) == SQLITE_NULL ? nil : sqlite3_column_double(statement, column)
+    }
+
     private static func text(_ statement: OpaquePointer, _ column: Int32) -> String? {
         guard let pointer = sqlite3_column_text(statement, column) else {
             return nil
         }
         return String(cString: pointer)
+    }
+
+    /// Decodes a JSON array of strings, e.g. the `links` column.
+    private static func stringArray(_ json: String?) -> [String] {
+        guard let data = json?.data(using: .utf8),
+              let array = try? JSONDecoder().decode([String].self, from: data) else {
+            return []
+        }
+        return array
     }
 }
