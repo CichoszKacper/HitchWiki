@@ -7,12 +7,25 @@
 
 import UIKit
 
-extension NSAttributedString.Key {
-    /// Title of the Hitchwiki page a run of text links to.
-    static let hitchwikiPage = NSAttributedString.Key("hitchwikiPage")
-}
-
 class PageDetailViewModel: ViewModel, ViewModelProtocol {    
+    
+    /// Links to other Hitchwiki pages use this app-only scheme, e.g. hitchwiki-page:Krak%C3%B3w,
+    /// so the page text view can tell them apart from websites.
+    static let pageLinkScheme = "hitchwiki-page"
+    
+    static func link(toPage title: String) -> URL? {
+        var components = URLComponents()
+        components.scheme = self.pageLinkScheme
+        components.path = title
+        return components.url
+    }
+    
+    static func pageTitle(fromLink url: URL) -> String? {
+        guard url.scheme == self.pageLinkScheme else {
+            return nil
+        }
+        return URLComponents(url: url, resolvingAgainstBaseURL: false)?.path
+    }
     
     var page: PageRecord?
     var infoboxValuesArray: [String]?
@@ -81,7 +94,7 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         /// Appends `separator + text` and marks the links, whose ranges are relative to `text`.
         func append(_ text: String, separator: String, font: UIFont, links: [PageLink]) {
             let start = description.length + (separator as NSString).length
-            description.append(NSAttributedString(string: separator + text, attributes: [.font: font]))
+            description.append(NSAttributedString(string: separator + text, attributes: [.font: font, .foregroundColor: UIColor.label]))
             for link in links {
                 let range = NSRange(location: start + link.range.location, length: link.range.length)
                 guard NSMaxRange(range) <= description.length else {
@@ -89,9 +102,11 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
                 }
                 switch link.destination {
                 case .page(let title):
-                    description.addAttributes([.hitchwikiPage: title, .foregroundColor: UIColor.systemBlue], range: range)
+                    if let url = Self.link(toPage: title) {
+                        description.addAttribute(.link, value: url, range: range)
+                    }
                 case .url(let url):
-                    description.addAttributes([.link: url, .foregroundColor: UIColor.systemBlue], range: range)
+                    description.addAttribute(.link, value: url, range: range)
                 }
             }
         }
@@ -101,7 +116,7 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
                 let headingSize: CGFloat = section.level <= 2 ? 24 : section.level == 3 ? 22 : 20
                 append(section.title, separator: description.length > 0 ? "\n\n" : "",
                        font: UIFont.boldSystemFont(ofSize: headingSize), links: section.titleLinks)
-                description.append(NSAttributedString(string: "\n", attributes: [.font: bodyFont]))
+                description.append(NSAttributedString(string: "\n", attributes: [.font: bodyFont, .foregroundColor: UIColor.label]))
             }
             if !section.text.isEmpty {
                 append(section.text, separator: description.length > 0 && section.title.isEmpty ? "\n\n" : "",
@@ -115,21 +130,6 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
             description.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: bodyFont.pointSize), range: titleRange)
         }
         self.pageDescriptionAttributedString = description
-    }
-    
-    /// Opens the page or website linked at `index` in the page text, if there is a link there.
-    public func openLink(in text: NSAttributedString, at index: Int) {
-        guard index >= 0, index < text.length else {
-            return
-        }
-        if let title = text.attribute(.hitchwikiPage, at: index, effectiveRange: nil) as? String {
-            let pageDetailViewController = PageDetailViewController(viewModel: PageDetailViewModel())
-            pageDetailViewController.populatePage(title: title)
-            pageDetailViewController.modalPresentationStyle = .fullScreen
-            UIApplication.topViewController()?.navigationController?.pushViewController(pageDetailViewController, animated: true)
-        } else if let url = text.attribute(.link, at: index, effectiveRange: nil) as? URL {
-            UIApplication.shared.open(url)
-        }
     }
     
     public func checkIfShouldMakeClickable(value: Bool, string: String) -> Bool {
