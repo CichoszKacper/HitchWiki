@@ -38,7 +38,7 @@ struct SpotDetailsView: View {
                         .lineLimit(5)
                 }
 
-                if self.text.count > Self.foldLength {
+                if self.text.count > Self.foldLength || self.text.filter(\.isNewline).count > 4 {
                     Button(self.isExpanded ? "Show less" : "Show more") {
                         withAnimation(Theme.spring) {
                             self.isExpanded.toggle()

@@ -13,6 +13,7 @@ struct MapPointCard: View {
     let distance: CLLocationDistance?
     /// Directions, for hitchhiking spots.
     var spotDetails: SpotDetails?
+    var isLoadingSpotDetails = false
     var onClose: () -> Void
 
     var body: some View {
@@ -54,7 +55,7 @@ struct MapPointCard: View {
                                 text: details.text, links: details.links)
                     .id(details.spotID)   // collapse "Show more" again for the next spot
                     .transition(.opacity)
-            } else if self.point.kind == .spot {
+            } else if self.isLoadingSpotDetails {
                 ProgressView()
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

@@ -3,7 +3,8 @@
 //  HitchWiki
 //
 //  Every Hitchwiki page with coordinates and every hitchhiking spot on one map.
-//  Markers load for the visible area; the row at the bottom shows what's nearest to the user.
+//  Points close together are grouped into bubbles (tap to zoom in); the row at the bottom
+//  shows what's nearest to the user.
 //
 
 import SwiftUI
@@ -18,7 +19,18 @@ struct MapTabView: View {
         NavigationStack(path: self.$router.path) {
             Map(position: self.$viewModel.position, selection: self.$viewModel.selectedID) {
                 UserAnnotation()
-                ForEach(self.viewModel.points) { point in
+                ForEach(self.viewModel.clusters) { cluster in
+                    Annotation("", coordinate: cluster.coordinate, anchor: .center) {
+                        Button {
+                            self.viewModel.zoom(into: cluster)
+                        } label: {
+                            ClusterBubble(count: cluster.count, tint: cluster.representative.tint)
+                        }
+                        .buttonStyle(.pressable)
+                    }
+                    .annotationTitles(.hidden)
+                }
+                ForEach(self.viewModel.singles) { point in
                     Marker(point.title, systemImage: point.systemImage, coordinate: point.coordinate)
                         .tint(point.tint)
                         .tag(point.id)
@@ -32,6 +44,14 @@ struct MapTabView: View {
             }
             .onMapCameraChange(frequency: .onEnd) { context in
                 self.viewModel.regionChanged(context.region)
+            }
+            .onGeometryChange(for: CGSize.self) { geometry in
+                geometry.size
+            } action: { size in
+                self.viewModel.mapSizeChanged(size)
+            }
+            .task {
+                await self.viewModel.loadPoints()
             }
             .onChange(of: self.viewModel.selectedID) {
                 self.viewModel.selectionChanged()
@@ -65,7 +85,8 @@ struct MapTabView: View {
     private var bottomPanel: some View {
         if let point = self.viewModel.selectedPoint {
             MapPointCard(point: point, distance: self.viewModel.distance(to: point),
-                         spotDetails: self.viewModel.selectedSpotDetails) {
+                         spotDetails: self.viewModel.selectedSpotDetails,
+                         isLoadingSpotDetails: self.viewModel.isLoadingSpotDetails) {
                 self.viewModel.clearSelection()
             }
             .padding(.horizontal, Theme.screenPadding)

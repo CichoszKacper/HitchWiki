@@ -262,7 +262,13 @@ final class HitchwikiDatabase: @unchecked Sendable {
         UNION ALL
         SELECT 'spot', s.rowid, s.section, p.title, NULL, s.lat, s.lng, 3
         FROM spots s JOIN pages p ON p.id = s.page_id
+        WHERE s.lat IS NOT NULL AND s.lng IS NOT NULL
         """
+
+    /// Every page with coordinates and every spot (~6,500 points), for clustering in memory.
+    func allMapPoints() throws -> [MapPoint] {
+        try self.query("SELECT kind, row_id, title, page_title, type, lat, lng FROM (\(Self.mapPointsSQL))", map: Self.mapPoint)
+    }
 
     /// Points inside a latitude/longitude box, at most `limit` of them.
     func mapPoints(minLatitude: Double, maxLatitude: Double, minLongitude: Double, maxLongitude: Double,
