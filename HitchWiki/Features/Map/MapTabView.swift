@@ -76,6 +76,7 @@ struct MapTabView: View {
         }
         .onChange(of: self.location.location) { _, newLocation in
             if let newLocation {
+                self.viewModel.centerOnUserIfNeeded(newLocation)
                 self.viewModel.updateNearby(from: newLocation)
             }
         }

@@ -32,6 +32,9 @@ final class MapViewModel {
     private(set) var selectedSpotDetails: SpotDetails?
     private(set) var isLoadingSpotDetails = false
 
+    /// How much of the map the first view of the user's location covers: roughly a city and its outskirts.
+    private static let cityDistance: CLLocationDistance = 25_000
+
     private static let europe = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50, longitude: 12),
                                                    span: MKCoordinateSpan(latitudeDelta: 22, longitudeDelta: 22))
 
@@ -43,6 +46,7 @@ final class MapViewModel {
     @ObservationIgnored private var nearbyTask: Task<Void, Never>?
     @ObservationIgnored private var detailsTask: Task<Void, Never>?
     @ObservationIgnored private var nearbyOrigin: CLLocation?
+    @ObservationIgnored private var hasCenteredOnUser = false
 
     init(database: HitchwikiDatabase? = HitchwikiDatabase.shared) {
         self.database = database
@@ -96,6 +100,23 @@ final class MapViewModel {
     }
 
     /// Recomputes the nearby list when the user has moved more than a few hundred metres.
+    /// The first time the user's location arrives, flies the map to their city (not street level).
+    /// Does nothing later on, or if the user has already moved the map themselves.
+    func centerOnUserIfNeeded(_ location: CLLocation) {
+        guard !self.hasCenteredOnUser else {
+            return
+        }
+        self.hasCenteredOnUser = true
+        guard !self.position.positionedByUser else {
+            return
+        }
+        withAnimation(.smooth(duration: 1.2)) {
+            self.position = .region(MKCoordinateRegion(center: location.coordinate,
+                                                       latitudinalMeters: Self.cityDistance,
+                                                       longitudinalMeters: Self.cityDistance))
+        }
+    }
+
     func updateNearby(from location: CLLocation) {
         if let origin = self.nearbyOrigin, origin.distance(from: location) < 300 {
             return
