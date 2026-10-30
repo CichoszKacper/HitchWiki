@@ -39,8 +39,20 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         if self.authorizationStatus == .notDetermined {
             self.manager.requestWhenInUseAuthorization()
         } else if self.isAuthorized {
+            self.useRecentCachedLocation()
             self.manager.startUpdatingLocation()
         }
+    }
+
+    /// The system's last known position, if it is recent and accurate enough to use right away
+    /// (a fresh GPS fix can take a few seconds).
+    private func useRecentCachedLocation() {
+        guard self.location == nil, let cached = self.manager.location,
+              cached.timestamp.timeIntervalSinceNow > -600,
+              cached.horizontalAccuracy >= 0, cached.horizontalAccuracy < 1_000 else {
+            return
+        }
+        self.location = cached
     }
 
     func stop() {
@@ -55,6 +67,7 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         Task { @MainActor in
             self.authorizationStatus = status
             if self.isAuthorized && self.wantsUpdates {
+                self.useRecentCachedLocation()
                 self.manager.startUpdatingLocation()
             }
         }

@@ -101,15 +101,14 @@ final class MapViewModel {
 
     /// Recomputes the nearby list when the user has moved more than a few hundred metres.
     /// The first time the user's location arrives, flies the map to their city (not street level).
-    /// Does nothing later on, or if the user has already moved the map themselves.
+    /// Does nothing on later location updates, so the map doesn't keep snapping back to the user.
     func centerOnUserIfNeeded(_ location: CLLocation) {
+        // No check for `position.positionedByUser`: MapKit can report the start position as moved
+        // by the user before anyone touched the map, which silently skipped this zoom.
         guard !self.hasCenteredOnUser else {
             return
         }
         self.hasCenteredOnUser = true
-        guard !self.position.positionedByUser else {
-            return
-        }
         withAnimation(.smooth(duration: 1.2)) {
             self.position = .region(MKCoordinateRegion(center: location.coordinate,
                                                        latitudinalMeters: Self.cityDistance,
