@@ -328,6 +328,22 @@ final class HitchwikiDatabase: @unchecked Sendable {
         return SpotDetails(spotID: rowID, pageTitle: spot.pageTitle, headings: headings, text: section.text, links: links)
     }
 
+    /// The closest cities and areas to a location (no countries, service stations or spots),
+    /// searching up to ~3° away. Nearest first.
+    func nearestPlaces(latitude: Double, longitude: Double, limit: Int) throws -> [MapPoint] {
+        let longitudeScale = max(cos(latitude * .pi / 180), 0.01)
+        let sql = """
+            SELECT 'page', id, title, title, infobox_type, lat, lng FROM pages
+            WHERE lat IS NOT NULL AND lng IS NOT NULL
+              AND lat BETWEEN ?1 - 3 AND ?1 + 3 AND lng BETWEEN ?2 - ?3 AND ?2 + ?3
+              AND infobox_type NOT IN ('country', 'servicestation')
+            ORDER BY (lat - ?1) * (lat - ?1) + (lng - ?2) * (lng - ?2) * ?4
+            LIMIT ?5
+            """
+        return try self.query(sql, [latitude, longitude, 3 / longitudeScale, longitudeScale * longitudeScale, limit],
+                              map: Self.mapPoint)
+    }
+
     private static func mapPoint(_ statement: OpaquePointer) -> MapPoint {
         let kind = MapPoint.Kind(rawValue: Self.text(statement, 0) ?? "") ?? .page
         var title = Self.text(statement, 2) ?? ""
