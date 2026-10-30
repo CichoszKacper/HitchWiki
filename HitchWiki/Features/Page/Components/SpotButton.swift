@@ -15,6 +15,8 @@ struct SpotButton: View {
         Button(action: self.action) {
             Label(self.title, systemImage: "hand.thumbsup.fill")
                 .font(.subheadline.weight(.semibold))
+                .lineLimit(1)
+                .fixedSize()
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(Color.accentColor.opacity(0.14), in: .capsule)

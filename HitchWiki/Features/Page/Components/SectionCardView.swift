@@ -68,7 +68,8 @@ struct SubsectionView: View {
                     .textSelection(.enabled)
             }
             if !self.spots.isEmpty {
-                HStack(spacing: 8) {
+                // Wraps onto more lines when there are many spots
+                FlowLayout(spacing: 8, lineSpacing: 8) {
                     ForEach(Array(self.spots.enumerated()), id: \.element.id) { index, spot in
                         SpotButton(title: self.spots.count == 1 ? "Show on map" : "Spot \(index + 1)") {
                             self.onShowSpot(spot)
