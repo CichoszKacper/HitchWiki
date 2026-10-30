@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4BDB10010000000000000004 /* ClusterBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB10010000000000000003 /* ClusterBubble.swift */; };
+		4BDB10010000000000000002 /* MapClusterer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB10010000000000000001 /* MapClusterer.swift */; };
 		4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */; };
 		4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD832709B68500BC520E /* Assets.xcassets */; };
 		4B4FCD872709B68500BC520E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */; };
@@ -49,6 +51,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4BDB10010000000000000003 /* ClusterBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterBubble.swift; sourceTree = "<group>"; };
+		4BDB10010000000000000001 /* MapClusterer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapClusterer.swift; sourceTree = "<group>"; };
 		4B4FCD742709B68500BC520E /* HitchWiki.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HitchWiki.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4FCD812709B68500BC520E /* HitchWiki.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HitchWiki.xcdatamodel; sourceTree = "<group>"; };
 		4B4FCD832709B68500BC520E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -241,6 +245,7 @@
 				4BDB0E010000000000000002 /* MapTabView.swift */,
 				4BDB0E010000000000000004 /* MapViewModel.swift */,
 				4BDB0E010000000000000006 /* MapPoint+Style.swift */,
+				4BDB10010000000000000001 /* MapClusterer.swift */,
 				4BDB0E010000000000000008 /* Components */,
 			);
 			path = Map;
@@ -250,6 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				4BDB0E010000000000000009 /* MapPointCard.swift */,
+				4BDB10010000000000000003 /* ClusterBubble.swift */,
 				4BDB0E01000000000000000B /* NearbyCarousel.swift */,
 			);
 			path = Components;
@@ -334,7 +340,9 @@
 				4BDB0E010000000000000003 /* MapTabView.swift in Sources */,
 				4BDB0E010000000000000005 /* MapViewModel.swift in Sources */,
 				4BDB0E010000000000000007 /* MapPoint+Style.swift in Sources */,
+				4BDB10010000000000000002 /* MapClusterer.swift in Sources */,
 				4BDB0E01000000000000000A /* MapPointCard.swift in Sources */,
+				4BDB10010000000000000004 /* ClusterBubble.swift in Sources */,
 				4BDB0E01000000000000000C /* NearbyCarousel.swift in Sources */,
 				4BDB0E01000000000000000E /* LocationManager.swift in Sources */,
 				4BDB0C010000000000000003 /* HitchWikiApp.swift in Sources */,

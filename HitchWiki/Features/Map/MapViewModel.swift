@@ -2,7 +2,7 @@
 //  MapViewModel.swift
 //  HitchWiki
 //
-//  Which points to show for the visible part of the map, what's near the user, and the selected point.
+//  Clusters and markers for the visible part of the map, what's near the user, and the selected point.
 //
 
 import SwiftUI
@@ -20,17 +20,17 @@ struct NearbyPoint: Identifiable, Hashable {
 @MainActor
 @Observable
 final class MapViewModel {
-    /// Most markers drawn at once; SwiftUI's Map gets sluggish beyond a few hundred.
-    static let markerLimit = 350
-
-    /// Starts on an overview of Europe; centerOnUserIfNeeded(_:) flies to the user's city once we know where they are.
-    var position: MapCameraPosition = .region(MapViewModel.europe)
+    var position: MapCameraPosition = .userLocation(fallback: .region(MapViewModel.europe))
     var selectedID: String?
-    private(set) var points = [MapPoint]()
+    /// Points drawn as their own marker.
+    private(set) var singles = [MapPoint]()
+    /// Groups of nearby points drawn as one bubble.
+    private(set) var clusters = [MapCluster]()
     private(set) var nearby = [NearbyPoint]()
     private(set) var selectedPoint: MapPoint?
     /// Directions for the selected point when it's a hitchhiking spot.
     private(set) var selectedSpotDetails: SpotDetails?
+    private(set) var isLoadingSpotDetails = false
 
     /// How much of the map the first view of the user's location covers: roughly a city and its outskirts.
     private static let cityDistance: CLLocationDistance = 25_000
@@ -39,7 +39,10 @@ final class MapViewModel {
                                                    span: MKCoordinateSpan(latitudeDelta: 22, longitudeDelta: 22))
 
     @ObservationIgnored private let database: HitchwikiDatabase?
-    @ObservationIgnored private var loadTask: Task<Void, Never>?
+    @ObservationIgnored private var allPoints = [MapPoint]()
+    @ObservationIgnored private var pointsByID = [String: MapPoint]()
+    @ObservationIgnored private var region: MKCoordinateRegion? = MapViewModel.europe
+    @ObservationIgnored private var mapSize = CGSize(width: 390, height: 800)
     @ObservationIgnored private var nearbyTask: Task<Void, Never>?
     @ObservationIgnored private var detailsTask: Task<Void, Never>?
     @ObservationIgnored private var nearbyOrigin: CLLocation?
@@ -49,31 +52,50 @@ final class MapViewModel {
         self.database = database
     }
 
-    /// Call when the map stops moving: loads the points inside the visible region.
-    func regionChanged(_ region: MKCoordinateRegion) {
-        self.loadTask?.cancel()
+    /// Loads every point once; clustering then happens in memory.
+    func loadPoints() async {
+        guard self.allPoints.isEmpty else {
+            return
+        }
         let database = self.database
-        // A bit of margin so markers don't pop in right at the edge.
-        let latitudeDelta = region.span.latitudeDelta * 0.6
-        let longitudeDelta = region.span.longitudeDelta * 0.6
-        let minLatitude = region.center.latitude - latitudeDelta
-        let maxLatitude = region.center.latitude + latitudeDelta
-        // Crossing the date line: just search all longitudes.
-        let crossesDateLine = region.center.longitude - longitudeDelta < -180 || region.center.longitude + longitudeDelta > 180
-        let minLongitude = crossesDateLine ? -180 : region.center.longitude - longitudeDelta
-        let maxLongitude = crossesDateLine ? 180 : region.center.longitude + longitudeDelta
+        let points = await Task.detached(priority: .userInitiated) {
+            (try? database?.allMapPoints()) ?? []
+        }.value
+        self.allPoints = points
+        self.pointsByID = Dictionary(points.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        self.recluster()
+    }
 
-        let limit = Self.markerLimit
-        self.loadTask = Task {
-            let points = await Task.detached(priority: .userInitiated) {
-                (try? database?.mapPoints(minLatitude: minLatitude, maxLatitude: maxLatitude,
-                                          minLongitude: minLongitude, maxLongitude: maxLongitude,
-                                          limit: limit)) ?? []
-            }.value
-            guard !Task.isCancelled else {
-                return
-            }
-            self.points = points
+    /// Call when the map stops moving.
+    func regionChanged(_ region: MKCoordinateRegion) {
+        self.region = region
+        self.recluster()
+    }
+
+    func mapSizeChanged(_ size: CGSize) {
+        guard size.width > 0, size.height > 0, size != self.mapSize else {
+            return
+        }
+        self.mapSize = size
+        self.recluster()
+    }
+
+    /// Zooms the map in to a cluster's points.
+    func zoom(into cluster: MapCluster) {
+        withAnimation(.smooth(duration: 0.7)) {
+            self.position = .region(cluster.region)
+        }
+    }
+
+    private func recluster() {
+        guard let region = self.region, !self.allPoints.isEmpty else {
+            return
+        }
+        // ~6,500 points take a few milliseconds, so this runs right here.
+        let result = MapClusterer.cluster(self.allPoints, in: region, mapSize: self.mapSize, keepingSeparate: self.selectedID)
+        withAnimation(.snappy) {
+            self.singles = result.singles
+            self.clusters = result.clusters
         }
     }
 
@@ -122,18 +144,20 @@ final class MapViewModel {
 
     /// Keeps `selectedPoint` in step with the map's selection.
     func selectionChanged() {
-        let point = self.points.first { $0.id == self.selectedID }
-            ?? self.nearby.first { $0.id == self.selectedID }?.point
+        let point = self.selectedID.flatMap { self.pointsByID[$0] }
         withAnimation(Theme.spring) {
             self.selectedPoint = self.selectedID == nil ? nil : (point ?? self.selectedPoint)
         }
         self.loadDetails(for: self.selectedPoint)
+        // The selected point always gets its own marker, even where it would be clustered.
+        self.recluster()
     }
 
     private func loadDetails(for point: MapPoint?) {
         guard let point, point.kind == .spot else {
             self.detailsTask?.cancel()
             self.selectedSpotDetails = nil
+            self.isLoadingSpotDetails = false
             return
         }
         guard self.selectedSpotDetails?.spotID != point.rowID else {
@@ -141,6 +165,7 @@ final class MapViewModel {
         }
         self.detailsTask?.cancel()
         self.selectedSpotDetails = nil
+        self.isLoadingSpotDetails = true
         let database = self.database
         let rowID = point.rowID
         self.detailsTask = Task {
@@ -152,14 +177,16 @@ final class MapViewModel {
             }
             withAnimation(Theme.spring) {
                 self.selectedSpotDetails = details
+                self.isLoadingSpotDetails = false
             }
         }
     }
 
     /// Selects a point from a list and flies the map to it.
     func focus(on point: MapPoint) {
-        if !self.points.contains(where: { $0.id == point.id }) {
-            self.points.append(point)
+        if self.pointsByID[point.id] == nil {
+            self.allPoints.append(point)
+            self.pointsByID[point.id] = point
         }
         self.selectedID = point.id
         self.selectionChanged()
