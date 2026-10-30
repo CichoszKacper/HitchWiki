@@ -7,14 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4BDB0F010000000000000002 /* SpotDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0F010000000000000001 /* SpotDetailsView.swift */; };
-		4BDB0E010000000000000003 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000002 /* MapTabView.swift */; };
-		4BDB0E010000000000000005 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000004 /* MapViewModel.swift */; };
-		4BDB0E010000000000000007 /* MapPoint+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000006 /* MapPoint+Style.swift */; };
-		4BDB0E01000000000000000A /* MapPointCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000009 /* MapPointCard.swift */; };
-		4BDB0E01000000000000000C /* NearbyCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E01000000000000000B /* NearbyCarousel.swift */; };
-		4BDB0E01000000000000000E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E01000000000000000D /* LocationManager.swift */; };
-		4BDB0D010000000000000002 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0D010000000000000001 /* FlowLayout.swift */; };
+		4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */; };
+		4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD832709B68500BC520E /* Assets.xcassets */; };
+		4B4FCD872709B68500BC520E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */; };
+		4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 4B89024A2717499F00C8C4B1 /* Algorithms */; };
+		4BDB0A012F2E000000000001 /* HitchwikiDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */; };
+		4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000004 /* hitchwiki.sqlite */; };
 		4BDB0C010000000000000003 /* HitchWikiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000002 /* HitchWikiApp.swift */; };
 		4BDB0C010000000000000005 /* AppTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000004 /* AppTab.swift */; };
 		4BDB0C010000000000000007 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000006 /* RootTabView.swift */; };
@@ -40,23 +38,25 @@
 		4BDB0C010000000000000036 /* Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000035 /* Shimmer.swift */; };
 		4BDB0C010000000000000038 /* StaggeredAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000037 /* StaggeredAppear.swift */; };
 		4BDB0C01000000000000003A /* AnimatedMeshBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */; };
-		4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */; };
-		4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD832709B68500BC520E /* Assets.xcassets */; };
-		4B4FCD872709B68500BC520E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */; };
-		4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 4B89024A2717499F00C8C4B1 /* Algorithms */; };
-		4BDB0A012F2E000000000001 /* HitchwikiDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */; };
-		4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000004 /* hitchwiki.sqlite */; };
+		4BDB0D010000000000000002 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0D010000000000000001 /* FlowLayout.swift */; };
+		4BDB0E010000000000000003 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000002 /* MapTabView.swift */; };
+		4BDB0E010000000000000005 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000004 /* MapViewModel.swift */; };
+		4BDB0E010000000000000007 /* MapPoint+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000006 /* MapPoint+Style.swift */; };
+		4BDB0E01000000000000000A /* MapPointCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000009 /* MapPointCard.swift */; };
+		4BDB0E01000000000000000C /* NearbyCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E01000000000000000B /* NearbyCarousel.swift */; };
+		4BDB0E01000000000000000E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E01000000000000000D /* LocationManager.swift */; };
+		4BDB0F010000000000000002 /* SpotDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0F010000000000000001 /* SpotDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4BDB0F010000000000000001 /* SpotDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailsView.swift; sourceTree = "<group>"; };
-		4BDB0E010000000000000002 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
-		4BDB0E010000000000000004 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
-		4BDB0E010000000000000006 /* MapPoint+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapPoint+Style.swift"; sourceTree = "<group>"; };
-		4BDB0E010000000000000009 /* MapPointCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPointCard.swift; sourceTree = "<group>"; };
-		4BDB0E01000000000000000B /* NearbyCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyCarousel.swift; sourceTree = "<group>"; };
-		4BDB0E01000000000000000D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
-		4BDB0D010000000000000001 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		4B4FCD742709B68500BC520E /* HitchWiki.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HitchWiki.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B4FCD812709B68500BC520E /* HitchWiki.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HitchWiki.xcdatamodel; sourceTree = "<group>"; };
+		4B4FCD832709B68500BC520E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B4FCD862709B68500BC520E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B4FCD882709B68500BC520E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B87E7592713556500C73578 /* hitchwiki.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hitchwiki.json; sourceTree = "<group>"; };
+		4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchwikiDatabase.swift; sourceTree = "<group>"; };
+		4BDB0A012F2E000000000004 /* hitchwiki.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchwiki.sqlite; sourceTree = "<group>"; };
 		4BDB0C010000000000000002 /* HitchWikiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchWikiApp.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000004 /* AppTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTab.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000006 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
@@ -82,14 +82,14 @@
 		4BDB0C010000000000000035 /* Shimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmer.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000037 /* StaggeredAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaggeredAppear.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedMeshBackground.swift; sourceTree = "<group>"; };
-		4B4FCD742709B68500BC520E /* HitchWiki.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HitchWiki.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B4FCD812709B68500BC520E /* HitchWiki.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HitchWiki.xcdatamodel; sourceTree = "<group>"; };
-		4B4FCD832709B68500BC520E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4B4FCD862709B68500BC520E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		4B4FCD882709B68500BC520E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B87E7592713556500C73578 /* hitchwiki.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hitchwiki.json; sourceTree = "<group>"; };
-		4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchwikiDatabase.swift; sourceTree = "<group>"; };
-		4BDB0A012F2E000000000004 /* hitchwiki.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchwiki.sqlite; sourceTree = "<group>"; };
+		4BDB0D010000000000000001 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		4BDB0E010000000000000002 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
+		4BDB0E010000000000000004 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		4BDB0E010000000000000006 /* MapPoint+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapPoint+Style.swift"; sourceTree = "<group>"; };
+		4BDB0E010000000000000009 /* MapPointCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPointCard.swift; sourceTree = "<group>"; };
+		4BDB0E01000000000000000B /* NearbyCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyCarousel.swift; sourceTree = "<group>"; };
+		4BDB0E01000000000000000D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		4BDB0F010000000000000001 /* SpotDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,116 +104,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4BDB0E010000000000000008 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0E010000000000000009 /* MapPointCard.swift */,
-				4BDB0E01000000000000000B /* NearbyCarousel.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4BDB0E010000000000000001 /* Map */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0E010000000000000002 /* MapTabView.swift */,
-				4BDB0E010000000000000004 /* MapViewModel.swift */,
-				4BDB0E010000000000000006 /* MapPoint+Style.swift */,
-				4BDB0E010000000000000008 /* Components */,
-			);
-			path = Map;
-			sourceTree = "<group>";
-		};
-		4BDB0C010000000000000001 /* App */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0C010000000000000002 /* HitchWikiApp.swift */,
-				4BDB0C010000000000000004 /* AppTab.swift */,
-				4BDB0C010000000000000006 /* RootTabView.swift */,
-			);
-			path = App;
-			sourceTree = "<group>";
-		};
-		4BDB0C010000000000000009 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0C01000000000000000A /* HomeView.swift */,
-				4BDB0C01000000000000000C /* HomeViewModel.swift */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
-		4BDB0C010000000000000015 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0C010000000000000016 /* PageHeroHeader.swift */,
-				4BDB0C010000000000000018 /* FactsRow.swift */,
-				4BDB0C01000000000000001A /* SectionCardView.swift */,
-				4BDB0C01000000000000001C /* SpotButton.swift */,
-				4BDB0C01000000000000001E /* SpotsMapSheet.swift */,
-				4BDB0C010000000000000020 /* PageLoadingView.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4BDB0C01000000000000000E /* Page */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0C01000000000000000F /* PageView.swift */,
-				4BDB0C010000000000000011 /* PageViewModel.swift */,
-				4BDB0C010000000000000013 /* PageContent.swift */,
-				4BDB0C010000000000000015 /* Components */,
-			);
-			path = Page;
-			sourceTree = "<group>";
-		};
-		4BDB0C010000000000000022 /* Placeholder */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0C010000000000000023 /* PlaceholderTabView.swift */,
-			);
-			path = Placeholder;
-			sourceTree = "<group>";
-		};
-		4BDB0C010000000000000008 /* Features */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0E010000000000000001 /* Map */,
-				4BDB0C010000000000000009 /* Home */,
-				4BDB0C01000000000000000E /* Page */,
-				4BDB0C010000000000000022 /* Placeholder */,
-			);
-			path = Features;
-			sourceTree = "<group>";
-		};
-		4BDB0C01000000000000002C /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0C01000000000000002D /* LinkedText.swift */,
-				4BDB0D010000000000000001 /* FlowLayout.swift */,
-				4BDB0F010000000000000001 /* SpotDetailsView.swift */,
-				4BDB0C01000000000000002F /* CollapsibleCard.swift */,
-				4BDB0C010000000000000031 /* FactChip.swift */,
-				4BDB0C010000000000000033 /* PressableButtonStyle.swift */,
-				4BDB0C010000000000000035 /* Shimmer.swift */,
-				4BDB0C010000000000000037 /* StaggeredAppear.swift */,
-				4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4BDB0C010000000000000025 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB0E01000000000000000D /* LocationManager.swift */,
-				4BDB0C010000000000000026 /* Theme.swift */,
-				4BDB0C010000000000000028 /* Router.swift */,
-				4BDB0C01000000000000002A /* PageLink+URL.swift */,
-				4BDB0C01000000000000002C /* Components */,
-			);
-			path = Shared;
-			sourceTree = "<group>";
-		};
 		4B4FCD6B2709B68500BC520E = {
 			isa = PBXGroup;
 			children = (
@@ -253,6 +143,116 @@
 				4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */,
 			);
 			path = Networking;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000001 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C010000000000000002 /* HitchWikiApp.swift */,
+				4BDB0C010000000000000004 /* AppTab.swift */,
+				4BDB0C010000000000000006 /* RootTabView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000008 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0E010000000000000001 /* Map */,
+				4BDB0C010000000000000009 /* Home */,
+				4BDB0C01000000000000000E /* Page */,
+				4BDB0C010000000000000022 /* Placeholder */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000009 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C01000000000000000A /* HomeView.swift */,
+				4BDB0C01000000000000000C /* HomeViewModel.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		4BDB0C01000000000000000E /* Page */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C01000000000000000F /* PageView.swift */,
+				4BDB0C010000000000000011 /* PageViewModel.swift */,
+				4BDB0C010000000000000013 /* PageContent.swift */,
+				4BDB0C010000000000000015 /* Components */,
+			);
+			path = Page;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000015 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C010000000000000016 /* PageHeroHeader.swift */,
+				4BDB0C010000000000000018 /* FactsRow.swift */,
+				4BDB0C01000000000000001A /* SectionCardView.swift */,
+				4BDB0C01000000000000001C /* SpotButton.swift */,
+				4BDB0C01000000000000001E /* SpotsMapSheet.swift */,
+				4BDB0C010000000000000020 /* PageLoadingView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000022 /* Placeholder */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C010000000000000023 /* PlaceholderTabView.swift */,
+			);
+			path = Placeholder;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000025 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0E01000000000000000D /* LocationManager.swift */,
+				4BDB0C010000000000000026 /* Theme.swift */,
+				4BDB0C010000000000000028 /* Router.swift */,
+				4BDB0C01000000000000002A /* PageLink+URL.swift */,
+				4BDB0C01000000000000002C /* Components */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		4BDB0C01000000000000002C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C01000000000000002D /* LinkedText.swift */,
+				4BDB0D010000000000000001 /* FlowLayout.swift */,
+				4BDB0F010000000000000001 /* SpotDetailsView.swift */,
+				4BDB0C01000000000000002F /* CollapsibleCard.swift */,
+				4BDB0C010000000000000031 /* FactChip.swift */,
+				4BDB0C010000000000000033 /* PressableButtonStyle.swift */,
+				4BDB0C010000000000000035 /* Shimmer.swift */,
+				4BDB0C010000000000000037 /* StaggeredAppear.swift */,
+				4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4BDB0E010000000000000001 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0E010000000000000002 /* MapTabView.swift */,
+				4BDB0E010000000000000004 /* MapViewModel.swift */,
+				4BDB0E010000000000000006 /* MapPoint+Style.swift */,
+				4BDB0E010000000000000008 /* Components */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		4BDB0E010000000000000008 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0E010000000000000009 /* MapPointCard.swift */,
+				4BDB0E01000000000000000B /* NearbyCarousel.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -505,7 +505,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7265U2P6NP;
+				DEVELOPMENT_TEAM = 7BZ3SX6Y2X;
 				INFOPLIST_FILE = HitchWiki/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -525,7 +525,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7265U2P6NP;
+				DEVELOPMENT_TEAM = 7BZ3SX6Y2X;
 				INFOPLIST_FILE = HitchWiki/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
