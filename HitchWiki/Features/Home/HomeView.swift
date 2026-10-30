@@ -2,8 +2,8 @@
 //  HomeView.swift
 //  HitchWiki
 //
-//  Plain port of the old main menu: a title, a search field and the matching pages.
-//  The redesign of this screen comes later.
+//  Plain home screen: the title, a search field, the places nearest to the user,
+//  and while searching the matching pages. The redesign of this screen comes later.
 //
 
 import SwiftUI
@@ -11,16 +11,58 @@ import SwiftUI
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
     @State private var router = Router()
+    @State private var location = LocationManager()
     @State private var isSearching = false
     @Namespace private var transition
 
+    private var showsAllResults: Bool {
+        self.isSearching || !self.viewModel.query.isEmpty
+    }
+
     var body: some View {
         NavigationStack(path: self.$router.path) {
-            Group {
-                if self.isSearching || !self.viewModel.query.isEmpty {
-                    self.results
+            List {
+                if !self.viewModel.nearbyMatches.isEmpty {
+                    Section("Near you") {
+                        ForEach(self.viewModel.nearbyMatches) { place in
+                            NavigationLink(value: PageRoute(title: place.page.title, zoomsFromSource: true)) {
+                                HStack {
+                                    Label(place.page.title, systemImage: "location.fill")
+                                    Spacer()
+                                    Text(place.distance.formattedDistance)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .matchedTransitionSource(id: place.page.title, in: self.transition)
+                        }
+                    }
+                }
+
+                if self.showsAllResults {
+                    Section {
+                        ForEach(self.viewModel.otherMatches) { page in
+                            NavigationLink(value: PageRoute(title: page.title, zoomsFromSource: true)) {
+                                Text(page.title)
+                            }
+                            .matchedTransitionSource(id: page.title, in: self.transition)
+                        }
+                    } header: {
+                        if !self.viewModel.nearbyMatches.isEmpty {
+                            Text("All places")
+                        }
+                    }
                 } else {
-                    self.welcome
+                    Section {
+                        Text("Search for a city or a country")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .overlay {
+                if self.showsAllResults && !self.viewModel.query.isEmpty
+                    && self.viewModel.nearbyMatches.isEmpty && self.viewModel.otherMatches.isEmpty {
+                    ContentUnavailableView.search(text: self.viewModel.query)
                 }
             }
             .navigationTitle("HitchWiki")
@@ -41,27 +83,18 @@ struct HomeView: View {
             }
         }
         .environment(self.router)
-    }
-
-    private var results: some View {
-        List(self.viewModel.filteredPages) { page in
-            NavigationLink(value: PageRoute(title: page.title, zoomsFromSource: true)) {
-                Text(page.title)
-            }
-            .matchedTransitionSource(id: page.title, in: self.transition)
+        // One position is enough for "Near you": stop as soon as it arrives.
+        .onAppear {
+            self.location.start()
         }
-        .overlay {
-            if self.viewModel.filteredPages.isEmpty && !self.viewModel.query.isEmpty {
-                ContentUnavailableView.search(text: self.viewModel.query)
-            }
+        .onDisappear {
+            self.location.stop()
         }
-    }
-
-    private var welcome: some View {
-        ContentUnavailableView {
-            Label("HitchWiki", systemImage: "hand.thumbsup.fill")
-        } description: {
-            Text("Search for a city or a country")
+        .onChange(of: self.location.location) { _, newLocation in
+            if let newLocation {
+                self.viewModel.updateNearby(from: newLocation)
+                self.location.stop()
+            }
         }
     }
 }
