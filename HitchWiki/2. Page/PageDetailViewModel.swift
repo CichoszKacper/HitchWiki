@@ -9,17 +9,18 @@ import UIKit
 
 class PageDetailViewModel: ViewModel, ViewModelProtocol {    
     
-    var pages: [Page]?
-    var page: Page?
+    var page: PageRecord?
     var infoboxValuesArray: [String]?
     var updatedInfoboxValuesArray: [String]?
     var newDictionary: [String:[String:Bool]] = [:]
-    var pageDescriptionText: String?
     var pageDescriptionAttributedString: NSAttributedString?
     
     var stringToBeCalled: String?
     var labelToBeCalled: UILabel?
-    var pageToBeCalled: Page?
+    /// Title of the page to open when the clickable infobox value is tapped.
+    var pageToBeCalled: String?
+    
+    private let database = HitchwikiDatabase.shared
     
     // MARK: - Updates
     var update: ((PageDetailViewModel.UpdateType) -> Void)?
@@ -32,108 +33,64 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
         
     }
 
-    func passPage(page: Page, allPages: [Page]) {
-        self.page = page
-        self.pages = allPages
-        guard let description = page.revision.text.text else {
-            return
-        }
-
-        if description.lowercased().contains("{{infobox") {
-            self.cleanInfobox(description: description)
-        }
-
-        self.cleanDescription(description: description, page: page)
-    }
-    
-//    func checkIfInfoboxExist() -> [String] {
-//        if let unwrappedInfoboxArray = self.updatedInfoboxValuesArray?.contains(":") {
-//            return unwrappedInfoboxArray
-//        }
-//    }
-    
-    public func loadData() {
-        NetworkManager().readLocalData(forName: "hitchwiki") { [weak self] result in
-            switch result {
-            case .success(let pagesToDisplay):
-                self?.pages = pagesToDisplay
-            case .failure(let error):
-                // TODO: Alert once the Alert Manager is set up
-                print("\(error)")
-            }
-        }
-    }
-    
-    private func cleanInfobox(description: String) {
-        guard let startingIndex = description.firstIndex(of: "{"), let endingIndex = description.firstIndex(of: "}") else {
-            return
-        }
-        
-        let infoboxDescription = description[startingIndex...endingIndex]
-        let rows = infoboxDescription.dropFirst().dropLast().split(separator: "|")
-        let infoboxDictionary = rows.dropFirst().reduce(into: [String:String]()) {
-            guard let index = $1.firstIndex(of: "=") else {
+    func passPage(title: String) {
+        do {
+            guard let page = try self.database?.page(titled: title) else {
                 return
             }
-            
-            let key = String($1[$1.startIndex..<index]).trimmingCharacters(in: .whitespaces)
-            let value = String($1[$1.index(after: index)..<$1.endIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
-            $0[key] = value
+            self.page = page
+            if !page.infobox.isEmpty {
+                self.cleanInfobox(page: page)
+            }
+            self.cleanDescription(page: page)
+        } catch {
+            // TODO: Alert once the Alert Manager is set up
+            print("\(error)")
         }
-        
+    }
+    
+    /// Infobox values now come ready from the `infobox_fields` table.
+    private func cleanInfobox(page: PageRecord) {
         self.infoboxValuesArray = ["country","language","capital","pop","currency"]
-        self.updatedInfoboxValuesArray = self.infoboxValuesArray
-        for (key,value) in infoboxDictionary {
-            for (index, item) in self.infoboxValuesArray!.enumerated() {
-                if key.lowercased() == item.lowercased() {
-                    var updatedValue = value.replacingOccurrences(of: "[[", with: "")
-                    updatedValue = updatedValue.replacingOccurrences(of: "]]", with: "")
-                    updatedValue = updatedValue.replacingOccurrences(of: "of ", with: "")
-                    self.updatedInfoboxValuesArray![index] = self.updatedInfoboxValuesArray![index].replacingOccurrences(of: "pop", with: "population")
-                    self.updatedInfoboxValuesArray![index] = self.updatedInfoboxValuesArray![index].capitalized
-                    if checkIfClickable(string: updatedValue) {
-                        self.newDictionary.updateValue([updatedValue:true], forKey: self.updatedInfoboxValuesArray![index])
-                    } else {
-                        self.newDictionary.updateValue([updatedValue:false], forKey: self.updatedInfoboxValuesArray![index])
-                    }
-                }
+        self.updatedInfoboxValuesArray = self.infoboxValuesArray?.map { $0 == "pop" ? "Population" : $0.capitalized }
+        
+        for (key, value) in page.infobox {
+            guard !value.isEmpty, let index = self.infoboxValuesArray?.firstIndex(of: key.lowercased()),
+                  let displayKey = self.updatedInfoboxValuesArray?[index] else {
+                continue
             }
-        }
-        for (k,v) in self.newDictionary {
-            print("\(k): \(v)")
+            self.newDictionary.updateValue([value: self.checkIfClickable(string: value)], forKey: displayKey)
         }
     }
     
-    private func checkIfClickable(string: String) -> Bool{
-        var clickable = false
-        self.pages?.forEach({ page in
-            if page.title.lowercased().contains(string.lowercased()) {
-                clickable = true
-            }
-        })
-        return clickable
+    private func checkIfClickable(string: String) -> Bool {
+        (try? self.database?.resolveTitle(string)) != nil
     }
     
-    private func cleanDescription(description: String, page: Page) {
-        guard let startingIndex = description.firstIndex(of: "{"), let indexToSetEnding = description.firstIndex(of: "}")  else {
-            return
+    /// Builds the page text from the `sections` table: bold headings, and the page title in bold where it first appears.
+    private func cleanDescription(page: PageRecord) {
+        let bodyFont = UIFont.systemFont(ofSize: 20, weight: .regular)
+        let description = NSMutableAttributedString()
+        
+        for section in page.sections {
+            if !section.title.isEmpty {
+                let headingSize: CGFloat = section.level <= 2 ? 24 : section.level == 3 ? 22 : 20
+                let separator = description.length > 0 ? "\n\n" : ""
+                description.append(NSAttributedString(string: separator + section.title + "\n",
+                                                      attributes: [.font: UIFont.boldSystemFont(ofSize: headingSize)]))
+            }
+            if !section.text.isEmpty {
+                let separator = description.length > 0 && section.title.isEmpty ? "\n\n" : ""
+                description.append(NSAttributedString(string: separator + section.text, attributes: [.font: bodyFont]))
+            }
         }
         
-        let endingIndex = description.index(after: indexToSetEnding)
-        var editedDescription = description
-        
-        // Remove the infobox string if exist
-        editedDescription.replaceSubrange(startingIndex...endingIndex, with: "")
-        editedDescription = editedDescription.replacingOccurrences(of: "__TOC__", with: "")
-        editedDescription = editedDescription.replacingOccurrences(of: "__NOTOC__", with: "")
-        
-        // Clean data from [[File]] and [[User]]
-//        var updated = editedDescription.replacingOccurrences(of: "\\[\\[File:[^\\]]+\\]\\]", with: "", options: .regularExpression)
-//        updated = updated.replacingOccurrences(of: "\\[\\[User[^\\]]+\\]\\]", with: "", options: .regularExpression)
-        
-        // Make the title in text bold and remove the triple quotation on it
-        self.pageDescriptionAttributedString = editedDescription.withBoldText(text: "'''\(page.title)'''")
-        self.pageDescriptionAttributedString = self.pageDescriptionAttributedString?.stringWithString(stringToReplace: "'''\(page.title)'''", replacedWithString: "\(page.title)")
+        // Make the title in text bold, like on the wiki
+        let titleRange = description.mutableString.range(of: page.title)
+        if titleRange.location != NSNotFound {
+            description.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: bodyFont.pointSize), range: titleRange)
+        }
+        self.pageDescriptionAttributedString = description
     }
     
     public func checkIfShouldMakeClickable(value: Bool, string: String) -> Bool {
@@ -147,11 +104,7 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     private func setUpDataForClickableLabel(string: String, label: UILabel) {
         self.stringToBeCalled = string
         self.labelToBeCalled = label
-        self.pages?.forEach({ page in
-            if page.title == self.stringToBeCalled {
-                self.pageToBeCalled = page
-            }
-        })
+        self.pageToBeCalled = try? self.database?.resolveTitle(string)
     }
     
     public func addTapGestureToPartOfString(label: UILabel, stringToBeCalled: String) {
@@ -166,14 +119,13 @@ class PageDetailViewModel: ViewModel, ViewModelProtocol {
     @objc func tappedOnLabel(_ gesture: UITapGestureRecognizer) {
         guard let label = self.labelToBeCalled,
               let stringToBeCalled = self.stringToBeCalled,
-              let page = self.pageToBeCalled,
-              let allPages = self.pages else {
+              let pageTitle = self.pageToBeCalled else {
             return
         }
         
         if gesture.didTapAttributedString(stringToBeCalled, in: label) {
             let pageDetailViewController = PageDetailViewController(viewModel: PageDetailViewModel())
-            pageDetailViewController.populatePage(page: page, allPages: allPages)
+            pageDetailViewController.populatePage(title: pageTitle)
             pageDetailViewController.modalPresentationStyle = .fullScreen
             UIApplication.topViewController()?.navigationController?.pushViewController(pageDetailViewController, animated: true)
         }

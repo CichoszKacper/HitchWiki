@@ -71,8 +71,8 @@ class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
         self.viewModel.labelToBeCalled?.set(color: .systemBlue, on: [self.viewModel.stringToBeCalled!])
     }
     
-    func populatePage(page: Page, allPages: [Page]) {
-        self.viewModel.passPage(page: page, allPages: allPages)
+    func populatePage(title: String) {
+        self.viewModel.passPage(title: title)
     }
     
     private func setUpInfoboxLayout() {

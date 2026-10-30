@@ -65,12 +65,7 @@ extension MainMenuViewController: UISearchBarDelegate {
     
     // Extension to SearchBar to search through the list of pages
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard !searchText.isEmpty else {
-            self.viewModel.filteredPages = self.viewModel.pages
-            return
-        }
-        
-        self.viewModel.filteredPages = self.viewModel.pages.filter { ($0.title.lowercased().starts(with: searchText.lowercased()))}
+        self.viewModel.search(searchText)
         self.pagesTableView.reloadOnMainThread()
         // TODO: Allow user to search when page contains searched text, not only starts with
 //        self.filteredPages = self.pages.filter { ($0.title.lowercased().contains(searchText.lowercased()))}

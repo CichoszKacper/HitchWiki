@@ -14,7 +14,7 @@ class PageTableViewCell: UITableViewCell {
         super.awakeFromNib()
     }
     
-    func populateCell(page: Page) {
+    func populateCell(page: PageSummary) {
         self.pageTextLabel.text = page.title
     }
 }
