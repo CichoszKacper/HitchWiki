@@ -15,11 +15,26 @@ struct PageSummary {
     let title: String
 }
 
+/// A link inside a heading or a section's text.
+struct PageLink {
+    enum Destination {
+        /// Another Hitchwiki article, by title (redirects already followed).
+        case page(String)
+        case url(URL)
+    }
+
+    /// Position in `PageSection.title` or `PageSection.text`, in UTF-16 units like NSString.
+    let range: NSRange
+    let destination: Destination
+}
+
 /// A heading and the plain text below it. Level 0 is the text before the first heading.
 struct PageSection {
     let level: Int
     let title: String
     let text: String
+    var titleLinks: [PageLink] = []
+    var links: [PageLink] = []
 }
 
 /// Everything the page screen shows.
@@ -111,8 +126,29 @@ final class HitchwikiDatabase {
             (Self.text($0, 0) ?? "", Self.text($0, 1) ?? "")
         }.forEach { infobox[$0.0] = $0.1 }
 
-        let sections = try self.query("SELECT level, title, text FROM sections WHERE page_id = ? ORDER BY idx", [row.id]) {
+        var sections = try self.query("SELECT level, title, text FROM sections WHERE page_id = ? ORDER BY idx", [row.id]) {
             PageSection(level: Int(Self.int($0, 0)), title: Self.text($0, 1) ?? "", text: Self.text($0, 2) ?? "")
+        }
+
+        let linkSQL = "SELECT section_idx, in_heading, start, length, target, url FROM section_links WHERE page_id = ? ORDER BY section_idx, start"
+        let links = try self.query(linkSQL, [row.id]) { statement -> (section: Int, inHeading: Bool, link: PageLink)? in
+            let range = NSRange(location: Int(Self.int(statement, 2)), length: Int(Self.int(statement, 3)))
+            let destination: PageLink.Destination
+            if let target = Self.text(statement, 4) {
+                destination = .page(target)
+            } else if let address = Self.text(statement, 5), let url = URL(string: address) {
+                destination = .url(url)
+            } else {
+                return nil
+            }
+            return (Int(Self.int(statement, 0)), Self.int(statement, 1) != 0, PageLink(range: range, destination: destination))
+        }
+        for case let (section, inHeading, link)? in links where sections.indices.contains(section) {
+            if inHeading {
+                sections[section].titleLinks.append(link)
+            } else {
+                sections[section].links.append(link)
+            }
         }
         return PageRecord(id: row.id, title: row.title, infoboxType: row.type, infobox: infobox, sections: sections)
     }

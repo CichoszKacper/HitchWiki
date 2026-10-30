@@ -26,6 +26,18 @@ class PageDetailViewController: ModelledViewController<PageDetailViewModel> {
         self.navigationItem.title = self.viewModel.page?.title
         self.navigationItem.title = self.navigationItem.title?.uppercased()
         self.navigationController?.isNavigationBarHidden = false
+        
+        // Links in the page text open other pages / websites
+        self.pageDescription.isUserInteractionEnabled = true
+        self.pageDescription.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pageDescriptionTapped(_:))))
+    }
+    
+    @objc private func pageDescriptionTapped(_ gesture: UITapGestureRecognizer) {
+        guard let text = self.pageDescription.attributedText,
+              let index = self.pageDescription.characterIndex(at: gesture.location(in: self.pageDescription)) else {
+            return
+        }
+        self.viewModel.openLink(in: text, at: index)
     }
     
     override func updateView(_ type: PageDetailViewModel.UpdateType) {
