@@ -88,3 +88,8 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# Hitchwiki dumps and generated data (too big for git; regenerate with tools/)
+HitchWiki/hitchwiki-full-en.xml
+tools/output/
+tools/.venv/

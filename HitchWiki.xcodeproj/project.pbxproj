@@ -3,66 +3,93 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B05D2AE27159E6C00EE0033 /* PageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B05D2AC27159E6C00EE0033 /* PageDetailViewController.swift */; };
-		4B05D2AF27159E6C00EE0033 /* PageDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B05D2AD27159E6C00EE0033 /* PageDetailViewController.xib */; };
-		4B05D2B32715F02100EE0033 /* UIApplicaitionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B05D2B22715F02100EE0033 /* UIApplicaitionExtension.swift */; };
-		4B4FCD782709B68500BC520E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD772709B68500BC520E /* AppDelegate.swift */; };
-		4B4FCD7A2709B68500BC520E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD792709B68500BC520E /* SceneDelegate.swift */; };
 		4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */; };
 		4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD832709B68500BC520E /* Assets.xcassets */; };
 		4B4FCD872709B68500BC520E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */; };
-		4B4FCD912709B93400BC520E /* MainMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD8F2709B93400BC520E /* MainMenuViewController.swift */; };
-		4B4FCD922709B93400BC520E /* MainMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD902709B93400BC520E /* MainMenuViewController.xib */; };
-		4B4FCD942709B94700BC520E /* MainMenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD932709B94700BC520E /* MainMenuViewModel.swift */; };
-		4B797D7927186FDE006E3F17 /* PageDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D7827186FDE006E3F17 /* PageDetailViewModel.swift */; };
-		4B797D7B27187A0C006E3F17 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D7A27187A0C006E3F17 /* StringExtension.swift */; };
-		4B797D7D27187A2F006E3F17 /* UIViewExtenstion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D7C27187A2F006E3F17 /* UIViewExtenstion.swift */; };
-		4B797D7F27187A4D006E3F17 /* NSAttributedStringExtenstion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D7E27187A4D006E3F17 /* NSAttributedStringExtenstion.swift */; };
-		4B797D8127187BA2006E3F17 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D8027187BA1006E3F17 /* UILabelExtension.swift */; };
-		4B797D832718EE39006E3F17 /* UITapGestureRecognizerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D822718EE39006E3F17 /* UITapGestureRecognizerExtension.swift */; };
-		4B797D862719B79A006E3F17 /* ViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D852719B79A006E3F17 /* ViewModelProtocol.swift */; };
-		4B797D882719B7BF006E3F17 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D872719B7BF006E3F17 /* ViewModel.swift */; };
-		4B797D8A2719B80D006E3F17 /* ModelledViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B797D892719B80D006E3F17 /* ModelledViewController.swift */; };
-		4B87E74F27134EAF00C73578 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B87E74E27134EAF00C73578 /* NetworkManager.swift */; };
-		4B87E75227134F1900C73578 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B87E75127134F1900C73578 /* DataModel.swift */; };
-		4B87E7562713525700C73578 /* PageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B87E7542713525700C73578 /* PageTableViewCell.swift */; };
-		4B87E7572713525700C73578 /* PageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B87E7552713525700C73578 /* PageTableViewCell.xib */; };
-		4B87E75A2713556500C73578 /* hitchwiki.json in Resources */ = {isa = PBXBuildFile; fileRef = 4B87E7592713556500C73578 /* hitchwiki.json */; };
 		4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 4B89024A2717499F00C8C4B1 /* Algorithms */; };
+		4BDB0A012F2E000000000001 /* HitchwikiDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */; };
+		4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000004 /* hitchwiki.sqlite */; };
+		4BDB0C010000000000000003 /* HitchWikiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000002 /* HitchWikiApp.swift */; };
+		4BDB0C010000000000000005 /* AppTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000004 /* AppTab.swift */; };
+		4BDB0C010000000000000007 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000006 /* RootTabView.swift */; };
+		4BDB0C01000000000000000B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C01000000000000000A /* HomeView.swift */; };
+		4BDB0C01000000000000000D /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C01000000000000000C /* HomeViewModel.swift */; };
+		4BDB0C010000000000000010 /* PageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C01000000000000000F /* PageView.swift */; };
+		4BDB0C010000000000000012 /* PageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000011 /* PageViewModel.swift */; };
+		4BDB0C010000000000000014 /* PageContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000013 /* PageContent.swift */; };
+		4BDB0C010000000000000017 /* PageHeroHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000016 /* PageHeroHeader.swift */; };
+		4BDB0C010000000000000019 /* FactsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000018 /* FactsRow.swift */; };
+		4BDB0C01000000000000001B /* SectionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C01000000000000001A /* SectionCardView.swift */; };
+		4BDB0C01000000000000001D /* SpotButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C01000000000000001C /* SpotButton.swift */; };
+		4BDB0C01000000000000001F /* SpotsMapSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C01000000000000001E /* SpotsMapSheet.swift */; };
+		4BDB0C010000000000000021 /* PageLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000020 /* PageLoadingView.swift */; };
+		4BDB0C010000000000000024 /* PlaceholderTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000023 /* PlaceholderTabView.swift */; };
+		4BDB0C010000000000000027 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000026 /* Theme.swift */; };
+		4BDB0C010000000000000029 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000028 /* Router.swift */; };
+		4BDB0C01000000000000002B /* PageLink+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C01000000000000002A /* PageLink+URL.swift */; };
+		4BDB0C01000000000000002E /* LinkedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C01000000000000002D /* LinkedText.swift */; };
+		4BDB0C010000000000000030 /* CollapsibleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C01000000000000002F /* CollapsibleCard.swift */; };
+		4BDB0C010000000000000032 /* FactChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000031 /* FactChip.swift */; };
+		4BDB0C010000000000000034 /* PressableButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000033 /* PressableButtonStyle.swift */; };
+		4BDB0C010000000000000036 /* Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000035 /* Shimmer.swift */; };
+		4BDB0C010000000000000038 /* StaggeredAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000037 /* StaggeredAppear.swift */; };
+		4BDB0C01000000000000003A /* AnimatedMeshBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */; };
+		4BDB0D010000000000000002 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0D010000000000000001 /* FlowLayout.swift */; };
+		4BDB0E010000000000000003 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000002 /* MapTabView.swift */; };
+		4BDB0E010000000000000005 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000004 /* MapViewModel.swift */; };
+		4BDB0E010000000000000007 /* MapPoint+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000006 /* MapPoint+Style.swift */; };
+		4BDB0E01000000000000000A /* MapPointCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000009 /* MapPointCard.swift */; };
+		4BDB0E01000000000000000C /* NearbyCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E01000000000000000B /* NearbyCarousel.swift */; };
+		4BDB0E01000000000000000E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E01000000000000000D /* LocationManager.swift */; };
+		4BDB0F010000000000000002 /* SpotDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0F010000000000000001 /* SpotDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4B05D2AC27159E6C00EE0033 /* PageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailViewController.swift; sourceTree = "<group>"; };
-		4B05D2AD27159E6C00EE0033 /* PageDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageDetailViewController.xib; sourceTree = "<group>"; };
-		4B05D2B22715F02100EE0033 /* UIApplicaitionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicaitionExtension.swift; sourceTree = "<group>"; };
 		4B4FCD742709B68500BC520E /* HitchWiki.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HitchWiki.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B4FCD772709B68500BC520E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4B4FCD792709B68500BC520E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		4B4FCD812709B68500BC520E /* HitchWiki.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HitchWiki.xcdatamodel; sourceTree = "<group>"; };
 		4B4FCD832709B68500BC520E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B4FCD862709B68500BC520E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B4FCD882709B68500BC520E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B4FCD8F2709B93400BC520E /* MainMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuViewController.swift; sourceTree = "<group>"; };
-		4B4FCD902709B93400BC520E /* MainMenuViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenuViewController.xib; sourceTree = "<group>"; };
-		4B4FCD932709B94700BC520E /* MainMenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuViewModel.swift; sourceTree = "<group>"; };
-		4B797D7827186FDE006E3F17 /* PageDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailViewModel.swift; sourceTree = "<group>"; };
-		4B797D7A27187A0C006E3F17 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
-		4B797D7C27187A2F006E3F17 /* UIViewExtenstion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtenstion.swift; sourceTree = "<group>"; };
-		4B797D7E27187A4D006E3F17 /* NSAttributedStringExtenstion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedStringExtenstion.swift; sourceTree = "<group>"; };
-		4B797D8027187BA1006E3F17 /* UILabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
-		4B797D822718EE39006E3F17 /* UITapGestureRecognizerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITapGestureRecognizerExtension.swift; sourceTree = "<group>"; };
-		4B797D852719B79A006E3F17 /* ViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocol.swift; sourceTree = "<group>"; };
-		4B797D872719B7BF006E3F17 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
-		4B797D892719B80D006E3F17 /* ModelledViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelledViewController.swift; sourceTree = "<group>"; };
-		4B87E74E27134EAF00C73578 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
-		4B87E75127134F1900C73578 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
-		4B87E7542713525700C73578 /* PageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageTableViewCell.swift; sourceTree = "<group>"; };
-		4B87E7552713525700C73578 /* PageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageTableViewCell.xib; sourceTree = "<group>"; };
 		4B87E7592713556500C73578 /* hitchwiki.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hitchwiki.json; sourceTree = "<group>"; };
+		4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchwikiDatabase.swift; sourceTree = "<group>"; };
+		4BDB0A012F2E000000000004 /* hitchwiki.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchwiki.sqlite; sourceTree = "<group>"; };
+		4BDB0C010000000000000002 /* HitchWikiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchWikiApp.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000004 /* AppTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTab.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000006 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		4BDB0C01000000000000000A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		4BDB0C01000000000000000C /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		4BDB0C01000000000000000F /* PageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageView.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000011 /* PageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewModel.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000013 /* PageContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageContent.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000016 /* PageHeroHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageHeroHeader.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000018 /* FactsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactsRow.swift; sourceTree = "<group>"; };
+		4BDB0C01000000000000001A /* SectionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCardView.swift; sourceTree = "<group>"; };
+		4BDB0C01000000000000001C /* SpotButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotButton.swift; sourceTree = "<group>"; };
+		4BDB0C01000000000000001E /* SpotsMapSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsMapSheet.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000020 /* PageLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageLoadingView.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000023 /* PlaceholderTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTabView.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000026 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000028 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		4BDB0C01000000000000002A /* PageLink+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PageLink+URL.swift"; sourceTree = "<group>"; };
+		4BDB0C01000000000000002D /* LinkedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedText.swift; sourceTree = "<group>"; };
+		4BDB0C01000000000000002F /* CollapsibleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollapsibleCard.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000031 /* FactChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactChip.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000033 /* PressableButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PressableButtonStyle.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000035 /* Shimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmer.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000037 /* StaggeredAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaggeredAppear.swift; sourceTree = "<group>"; };
+		4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedMeshBackground.swift; sourceTree = "<group>"; };
+		4BDB0D010000000000000001 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		4BDB0E010000000000000002 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
+		4BDB0E010000000000000004 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		4BDB0E010000000000000006 /* MapPoint+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapPoint+Style.swift"; sourceTree = "<group>"; };
+		4BDB0E010000000000000009 /* MapPointCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPointCard.swift; sourceTree = "<group>"; };
+		4BDB0E01000000000000000B /* NearbyCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyCarousel.swift; sourceTree = "<group>"; };
+		4BDB0E01000000000000000D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		4BDB0F010000000000000001 /* SpotDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,29 +104,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4B05D2AB27159DDC00EE0033 /* 2. Page */ = {
-			isa = PBXGroup;
-			children = (
-				4B05D2AC27159E6C00EE0033 /* PageDetailViewController.swift */,
-				4B05D2AD27159E6C00EE0033 /* PageDetailViewController.xib */,
-				4B797D7827186FDE006E3F17 /* PageDetailViewModel.swift */,
-			);
-			path = "2. Page";
-			sourceTree = "<group>";
-		};
-		4B05D2B12715EFDD00EE0033 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				4B05D2B22715F02100EE0033 /* UIApplicaitionExtension.swift */,
-				4B797D7A27187A0C006E3F17 /* StringExtension.swift */,
-				4B797D7C27187A2F006E3F17 /* UIViewExtenstion.swift */,
-				4B797D7E27187A4D006E3F17 /* NSAttributedStringExtenstion.swift */,
-				4B797D8027187BA1006E3F17 /* UILabelExtension.swift */,
-				4B797D822718EE39006E3F17 /* UITapGestureRecognizerExtension.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
 		4B4FCD6B2709B68500BC520E = {
 			isa = PBXGroup;
 			children = (
@@ -119,14 +123,12 @@
 		4B4FCD762709B68500BC520E /* HitchWiki */ = {
 			isa = PBXGroup;
 			children = (
-				4B797D842719B787006E3F17 /* MVVM */,
+				4BDB0C010000000000000001 /* App */,
+				4BDB0C010000000000000008 /* Features */,
+				4BDB0C010000000000000025 /* Shared */,
 				4B87E7592713556500C73578 /* hitchwiki.json */,
-				4B4FCD8E2709B90A00BC520E /* 1. Main Menu */,
-				4B05D2AB27159DDC00EE0033 /* 2. Page */,
+				4BDB0A012F2E000000000004 /* hitchwiki.sqlite */,
 				4B87E74D27134E9C00C73578 /* Networking */,
-				4B05D2B12715EFDD00EE0033 /* Extensions */,
-				4B4FCD772709B68500BC520E /* AppDelegate.swift */,
-				4B4FCD792709B68500BC520E /* SceneDelegate.swift */,
 				4B4FCD832709B68500BC520E /* Assets.xcassets */,
 				4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */,
 				4B4FCD882709B68500BC520E /* Info.plist */,
@@ -135,43 +137,122 @@
 			path = HitchWiki;
 			sourceTree = "<group>";
 		};
-		4B4FCD8E2709B90A00BC520E /* 1. Main Menu */ = {
-			isa = PBXGroup;
-			children = (
-				4B87E75C2713982D00C73578 /* Cells */,
-				4B4FCD8F2709B93400BC520E /* MainMenuViewController.swift */,
-				4B4FCD902709B93400BC520E /* MainMenuViewController.xib */,
-				4B4FCD932709B94700BC520E /* MainMenuViewModel.swift */,
-			);
-			path = "1. Main Menu";
-			sourceTree = "<group>";
-		};
-		4B797D842719B787006E3F17 /* MVVM */ = {
-			isa = PBXGroup;
-			children = (
-				4B797D852719B79A006E3F17 /* ViewModelProtocol.swift */,
-				4B797D872719B7BF006E3F17 /* ViewModel.swift */,
-				4B797D892719B80D006E3F17 /* ModelledViewController.swift */,
-			);
-			path = MVVM;
-			sourceTree = "<group>";
-		};
 		4B87E74D27134E9C00C73578 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				4B87E74E27134EAF00C73578 /* NetworkManager.swift */,
-				4B87E75127134F1900C73578 /* DataModel.swift */,
+				4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
 		};
-		4B87E75C2713982D00C73578 /* Cells */ = {
+		4BDB0C010000000000000001 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				4B87E7542713525700C73578 /* PageTableViewCell.swift */,
-				4B87E7552713525700C73578 /* PageTableViewCell.xib */,
+				4BDB0C010000000000000002 /* HitchWikiApp.swift */,
+				4BDB0C010000000000000004 /* AppTab.swift */,
+				4BDB0C010000000000000006 /* RootTabView.swift */,
 			);
-			path = Cells;
+			path = App;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000008 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0E010000000000000001 /* Map */,
+				4BDB0C010000000000000009 /* Home */,
+				4BDB0C01000000000000000E /* Page */,
+				4BDB0C010000000000000022 /* Placeholder */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000009 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C01000000000000000A /* HomeView.swift */,
+				4BDB0C01000000000000000C /* HomeViewModel.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		4BDB0C01000000000000000E /* Page */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C01000000000000000F /* PageView.swift */,
+				4BDB0C010000000000000011 /* PageViewModel.swift */,
+				4BDB0C010000000000000013 /* PageContent.swift */,
+				4BDB0C010000000000000015 /* Components */,
+			);
+			path = Page;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000015 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C010000000000000016 /* PageHeroHeader.swift */,
+				4BDB0C010000000000000018 /* FactsRow.swift */,
+				4BDB0C01000000000000001A /* SectionCardView.swift */,
+				4BDB0C01000000000000001C /* SpotButton.swift */,
+				4BDB0C01000000000000001E /* SpotsMapSheet.swift */,
+				4BDB0C010000000000000020 /* PageLoadingView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000022 /* Placeholder */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C010000000000000023 /* PlaceholderTabView.swift */,
+			);
+			path = Placeholder;
+			sourceTree = "<group>";
+		};
+		4BDB0C010000000000000025 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0E01000000000000000D /* LocationManager.swift */,
+				4BDB0C010000000000000026 /* Theme.swift */,
+				4BDB0C010000000000000028 /* Router.swift */,
+				4BDB0C01000000000000002A /* PageLink+URL.swift */,
+				4BDB0C01000000000000002C /* Components */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		4BDB0C01000000000000002C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0C01000000000000002D /* LinkedText.swift */,
+				4BDB0D010000000000000001 /* FlowLayout.swift */,
+				4BDB0F010000000000000001 /* SpotDetailsView.swift */,
+				4BDB0C01000000000000002F /* CollapsibleCard.swift */,
+				4BDB0C010000000000000031 /* FactChip.swift */,
+				4BDB0C010000000000000033 /* PressableButtonStyle.swift */,
+				4BDB0C010000000000000035 /* Shimmer.swift */,
+				4BDB0C010000000000000037 /* StaggeredAppear.swift */,
+				4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4BDB0E010000000000000001 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0E010000000000000002 /* MapTabView.swift */,
+				4BDB0E010000000000000004 /* MapViewModel.swift */,
+				4BDB0E010000000000000006 /* MapPoint+Style.swift */,
+				4BDB0E010000000000000008 /* Components */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		4BDB0E010000000000000008 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB0E010000000000000009 /* MapPointCard.swift */,
+				4BDB0E01000000000000000B /* NearbyCarousel.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,10 +319,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B4FCD872709B68500BC520E /* LaunchScreen.storyboard in Resources */,
-				4B87E75A2713556500C73578 /* hitchwiki.json in Resources */,
-				4B4FCD922709B93400BC520E /* MainMenuViewController.xib in Resources */,
-				4B87E7572713525700C73578 /* PageTableViewCell.xib in Resources */,
-				4B05D2AF27159E6C00EE0033 /* PageDetailViewController.xib in Resources */,
+				4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */,
 				4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,25 +331,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B797D7F27187A4D006E3F17 /* NSAttributedStringExtenstion.swift in Sources */,
-				4B87E75227134F1900C73578 /* DataModel.swift in Sources */,
-				4B87E74F27134EAF00C73578 /* NetworkManager.swift in Sources */,
-				4B87E7562713525700C73578 /* PageTableViewCell.swift in Sources */,
-				4B797D7927186FDE006E3F17 /* PageDetailViewModel.swift in Sources */,
-				4B05D2AE27159E6C00EE0033 /* PageDetailViewController.swift in Sources */,
-				4B4FCD912709B93400BC520E /* MainMenuViewController.swift in Sources */,
-				4B797D832718EE39006E3F17 /* UITapGestureRecognizerExtension.swift in Sources */,
-				4B797D8127187BA2006E3F17 /* UILabelExtension.swift in Sources */,
-				4B797D7D27187A2F006E3F17 /* UIViewExtenstion.swift in Sources */,
-				4B797D8A2719B80D006E3F17 /* ModelledViewController.swift in Sources */,
-				4B797D882719B7BF006E3F17 /* ViewModel.swift in Sources */,
-				4B4FCD782709B68500BC520E /* AppDelegate.swift in Sources */,
-				4B4FCD942709B94700BC520E /* MainMenuViewModel.swift in Sources */,
-				4B797D7B27187A0C006E3F17 /* StringExtension.swift in Sources */,
+				4BDB0E010000000000000003 /* MapTabView.swift in Sources */,
+				4BDB0E010000000000000005 /* MapViewModel.swift in Sources */,
+				4BDB0E010000000000000007 /* MapPoint+Style.swift in Sources */,
+				4BDB0E01000000000000000A /* MapPointCard.swift in Sources */,
+				4BDB0E01000000000000000C /* NearbyCarousel.swift in Sources */,
+				4BDB0E01000000000000000E /* LocationManager.swift in Sources */,
+				4BDB0C010000000000000003 /* HitchWikiApp.swift in Sources */,
+				4BDB0C010000000000000005 /* AppTab.swift in Sources */,
+				4BDB0C010000000000000007 /* RootTabView.swift in Sources */,
+				4BDB0C01000000000000000B /* HomeView.swift in Sources */,
+				4BDB0C01000000000000000D /* HomeViewModel.swift in Sources */,
+				4BDB0C010000000000000010 /* PageView.swift in Sources */,
+				4BDB0C010000000000000012 /* PageViewModel.swift in Sources */,
+				4BDB0C010000000000000014 /* PageContent.swift in Sources */,
+				4BDB0C010000000000000017 /* PageHeroHeader.swift in Sources */,
+				4BDB0C010000000000000019 /* FactsRow.swift in Sources */,
+				4BDB0C01000000000000001B /* SectionCardView.swift in Sources */,
+				4BDB0C01000000000000001D /* SpotButton.swift in Sources */,
+				4BDB0C01000000000000001F /* SpotsMapSheet.swift in Sources */,
+				4BDB0C010000000000000021 /* PageLoadingView.swift in Sources */,
+				4BDB0C010000000000000024 /* PlaceholderTabView.swift in Sources */,
+				4BDB0C010000000000000027 /* Theme.swift in Sources */,
+				4BDB0C010000000000000029 /* Router.swift in Sources */,
+				4BDB0C01000000000000002B /* PageLink+URL.swift in Sources */,
+				4BDB0C01000000000000002E /* LinkedText.swift in Sources */,
+				4BDB0D010000000000000002 /* FlowLayout.swift in Sources */,
+				4BDB0F010000000000000002 /* SpotDetailsView.swift in Sources */,
+				4BDB0C010000000000000030 /* CollapsibleCard.swift in Sources */,
+				4BDB0C010000000000000032 /* FactChip.swift in Sources */,
+				4BDB0C010000000000000034 /* PressableButtonStyle.swift in Sources */,
+				4BDB0C010000000000000036 /* Shimmer.swift in Sources */,
+				4BDB0C010000000000000038 /* StaggeredAppear.swift in Sources */,
+				4BDB0C01000000000000003A /* AnimatedMeshBackground.swift in Sources */,
+				4BDB0A012F2E000000000001 /* HitchwikiDatabase.swift in Sources */,
 				4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */,
-				4B05D2B32715F02100EE0033 /* UIApplicaitionExtension.swift in Sources */,
-				4B797D862719B79A006E3F17 /* ViewModelProtocol.swift in Sources */,
-				4B4FCD7A2709B68500BC520E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,7 +434,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -395,7 +489,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -411,8 +505,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7265U2P6NP;
+				DEVELOPMENT_TEAM = 7BZ3SX6Y2X;
 				INFOPLIST_FILE = HitchWiki/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -430,8 +525,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7265U2P6NP;
+				DEVELOPMENT_TEAM = 7BZ3SX6Y2X;
 				INFOPLIST_FILE = HitchWiki/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
