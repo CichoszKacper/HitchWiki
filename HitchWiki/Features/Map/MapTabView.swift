@@ -74,7 +74,8 @@ struct MapTabView: View {
         .onDisappear {
             self.location.stop()
         }
-        .onChange(of: self.location.location) { _, newLocation in
+        // initial: also handle a position that is already known when the tab appears.
+        .onChange(of: self.location.location, initial: true) { _, newLocation in
             if let newLocation {
                 self.viewModel.centerOnUserIfNeeded(newLocation)
                 self.viewModel.updateNearby(from: newLocation)
