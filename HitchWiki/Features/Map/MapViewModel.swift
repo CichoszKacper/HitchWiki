@@ -38,7 +38,9 @@ final class MapViewModel {
     private static let europe = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50, longitude: 12),
                                                    span: MKCoordinateSpan(latitudeDelta: 22, longitudeDelta: 22))
 
-    @ObservationIgnored private let database: HitchwikiDatabase?
+    @ObservationIgnored private let injectedDatabase: HitchwikiDatabase?
+    /// Read at query time, so a database installed by DatabaseSync is used straight away.
+    private var database: HitchwikiDatabase? { self.injectedDatabase ?? HitchwikiDatabase.shared }
     @ObservationIgnored private var allPoints = [MapPoint]()
     @ObservationIgnored private var pointsByID = [String: MapPoint]()
     @ObservationIgnored private var region: MKCoordinateRegion? = MapViewModel.europe
@@ -48,8 +50,20 @@ final class MapViewModel {
     @ObservationIgnored private var nearbyOrigin: CLLocation?
     @ObservationIgnored private var hasCenteredOnUser = false
 
-    init(database: HitchwikiDatabase? = HitchwikiDatabase.shared) {
-        self.database = database
+    init(database: HitchwikiDatabase? = nil) {
+        self.injectedDatabase = database
+    }
+
+    /// New data was installed: reload every point and the nearby list.
+    func reload(location: CLLocation?) async {
+        // Spot ids can change between builds, so drop the selection.
+        self.clearSelection()
+        self.allPoints = []
+        await self.loadPoints()
+        self.nearbyOrigin = nil
+        if let location {
+            self.updateNearby(from: location)
+        }
     }
 
     /// Loads every point once; clustering then happens in memory.

@@ -4,6 +4,7 @@
 Usage:
     python3 -m venv .venv && .venv/bin/pip install mwparserfromhell mwxml
     .venv/bin/python extract.py output/hitchwiki-latest.xml output/ [--app-db ../HitchWiki/hitchwiki.sqlite]
+                     [--version 202610311200] [--source-sha256 <hash of the dump>]
 
 Writes:
     output/pages.jsonl   one JSON object per article (ns 0), easy to grep / jq / load in pandas
@@ -16,6 +17,8 @@ import argparse
 _ap = argparse.ArgumentParser()
 _ap.add_argument('src'); _ap.add_argument('outdir')
 _ap.add_argument('--app-db', help='also write a slim copy (no raw wikitext) for bundling in the iOS app, e.g. ../HitchWiki/hitchwiki.sqlite')
+_ap.add_argument('--version', type=int, help='data version stored in the meta table (default: time of the newest edit in the dump as YYYYMMDDHHMM); the app updates to a higher one')
+_ap.add_argument('--source-sha256', default='', help='SHA-256 of the dump this was built from, stored in the meta table')
 _args = _ap.parse_args()
 src, outdir = _args.src, _args.outdir
 MAP_RE = re.compile(r"""<map[^>]*?lat=['"]([-\d.]+)['"][^>]*?lng=['"]([-\d.]+)['"]""", re.I)
@@ -247,11 +250,14 @@ for p in mwxml.Dump.from_file(open(src, encoding='utf-8')):
         if p.redirect: REDIRECTS[norm_title(p.title)] = p.redirect
         else: ARTICLES.add(norm_title(p.title))
 n = 0
+newest_edit = ''   # YYYYMMDDHHMM of the latest revision, the default data version
 with open(os.path.join(outdir, 'pages.jsonl'), 'w', encoding='utf-8') as jl:
     for p in mwxml.Dump.from_file(open(src, encoding='utf-8')):
         rev = None
         for r in p: rev = r
         if rev is None: continue
+        if rev.timestamp is not None:
+            newest_edit = max(newest_edit, rev.timestamp.strftime('%Y%m%d%H%M'))
         text = rev.text or ''
         if p.namespace == 10:
             db.execute('INSERT OR REPLACE INTO templates VALUES(?,?)', (p.title, text)); continue
@@ -279,6 +285,24 @@ with open(os.path.join(outdir, 'pages.jsonl'), 'w', encoding='utf-8') as jl:
         db.executemany('INSERT INTO categories VALUES(?,?)', [(p.id, c) for c in d['categories']])
         n += 1
 db.execute("INSERT INTO pages_fts(pages_fts) VALUES('rebuild')")
+
+# Version info the app reads to decide whether a downloaded database is newer / compatible.
+# Bump SCHEMA_VERSION whenever tables or columns the app reads change (and the app's supportedSchemaVersion with it).
+import datetime
+SCHEMA_VERSION = 1
+now = datetime.datetime.now(datetime.timezone.utc)
+# Default: the newest edit in the dump, so the same dump always gives the same version wherever it's built.
+version = _args.version or int(newest_edit or now.strftime('%Y%m%d%H%M'))
+db.execute('CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT)')
+db.executemany('INSERT INTO meta VALUES(?,?)', [
+    ('schema_version', str(SCHEMA_VERSION)),
+    ('version', str(version)),
+    ('generated_at', now.strftime('%Y-%m-%dT%H:%M:%SZ')),
+    ('source_sha256', _args.source_sha256),
+    ('pages', str(n)),
+    ('spots', str(db.execute('SELECT COUNT(*) FROM spots').fetchone()[0])),
+])
+print('version:', version, 'schema:', SCHEMA_VERSION)
 db.executescript("CREATE INDEX i1 ON infobox_fields(page_id); CREATE INDEX i2 ON sections(page_id); "
                  "CREATE INDEX i3 ON spots(page_id); CREATE INDEX i4 ON links(target); CREATE INDEX i5 ON categories(name); CREATE INDEX i6 ON section_links(page_id);")
 db.commit(); db.execute('VACUUM'); db.close()

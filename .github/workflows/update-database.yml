@@ -1,0 +1,125 @@
+# Rebuilds the app database from the latest Hitchwiki dump and publishes it for the app to download.
+#
+# Runs every Monday and can be started by hand (Actions tab -> Update Hitchwiki database -> Run workflow).
+# Free on public repositories. Where the dump comes from, in order:
+#   1. the "dump_url" input when started by hand
+#   2. the repository variable HITCHWIKI_DUMP_URL (Settings -> Secrets and variables -> Actions -> Variables)
+#   3. a file uploaded to a release tagged "dump-source" (upload the .xml / .xml.gz / .xml.bz2 / .7z there)
+#
+# Output: release "database-latest" with manifest.json and hitchwiki-<version>.sqlite.deflate.
+# The app reads https://github.com/<owner>/<repo>/releases/download/database-latest/manifest.json on launch.
+
+name: Update Hitchwiki database
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'   # Mondays 03:17 UTC
+  workflow_dispatch:
+    inputs:
+      dump_url:
+        description: 'Dump URL (overrides the HITCHWIKI_DUMP_URL variable)'
+        required: false
+        default: ''
+      force:
+        description: 'Publish even if the dump has not changed'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-database
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: database-latest
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install parser
+        run: pip install mwparserfromhell==0.7.2 mwxml==0.3.8
+
+      - name: Download dump
+        id: dump
+        env:
+          DUMP_URL: ${{ inputs.dump_url || vars.HITCHWIKI_DUMP_URL }}
+        run: |
+          set -euo pipefail
+          mkdir -p work
+          if [ -n "${DUMP_URL}" ]; then
+            echo "Downloading ${DUMP_URL}"
+            curl -fL --retry 3 --retry-delay 10 \
+              -A "HitchWikiAppDatabaseBuilder/1.0 (+https://github.com/${GITHUB_REPOSITORY})" \
+              -o work/dump.download "${DUMP_URL}"
+          else
+            echo "No dump URL set: using the file uploaded to the dump-source release"
+            gh release download dump-source --dir work/source
+            mv "$(ls -S work/source/* | head -n 1)" work/dump.download
+          fi
+          case "$(file -b --mime-type work/dump.download)" in
+            application/gzip|application/x-gzip) gunzip -c work/dump.download > work/dump.xml ;;
+            application/x-bzip2) bunzip2 -c work/dump.download > work/dump.xml ;;
+            application/x-7z-compressed)
+              command -v 7z > /dev/null || sudo apt-get install -y p7zip-full
+              7z x -so work/dump.download > work/dump.xml ;;
+            *) mv work/dump.download work/dump.xml ;;
+          esac
+          rm -f work/dump.download
+          if ! head -c 2000 work/dump.xml | grep -q '<mediawiki'; then
+            echo "::error::The download is not a MediaWiki XML dump (blocked by bot protection or a wrong URL?)"
+            head -c 500 work/dump.xml
+            exit 1
+          fi
+          echo "Dump: $(du -h work/dump.xml | cut -f1)"
+          echo "sha256=$(sha256sum work/dump.xml | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Compare with the published database
+        id: previous
+        run: |
+          previous=$(gh release download "$RELEASE_TAG" --pattern manifest.json --output - 2>/dev/null \
+            | python3 -c "import json, sys; print(json.load(sys.stdin).get('source_sha256', ''))" || true)
+          if [ "$previous" = "${{ steps.dump.outputs.sha256 }}" ] && [ "${{ inputs.force }}" != "true" ]; then
+            echo "Dump unchanged since the last build: nothing to publish."
+            echo "unchanged=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build database
+        if: steps.previous.outputs.unchanged != 'true'
+        run: |
+          set -euo pipefail
+          python3 tools/slim_dump.py work/dump.xml work/hitchwiki-latest.xml
+          python3 tools/extract.py work/hitchwiki-latest.xml work/output \
+            --app-db work/hitchwiki.sqlite --source-sha256 "${{ steps.dump.outputs.sha256 }}"
+          python3 tools/package_database.py work/hitchwiki.sqlite work/publish \
+            --base-url "https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}"
+
+      - name: Publish
+        if: steps.previous.outputs.unchanged != 'true'
+        run: |
+          set -euo pipefail
+          if ! gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --title "Hitchwiki database" --latest=false \
+              --notes "Database the app downloads on launch. Rebuilt weekly from the Hitchwiki dump by .github/workflows/update-database.yml."
+          fi
+          database=$(basename work/publish/*.sqlite.deflate)
+          # Database first, then the manifest that points at it, so the app never sees a manifest for a missing file.
+          gh release upload "$RELEASE_TAG" "work/publish/${database}" --clobber
+          gh release upload "$RELEASE_TAG" work/publish/manifest.json --clobber
+          # Keep the new database and the previous one (for apps that fetched the old manifest moments ago);
+          # delete anything older. Names contain the version, so they sort oldest first.
+          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' \
+            | { grep '\.sqlite\.deflate$' || true; } | { grep -v -Fx "${database}" || true; } \
+            | sort | head -n -1 \
+            | while read -r old; do gh release delete-asset "$RELEASE_TAG" "$old" --yes; done
+          cat work/publish/manifest.json >> "$GITHUB_STEP_SUMMARY"

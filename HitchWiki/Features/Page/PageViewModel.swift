@@ -22,11 +22,13 @@ final class PageViewModel {
     /// Cards that are open, by card id.
     var expandedCards = Set<Int>()
 
-    private let database: HitchwikiDatabase?
+    private let injectedDatabase: HitchwikiDatabase?
+    /// Read at query time, so a database installed by DatabaseSync is used straight away.
+    private var database: HitchwikiDatabase? { self.injectedDatabase ?? HitchwikiDatabase.shared }
 
-    init(title: String, database: HitchwikiDatabase? = HitchwikiDatabase.shared) {
+    init(title: String, database: HitchwikiDatabase? = nil) {
         self.title = title
-        self.database = database
+        self.injectedDatabase = database
     }
 
     var content: PageContent? {
