@@ -135,33 +135,91 @@ enum DatabaseError: Error {
 
 /// Safe to use from any thread: every query runs on one serial queue.
 final class HitchwikiDatabase: @unchecked Sendable {
-    static let shared: HitchwikiDatabase? = {
-        do {
-            return try HitchwikiDatabase(name: "hitchwiki")
-        } catch {
-            print("Could not open hitchwiki.sqlite: \(error)")
-            return nil
-        }
-    }()
+    /// Tables/columns this build of the app understands. Matches SCHEMA_VERSION in tools/extract.py;
+    /// downloaded databases with a different schema are ignored until the app is updated.
+    static let supportedSchemaVersion = 1
+
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var current: HitchwikiDatabase? = HitchwikiDatabase.openInitial()
+
+    /// The database in use: the newest downloaded one, or the one bundled with the app.
+    /// DatabaseSync swaps it when an update has been installed; view models read it at query time.
+    static var shared: HitchwikiDatabase? {
+        self.lock.lock()
+        defer { self.lock.unlock() }
+        return self.current
+    }
+
+    static func replaceShared(with database: HitchwikiDatabase) {
+        self.lock.lock()
+        defer { self.lock.unlock() }
+        self.current = database
+    }
+
+    /// Data version (YYYYMMDDHHMM of the build), 0 for databases without version info.
+    let version: Int64
+    let schemaVersion: Int
 
     private var db: OpaquePointer?
     /// SQLite runs queries one at a time on a connection.
     private let queue = DispatchQueue(label: "HitchwikiDatabase")
 
-    init(name: String, bundle: Bundle = .main) throws {
+    init(url: URL) throws {
+        var handle: OpaquePointer?
+        guard sqlite3_open_v2(url.path, &handle, SQLITE_OPEN_READONLY, nil) == SQLITE_OK else {
+            let message = String(cString: sqlite3_errmsg(handle))
+            sqlite3_close(handle)
+            throw DatabaseError.cannotOpen(message)
+        }
+        self.db = handle
+        self.version = Self.meta("version", in: handle).flatMap { Int64($0) } ?? 0
+        self.schemaVersion = Self.meta("schema_version", in: handle).flatMap { Int($0) } ?? 0
+    }
+
+    convenience init(name: String, bundle: Bundle = .main) throws {
         guard let url = bundle.url(forResource: name, withExtension: "sqlite") else {
             throw DatabaseError.missingFile
         }
-        guard sqlite3_open_v2(url.path, &self.db, SQLITE_OPEN_READONLY, nil) == SQLITE_OK else {
-            let message = String(cString: sqlite3_errmsg(self.db))
-            sqlite3_close(self.db)
-            self.db = nil   // deinit closes it again otherwise
-            throw DatabaseError.cannotOpen(message)
-        }
+        try self.init(url: url)
     }
 
     deinit {
         sqlite3_close(self.db)
+    }
+
+    /// The downloaded database if there is a usable one that is newer than the bundled copy, else the bundled one.
+    private static func openInitial() -> HitchwikiDatabase? {
+        let bundled: HitchwikiDatabase?
+        do {
+            bundled = try HitchwikiDatabase(name: "hitchwiki")
+        } catch {
+            print("Could not open the bundled hitchwiki.sqlite: \(error)")
+            bundled = nil
+        }
+        if let installed = try? HitchwikiDatabase(url: DatabaseFiles.installedURL),
+           installed.schemaVersion == self.supportedSchemaVersion,
+           installed.version > (bundled?.version ?? 0) {
+            return installed
+        }
+        return bundled
+    }
+
+    /// Number of articles; used to sanity-check a downloaded database before switching to it.
+    func pageCount() throws -> Int {
+        try self.query("SELECT COUNT(*) FROM pages") { Int(Self.int($0, 0)) }.first ?? 0
+    }
+
+    private static func meta(_ key: String, in db: OpaquePointer?) -> String? {
+        var statement: OpaquePointer?
+        guard sqlite3_prepare_v2(db, "SELECT value FROM meta WHERE key = ?", -1, &statement, nil) == SQLITE_OK else {
+            return nil   // older databases have no meta table
+        }
+        defer { sqlite3_finalize(statement) }
+        sqlite3_bind_text(statement, 1, key, -1, Self.transient)
+        guard sqlite3_step(statement) == SQLITE_ROW, let value = sqlite3_column_text(statement, 0) else {
+            return nil
+        }
+        return String(cString: value)
     }
 
     // MARK: - Pages

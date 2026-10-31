@@ -32,12 +32,24 @@ final class HomeViewModel {
 
     private static let nearbyCount = 8
 
-    @ObservationIgnored private let database: HitchwikiDatabase?
+    @ObservationIgnored private let injectedDatabase: HitchwikiDatabase?
+    /// Read at query time, so a database installed by DatabaseSync is used straight away.
+    private var database: HitchwikiDatabase? { self.injectedDatabase ?? HitchwikiDatabase.shared }
     @ObservationIgnored private var nearbyOrigin: CLLocation?
     @ObservationIgnored private var nearbyTask: Task<Void, Never>?
 
-    init(database: HitchwikiDatabase? = HitchwikiDatabase.shared) {
-        self.database = database
+    init(database: HitchwikiDatabase? = nil) {
+        self.injectedDatabase = database
+    }
+
+    /// New data was installed: reload the list and the nearby places.
+    func reload(location: CLLocation?) {
+        self.pages = []
+        self.loadData()
+        self.nearbyOrigin = nil
+        if let location {
+            self.updateNearby(from: location)
+        }
     }
 
     /// Nearby places matching the query (all of them for an empty query).

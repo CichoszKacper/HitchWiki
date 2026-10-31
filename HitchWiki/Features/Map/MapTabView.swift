@@ -14,6 +14,7 @@ struct MapTabView: View {
     @State private var viewModel = MapViewModel()
     @State private var location = LocationManager()
     @State private var router = Router()
+    @Environment(DatabaseSync.self) private var sync
 
     var body: some View {
         NavigationStack(path: self.$router.path) {
@@ -74,6 +75,11 @@ struct MapTabView: View {
         .onDisappear {
             self.location.stop()
         }
+        .onChange(of: self.sync.dataVersion) {
+            Task {
+                await self.viewModel.reload(location: self.location.location)
+            }
+        }
         // initial: also handle a position that is already known when the tab appears.
         .onChange(of: self.location.location, initial: true) { _, newLocation in
             if let newLocation {
@@ -126,4 +132,5 @@ struct MapTabView: View {
 
 #Preview {
     MapTabView()
+        .environment(DatabaseSync())
 }

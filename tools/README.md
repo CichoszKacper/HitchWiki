@@ -38,3 +38,25 @@ SELECT title FROM pages_fts WHERE pages_fts MATCH 'mitfahrbank';
 - Template expansion is light: `{{{1}}}`-style params are substituted, parser functions (`{{#if:}}`) aren't evaluated.
 - ~4,900 of the ~5,900 `{{Coords}}` in articles are `0|0` placeholders on the wiki itself, so only ~870 spots have real coordinates.
 - Highway tables (`{{ramp}}`, `{{gas}}`, `{{good}}`) are kept as wikitext in `sections.wikitext`, not yet parsed into rows.
+
+## Automatic updates (GitHub Actions → app)
+
+`.github/workflows/update-database.yml` rebuilds the database every Monday (or on demand from the Actions tab)
+and publishes it to the release **`database-latest`**:
+
+1. Downloads the dump from the `dump_url` input, else the `HITCHWIKI_DUMP_URL` repository variable,
+   else the largest file uploaded to a release tagged **`dump-source`** (`.xml`, `.xml.gz`, `.xml.bz2` or `.7z`).
+2. Skips the rest if the dump is identical to the last published one.
+3. Runs `slim_dump.py` → `extract.py` (writes a `meta` table with `version` = YYYYMMDDHHMM and `schema_version`)
+   → `package_database.py` (raw-DEFLATE copy, ~8 MB, plus `manifest.json` with size and SHA-256).
+
+Free on public repositories. To set it up: add the dump URL as a repository variable, or create the `dump-source`
+release and attach the dump, then run the workflow once by hand.
+
+The app (`Networking/DatabaseUpdater.swift`, `Shared/DatabaseSync.swift`) downloads `manifest.json` when it opens
+or returns to the foreground (at most every 30 minutes). If `version` is newer and `schema_version` matches
+`HitchwikiDatabase.supportedSchemaVersion`, it downloads the database in the background (not on Low Data Mode),
+checks it, swaps it in and shows a small "Syncing Hitchwiki data…" banner. Offline it silently keeps the data it has.
+
+**When you change the tables or columns the app reads**, bump `SCHEMA_VERSION` in `extract.py` and
+`supportedSchemaVersion` in `HitchwikiDatabase.swift` together, so older app versions don't download a database they can't read.

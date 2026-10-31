@@ -13,6 +13,7 @@ struct HomeView: View {
     @State private var router = Router()
     @State private var location = LocationManager()
     @State private var isSearching = false
+    @Environment(DatabaseSync.self) private var sync
     @Namespace private var transition
 
     private var showsAllResults: Bool {
@@ -90,6 +91,10 @@ struct HomeView: View {
         .onDisappear {
             self.location.stop()
         }
+        .onChange(of: self.sync.dataVersion) {
+            self.viewModel.reload(location: self.location.location)
+            self.viewModel.search()
+        }
         .onChange(of: self.location.location) { _, newLocation in
             if let newLocation {
                 self.viewModel.updateNearby(from: newLocation)
@@ -101,4 +106,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environment(DatabaseSync())
 }
