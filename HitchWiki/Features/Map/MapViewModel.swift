@@ -9,6 +9,17 @@ import SwiftUI
 import MapKit
 import Observation
 
+/// Where the map should fly to. A new value (new `id`) moves the camera once.
+struct CameraMove: Equatable {
+    let id = UUID()
+    let region: MKCoordinateRegion
+    var animated = true
+
+    static func == (lhs: CameraMove, rhs: CameraMove) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 /// A point with its distance from the user.
 struct NearbyPoint: Identifiable, Hashable {
     let point: MapPoint
@@ -20,7 +31,8 @@ struct NearbyPoint: Identifiable, Hashable {
 @MainActor
 @Observable
 final class MapViewModel {
-    var position: MapCameraPosition = .userLocation(fallback: .region(MapViewModel.europe))
+    /// The latest camera move asked for; HitchMapView applies each one once.
+    private(set) var cameraMove: CameraMove? = CameraMove(region: MapViewModel.europe, animated: false)
     var selectedID: String?
     /// Points drawn as their own marker.
     private(set) var singles = [MapPoint]()
@@ -83,35 +95,7 @@ final class MapViewModel {
     /// Call when the map stops moving.
     func regionChanged(_ region: MKCoordinateRegion) {
         self.region = region
-        self.touchArea = Self.makeTouchArea(around: region)
         self.recluster()
-    }
-
-    /// An invisible polygon three times the visible area (see MapTabView). Without network and cached
-    /// tiles MapKit has nothing under the finger and stops responding to gestures; this gives it a surface.
-    private(set) var touchArea = MapViewModel.makeTouchArea(around: MapViewModel.europe)
-
-    private static func makeTouchArea(around region: MKCoordinateRegion) -> [CLLocationCoordinate2D] {
-        let latitudeRadius = min(region.span.latitudeDelta * 1.5, 170)
-        let longitudeRadius = min(region.span.longitudeDelta * 1.5, 360)
-        let south = max(region.center.latitude - latitudeRadius, -85)
-        let north = min(region.center.latitude + latitudeRadius, 85)
-        var west = region.center.longitude - longitudeRadius
-        var east = region.center.longitude + longitudeRadius
-        if west < -180 || east > 180 {
-            // Across the date line: cover every longitude rather than wrap.
-            west = -180
-            east = 180
-        }
-        let middle = (west + east) / 2
-        return [
-            CLLocationCoordinate2D(latitude: north, longitude: west),
-            CLLocationCoordinate2D(latitude: north, longitude: middle),
-            CLLocationCoordinate2D(latitude: north, longitude: east),
-            CLLocationCoordinate2D(latitude: south, longitude: east),
-            CLLocationCoordinate2D(latitude: south, longitude: middle),
-            CLLocationCoordinate2D(latitude: south, longitude: west)
-        ]
     }
 
     func mapSizeChanged(_ size: CGSize) {
@@ -124,9 +108,7 @@ final class MapViewModel {
 
     /// Zooms the map in to a cluster's points.
     func zoom(into cluster: MapCluster) {
-        withAnimation(.smooth(duration: 0.7)) {
-            self.position = .region(cluster.region)
-        }
+        self.cameraMove = CameraMove(region: cluster.region)
     }
 
     private func recluster() {
@@ -145,17 +127,14 @@ final class MapViewModel {
     /// The first time the user's location arrives, flies the map to their city (not street level).
     /// Does nothing on later location updates, so the map doesn't keep snapping back to the user.
     func centerOnUserIfNeeded(_ location: CLLocation) {
-        // No check for `position.positionedByUser`: MapKit can report the start position as moved
-        // by the user before anyone touched the map, which silently skipped this zoom.
+        // Only once: later location updates shouldn't keep snapping the map back to the user.
         guard !self.hasCenteredOnUser else {
             return
         }
         self.hasCenteredOnUser = true
-        withAnimation(.smooth(duration: 1.2)) {
-            self.position = .region(MKCoordinateRegion(center: location.coordinate,
-                                                       latitudinalMeters: Self.cityDistance,
-                                                       longitudinalMeters: Self.cityDistance))
-        }
+        self.cameraMove = CameraMove(region: MKCoordinateRegion(center: location.coordinate,
+                                                                latitudinalMeters: Self.cityDistance,
+                                                                longitudinalMeters: Self.cityDistance))
     }
 
     func updateNearby(from location: CLLocation) {
@@ -231,10 +210,8 @@ final class MapViewModel {
         }
         self.selectedID = point.id
         self.selectionChanged()
-        withAnimation(.smooth(duration: 0.8)) {
-            self.position = .region(MKCoordinateRegion(center: point.coordinate,
-                                                       span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)))
-        }
+        self.cameraMove = CameraMove(region: MKCoordinateRegion(center: point.coordinate,
+                                                                span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)))
     }
 
     func clearSelection() {

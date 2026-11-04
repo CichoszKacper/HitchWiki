@@ -6,10 +6,9 @@
 //  Points close together are grouped into bubbles (tap to zoom in); the row at the bottom
 //  shows what's nearest to the user.
 //
-//  Offline, Apple's map only has the tiles it cached earlier. Where it has none, MapKit can stop
-//  taking touches (seen after selecting and closing a marker fully zoomed in, in Airplane Mode),
-//  so an invisible polygon under the markers always gives it something to hit-test. Offline the
-//  map is also flat (3D terrain needs data too) and a capsule explains the missing background.
+//  The map itself is HitchMapView (UIKit's MKMapView): offline, SwiftUI's Map could stop taking
+//  touches in areas without cached tiles. Offline the map is flat (3D terrain needs data too) and a
+//  capsule explains the missing background.
 //
 
 import SwiftUI
@@ -25,37 +24,18 @@ struct MapTabView: View {
 
     var body: some View {
         NavigationStack(path: self.$router.path) {
-            Map(position: self.$viewModel.position, selection: self.$viewModel.selectedID) {
-                // Keeps gestures working where MapKit has no tiles (offline). Fully transparent.
-                MapPolygon(coordinates: self.viewModel.touchArea)
-                    .foregroundStyle(.clear)
-                UserAnnotation()
-                ForEach(self.viewModel.clusters) { cluster in
-                    Annotation("", coordinate: cluster.coordinate, anchor: .center) {
-                        Button {
-                            self.viewModel.zoom(into: cluster)
-                        } label: {
-                            ClusterBubble(count: cluster.count, tint: cluster.representative.tint)
-                        }
-                        .buttonStyle(.pressable)
-                    }
-                    .annotationTitles(.hidden)
-                }
-                ForEach(self.viewModel.singles) { point in
-                    Marker(point.title, systemImage: point.systemImage, coordinate: point.coordinate)
-                        .tint(point.tint)
-                        .tag(point.id)
-                }
-            }
-            .mapStyle(.standard(elevation: self.network.isOnline ? .realistic : .flat, pointsOfInterest: .excludingAll))
-            .mapControls {
-                MapUserLocationButton()
-                MapCompass()
-                MapScaleView()
-            }
-            .onMapCameraChange(frequency: .onEnd) { context in
-                self.viewModel.regionChanged(context.region)
-            }
+            HitchMapView(singles: self.viewModel.singles,
+                         clusters: self.viewModel.clusters,
+                         selectedID: self.$viewModel.selectedID,
+                         cameraMove: self.viewModel.cameraMove,
+                         isOnline: self.network.isOnline,
+                         onRegionChange: { region in
+                             self.viewModel.regionChanged(region)
+                         },
+                         onClusterTap: { cluster in
+                             self.viewModel.zoom(into: cluster)
+                         })
+            .ignoresSafeArea(.container, edges: .top)
             .onGeometryChange(for: CGSize.self) { geometry in
                 geometry.size
             } action: { size in
