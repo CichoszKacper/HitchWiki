@@ -4,9 +4,12 @@
 Usage:
     python3 package_database.py <app hitchwiki.sqlite> <out dir> --base-url <URL the files will be served from>
 
-Writes:
+Writes (English, the default):
     <out dir>/hitchwiki-<version>.sqlite.deflate   raw DEFLATE (what Apple's NSData.decompressed(using: .zlib) reads)
     <out dir>/manifest.json                        version, schema, checksum and download URL
+Other languages (the language comes from the database's meta table, or --language):
+    <out dir>/hitchwiki-pl-<version>.sqlite.deflate
+    <out dir>/manifest-pl.json
 
 The app downloads manifest.json on launch, and the database only when `version` is higher than its own
 and `schema_version` is one it supports.
@@ -17,19 +20,22 @@ ap = argparse.ArgumentParser()
 ap.add_argument('database')
 ap.add_argument('outdir')
 ap.add_argument('--base-url', required=True, help='e.g. https://github.com/OWNER/REPO/releases/download/database-latest')
+ap.add_argument('--language', help="override the language in the database's meta table ('en', 'pl')")
 args = ap.parse_args()
 
 db = sqlite3.connect(args.database)
 meta = dict(db.execute('SELECT key, value FROM meta'))
 db.close()
 version = int(meta['version'])
+language = args.language or meta.get('language', 'en')
+suffix = '' if language == 'en' else f'-{language}'
 
 data = open(args.database, 'rb').read()
 compressor = zlib.compressobj(9, zlib.DEFLATED, -15)   # -15: raw DEFLATE, no zlib/gzip header
 deflated = compressor.compress(data) + compressor.flush()
 
 os.makedirs(args.outdir, exist_ok=True)
-name = f'hitchwiki-{version}.sqlite.deflate'
+name = f'hitchwiki{suffix}-{version}.sqlite.deflate'
 with open(os.path.join(args.outdir, name), 'wb') as f:
     f.write(deflated)
 
@@ -37,6 +43,7 @@ manifest = {
     'schema_version': int(meta['schema_version']),
     'version': version,
     'generated_at': meta.get('generated_at', ''),
+    'language': language,
     'source_sha256': meta.get('source_sha256', ''),
     'database': {
         'url': args.base_url.rstrip('/') + '/' + name,
@@ -47,6 +54,6 @@ manifest = {
     },
     'stats': {'pages': int(meta.get('pages', 0)), 'spots': int(meta.get('spots', 0))},
 }
-with open(os.path.join(args.outdir, 'manifest.json'), 'w') as f:
+with open(os.path.join(args.outdir, f'manifest{suffix}.json'), 'w') as f:
     json.dump(manifest, f, indent=2)
 print(json.dumps(manifest, indent=2))

@@ -2,7 +2,7 @@
 //  SyncBanner.swift
 //  HitchWiki
 //
-//  A small capsule at the top of the screen while new Hitchwiki data downloads.
+//  A small capsule at the top of the screen while new guide data downloads.
 //
 
 import SwiftUI
@@ -16,7 +16,7 @@ struct SyncBanner: View {
             case .updated:
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
-                Text("Hitchwiki data updated")
+                Text("Guide updated")
             case .failed:
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(.orange)
@@ -24,7 +24,7 @@ struct SyncBanner: View {
             default:
                 ProgressView()
                     .controlSize(.small)
-                Text("Syncing Hitchwiki data…")
+                Text("Updating the guide…")
             }
         }
         .font(.footnote.weight(.semibold))

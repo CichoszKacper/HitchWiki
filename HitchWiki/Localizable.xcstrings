@@ -1,0 +1,1119 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%lld guides": {
+      "comment": "Number of guide articles",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld guide"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld guides"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld przewodniki"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld przewodników"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld przewodnik"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld przewodnika"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld parts": {
+      "comment": "Number of subsections in a page section",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld part"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld parts"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld części"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld części"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld część"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld części"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld places": {
+      "comment": "Cities and areas",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld place"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld places"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld miejsca"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld miejsc"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld miejsce"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld miejsca"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld spots": {
+      "comment": "Number of hitchhiking spots",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld spot"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld spots"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld miejscówki"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld miejscówek"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld miejscówka"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld miejscówki"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "A smaller guide written by the Polish community. Fewer places than in English.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mniejszy przewodnik tworzony przez polską społeczność. Mniej miejsc niż po angielsku."
+          }
+        }
+      }
+    },
+    "About": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informacje"
+          }
+        }
+      }
+    },
+    "All places": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszystkie miejsca"
+          }
+        }
+      }
+    },
+    "Already on your phone, works offline right away": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Już jest w telefonie, działa offline od razu"
+          }
+        }
+      }
+    },
+    "App language": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Język aplikacji"
+          }
+        }
+      }
+    },
+    "Capital": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stolica"
+          }
+        }
+      }
+    },
+    "Check your internet connection and try again.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprawdź połączenie z internetem i spróbuj ponownie."
+          }
+        }
+      }
+    },
+    "Choose the language of the guide": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz język przewodnika"
+          }
+        }
+      }
+    },
+    "Clear": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyczyść"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamknij"
+          }
+        }
+      }
+    },
+    "Collapses the section": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwija sekcję"
+          }
+        }
+      }
+    },
+    "Coming soon": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Już wkrótce"
+          }
+        }
+      }
+    },
+    "Contents": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spis treści"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalej"
+          }
+        }
+      }
+    },
+    "Couldn't download the guide": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się pobrać przewodnika"
+          }
+        }
+      }
+    },
+    "Couldn't download this guide. Check your connection and try again, or start with English.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się pobrać tego przewodnika. Sprawdź połączenie i spróbuj ponownie albo zacznij od angielskiego."
+          }
+        }
+      }
+    },
+    "Couldn't update, using saved data": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się zaktualizować, używam zapisanych danych"
+          }
+        }
+      }
+    },
+    "Country": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kraj"
+          }
+        }
+      }
+    },
+    "Currency": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waluta"
+          }
+        }
+      }
+    },
+    "District": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dzielnica"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotowe"
+          }
+        }
+      }
+    },
+    "Downloading the guide…": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pobieranie przewodnika…"
+          }
+        }
+      }
+    },
+    "Downloads now (%@), then works offline": {
+      "comment": "%@ is the download size",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pobierze się teraz (%@), potem działa offline"
+          }
+        }
+      }
+    },
+    "Expands the section": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozwija sekcję"
+          }
+        }
+      }
+    },
+    "Expressways": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drogi ekspresowe"
+          }
+        }
+      }
+    },
+    "Go": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trasa"
+          }
+        }
+      }
+    },
+    "Guide data from": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dane przewodnika z dnia"
+          }
+        }
+      }
+    },
+    "Guide language": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Język przewodnika"
+          }
+        }
+      }
+    },
+    "Guide updated": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przewodnik zaktualizowany"
+          }
+        }
+      }
+    },
+    "Guides": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przewodniki"
+          }
+        }
+      }
+    },
+    "HitchWise": {
+      "comment": "App name",
+      "shouldTranslate": false
+    },
+    "HitchWise follows your iPhone's language. To use another one just for this app, go to Settings › HitchWise › Language.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HitchWise używa języka Twojego iPhone’a. Aby wybrać inny tylko dla tej aplikacji, przejdź do Ustawienia › HitchWise › Język."
+          }
+        }
+      }
+    },
+    "Hitchhiking spot": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miejscówka na stopa"
+          }
+        }
+      }
+    },
+    "Hitchhiking spot · %@": {
+      "comment": "Map point subtitle; the page the spot is on",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miejscówka na stopa · %@"
+          }
+        }
+      }
+    },
+    "Home": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        }
+      }
+    },
+    "Language": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Język"
+          }
+        }
+      }
+    },
+    "Loading page": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wczytywanie strony"
+          }
+        }
+      }
+    },
+    "Looking for places near you": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szukam miejsc w pobliżu"
+          }
+        }
+      }
+    },
+    "Map": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapa"
+          }
+        }
+      }
+    },
+    "Money": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waluta"
+          }
+        }
+      }
+    },
+    "Most complete": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Najpełniejszy"
+          }
+        }
+      }
+    },
+    "Motorways": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autostrady"
+          }
+        }
+      }
+    },
+    "Near you": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W pobliżu"
+          }
+        }
+      }
+    },
+    "Needs the internet once to download": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trzeba go raz pobrać z internetu"
+          }
+        }
+      }
+    },
+    "Nothing here yet": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na razie pusto"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Open Hitchwiki.org": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz Hitchwiki.org"
+          }
+        }
+      }
+    },
+    "Open Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz Ustawienia"
+          }
+        }
+      }
+    },
+    "Open map": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz mapę"
+          }
+        }
+      }
+    },
+    "Open map with %lld spots": {
+      "comment": "Accessibility label",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open map with %lld spot"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Open map with %lld spots"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otwórz mapę z %lld miejscówkami"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otwórz mapę z %lld miejscówkami"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otwórz mapę z %lld miejscówką"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Otwórz mapę z %lld miejscówki"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Open page": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz stronę"
+          }
+        }
+      }
+    },
+    "Opens the hitchhiking guide": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwiera przewodnik autostopowy"
+          }
+        }
+      }
+    },
+    "Page not found": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie znaleziono strony"
+          }
+        }
+      }
+    },
+    "Place": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miejscowość"
+          }
+        }
+      }
+    },
+    "Places you read about show up here, so you can jump straight back in.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu pojawią się miejsca, o których czytasz, żeby łatwo było do nich wrócić."
+          }
+        }
+      }
+    },
+    "Plates": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tablice rej."
+          }
+        }
+      }
+    },
+    "Population": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ludność"
+          }
+        }
+      }
+    },
+    "Read about %@": {
+      "comment": "Opens the page a hitchhiking spot is on",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czytaj o: %@"
+          }
+        }
+      }
+    },
+    "Read the guide": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czytaj przewodnik"
+          }
+        }
+      }
+    },
+    "Recently viewed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ostatnio oglądane"
+          }
+        }
+      }
+    },
+    "Region": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Region"
+          }
+        }
+      }
+    },
+    "Remove from Recently Viewed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń z ostatnio oglądanych"
+          }
+        }
+      }
+    },
+    "Saved": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapisane"
+          }
+        }
+      }
+    },
+    "See what's around you": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zobacz, co jest w pobliżu"
+          }
+        }
+      }
+    },
+    "Service station": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stacja paliw"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustawienia"
+          }
+        }
+      }
+    },
+    "Show less": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż mniej"
+          }
+        }
+      }
+    },
+    "Show more": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż więcej"
+          }
+        }
+      }
+    },
+    "Show on map": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż na mapie"
+          }
+        }
+      }
+    },
+    "Spot %lld": {
+      "comment": "Button showing the n-th hitchhiking spot on a map",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miejscówka %lld"
+          }
+        }
+      }
+    },
+    "The English guide is the most complete. Other languages are downloaded when you pick them and then work offline.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przewodnik po angielsku jest najpełniejszy. Inne języki pobierają się po wybraniu, a potem działają offline."
+          }
+        }
+      }
+    },
+    "The biggest Hitchwiki, written by hitchhikers from all over the world.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Największe Hitchwiki, tworzone przez autostopowiczów z całego świata."
+          }
+        }
+      }
+    },
+    "The guide's content comes from Hitchwiki, written by hitchhikers and shared under the Creative Commons Attribution-ShareAlike licence.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treści przewodnika pochodzą z Hitchwiki. Tworzą je autostopowicze, a udostępniane są na licencji Creative Commons Uznanie autorstwa – Na tych samych warunkach."
+          }
+        }
+      }
+    },
+    "Try Again": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spróbuj ponownie"
+          }
+        }
+      }
+    },
+    "Turn On Location": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz lokalizację"
+          }
+        }
+      }
+    },
+    "Turn on location to see spots near you": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz lokalizację, żeby zobaczyć miejscówki w pobliżu"
+          }
+        }
+      }
+    },
+    "Turn on location to see the closest cities, their hitchhiking spots and a guide to the country you're in.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz lokalizację, żeby zobaczyć najbliższe miasta, ich miejscówki na stopa i przewodnik po kraju, w którym jesteś."
+          }
+        }
+      }
+    },
+    "Type a city or a country...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wpisz miasto lub kraj…"
+          }
+        }
+      }
+    },
+    "Updating the guide…": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualizowanie przewodnika…"
+          }
+        }
+      }
+    },
+    "Use English for now": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na razie użyj angielskiego"
+          }
+        }
+      }
+    },
+    "Version": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wersja"
+          }
+        }
+      }
+    },
+    "Welcome to HitchWise": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Witaj w HitchWise"
+          }
+        }
+      }
+    },
+    "You can change this anytime in Settings.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Możesz to zmienić w każdej chwili w Ustawieniach."
+          }
+        }
+      }
+    },
+    "You're in": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twój kraj"
+          }
+        }
+      }
+    },
+    "Your offline hitchhiking guide: cities, spots and tips from the Hitchwiki community.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twój przewodnik autostopowy offline: miasta, miejscówki i porady od społeczności Hitchwiki."
+          }
+        }
+      }
+    },
+    "“%@” isn't in the offline Hitchwiki.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strony „%@” nie ma w przewodniku offline."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

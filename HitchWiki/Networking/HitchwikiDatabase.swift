@@ -187,6 +187,11 @@ final class HitchwikiDatabase: @unchecked Sendable {
     /// Data version (YYYYMMDDHHMM of the build), 0 for databases without version info.
     let version: Int64
     let schemaVersion: Int
+    /// The Hitchwiki the data comes from. Databases without this info are English.
+    let language: AppLanguage
+    /// Number of articles and spots, as recorded when the database was built (0 if unknown).
+    let articleCount: Int
+    let spotCount: Int
 
     private var db: OpaquePointer?
     /// SQLite runs queries one at a time on a connection.
@@ -202,6 +207,9 @@ final class HitchwikiDatabase: @unchecked Sendable {
         self.db = handle
         self.version = Self.meta("version", in: handle).flatMap { Int64($0) } ?? 0
         self.schemaVersion = Self.meta("schema_version", in: handle).flatMap { Int($0) } ?? 0
+        self.language = Self.meta("language", in: handle).flatMap(AppLanguage.init(rawValue:)) ?? .english
+        self.articleCount = Self.meta("pages", in: handle).flatMap { Int($0) } ?? 0
+        self.spotCount = Self.meta("spots", in: handle).flatMap { Int($0) } ?? 0
     }
 
     convenience init(name: String, bundle: Bundle = .main) throws {
@@ -215,21 +223,37 @@ final class HitchwikiDatabase: @unchecked Sendable {
         sqlite3_close(self.db)
     }
 
-    /// The downloaded database if there is a usable one that is newer than the bundled copy, else the bundled one.
+    /// The database for the chosen guide language, falling back to the bundled English one
+    /// (e.g. while the Polish database hasn't been downloaded yet).
     private static func openInitial() -> HitchwikiDatabase? {
-        let bundled: HitchwikiDatabase?
-        do {
-            bundled = try HitchwikiDatabase(name: "hitchwiki")
-        } catch {
-            print("Could not open the bundled hitchwiki.sqlite: \(error)")
-            bundled = nil
+        let language = LanguageManager.storedGuideLanguage() ?? .english
+        return self.openLocal(for: language) ?? self.openBundled()
+    }
+
+    /// The best copy of `language` already on the phone: for English the newer of the downloaded
+    /// and the bundled database, for other languages the downloaded one. Nil if there is none.
+    static func openLocal(for language: AppLanguage) -> HitchwikiDatabase? {
+        let installed = (try? HitchwikiDatabase(url: DatabaseFiles.installedURL(for: language))).flatMap { database in
+            database.schemaVersion == self.supportedSchemaVersion && database.language == language ? database : nil
         }
-        if let installed = try? HitchwikiDatabase(url: DatabaseFiles.installedURL),
-           installed.schemaVersion == self.supportedSchemaVersion,
-           installed.version > (bundled?.version ?? 0) {
+        guard language == .english else {
+            return installed
+        }
+        let bundled = self.openBundled()
+        if let installed, installed.version > (bundled?.version ?? 0) {
             return installed
         }
         return bundled
+    }
+
+    /// The English database that ships with the app.
+    static func openBundled() -> HitchwikiDatabase? {
+        do {
+            return try HitchwikiDatabase(name: "hitchwiki")
+        } catch {
+            print("Could not open the bundled hitchwiki.sqlite: \(error)")
+            return nil
+        }
     }
 
     /// Number of articles; used to sanity-check a downloaded database before switching to it.
@@ -437,7 +461,7 @@ final class HitchwikiDatabase: @unchecked Sendable {
             // Spots store their heading path ("Hitchhiking out > West > Option 1"): keep the last heading.
             title = title.components(separatedBy: " > ").last ?? title
             if title.isEmpty {
-                title = "Hitchhiking spot"
+                title = String(localized: "Hitchhiking spot")
             }
         }
         return MapPoint(kind: kind, rowID: Self.int(statement, 1), title: title, pageTitle: Self.text(statement, 3) ?? "",
@@ -484,13 +508,13 @@ final class HitchwikiDatabase: @unchecked Sendable {
             }
         }
 
-        // The hitchhiking overview ("Hitchhiking", "Hitchhiking in Poland"), else the intro.
+        // The hitchhiking overview ("Hitchhiking", "Hitchhiking in Poland", "Ogólne informacje o stopowaniu"), else the intro.
         let sections = try self.query("SELECT level, title, text FROM sections WHERE page_id = ? AND text != '' ORDER BY idx", [page.id]) {
             (level: Int(Self.int($0, 0)), title: (Self.text($0, 1) ?? "").lowercased(), text: Self.text($0, 2) ?? "")
         }
         let overview = sections.first { section in
-            section.level > 0 && (section.title.contains("hitchhiking") || section.title.contains("hitching"))
-                && !section.title.contains("legal")
+            section.level > 0 && ["hitchhiking", "hitching", "autostop", "stopowa", "łapanie stopa"].contains { section.title.contains($0) }
+                && !["legal", "legaln", "prawo"].contains { section.title.contains($0) }
         } ?? sections.first { $0.level == 0 }
         let summary = overview?.text
             .components(separatedBy: "\n")

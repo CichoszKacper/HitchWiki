@@ -39,7 +39,7 @@ struct CollapsibleCard<Header: View, Content: View>: View {
             }
             .buttonStyle(.plain)
             .sensoryFeedback(.selection, trigger: self.isExpanded)
-            .accessibilityHint(self.isExpanded ? "Collapses the section" : "Expands the section")
+            .accessibilityHint(self.isExpanded ? Text("Collapses the section") : Text("Expands the section"))
 
             if self.isExpanded {
                 self.content()

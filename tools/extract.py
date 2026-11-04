@@ -4,7 +4,7 @@
 Usage:
     python3 -m venv .venv && .venv/bin/pip install mwparserfromhell mwxml
     .venv/bin/python extract.py output/hitchwiki-latest.xml output/ [--app-db ../HitchWiki/hitchwiki.sqlite]
-                     [--version 202610311200] [--source-sha256 <hash of the dump>]
+                     [--version 202610311200] [--source-sha256 <hash of the dump>] [--language pl]
 
 Writes:
     output/pages.jsonl   one JSON object per article (ns 0), easy to grep / jq / load in pandas
@@ -19,6 +19,11 @@ _ap.add_argument('src'); _ap.add_argument('outdir')
 _ap.add_argument('--app-db', help='also write a slim copy (no raw wikitext) for bundling in the iOS app, e.g. ../HitchWiki/hitchwiki.sqlite')
 _ap.add_argument('--version', type=int, help='data version stored in the meta table (default: time of the newest edit in the dump as YYYYMMDDHHMM); the app updates to a higher one')
 _ap.add_argument('--source-sha256', default='', help='SHA-256 of the dump this was built from, stored in the meta table')
+_ap.add_argument('--min-version', type=int, default=0, help='never use a lower version than this (the workflow passes the '
+                                     'last published version + 1, so a rebuild of the same dump with a better parser still reaches the app)')
+_ap.add_argument('--language', default='en', help="which Hitchwiki the dump is from ('en', 'pl'), stored in the meta table; the app checks it")
+_ap.add_argument('--gazetteer', help='an English hitchwiki.sqlite; pages of another language without coordinates borrow them '
+                                     'from the English page with the same title or a redirect to it (e.g. ../HitchWiki/hitchwiki.sqlite)')
 _args = _ap.parse_args()
 src, outdir = _args.src, _args.outdir
 MAP_RE = re.compile(r"""<map[^>]*?lat=['"]([-\d.]+)['"][^>]*?lng=['"]([-\d.]+)['"]""", re.I)
@@ -189,7 +194,7 @@ def parse_page(title, text):
                 ex = mwp.parse(expand(raw))
                 fields[k] = {'text': clean(ex), 'links': links_in(ex), 'raw': raw} if '[[' in str(ex) else clean(ex)
             page['infobox'] = {'type': n[len('infobox'):].strip() or 'generic', 'fields': fields}
-        elif n == 'isin':
+        elif n in ('isin', 'jestw'):   # {{JestW|Polska}} is the Polish wiki's {{IsIn}}
             page['is_in'] += [clean(p.value) for p in t.params if not p.showkey]
 
     for l in code.filter_wikilinks():
@@ -286,23 +291,148 @@ with open(os.path.join(outdir, 'pages.jsonl'), 'w', encoding='utf-8') as jl:
         n += 1
 db.execute("INSERT INTO pages_fts(pages_fts) VALUES('rebuild')")
 
+# ---------- wikis without infoboxes (e.g. Polish) ----------
+# The app finds countries by infobox_type = 'country', places near the user by their coordinates and a
+# place's country by pages.country. The Polish wiki has no infoboxes, so fill those in:
+#   country    a page titled like a country ("Polska", "Niemcy": CLDR names via babel) or a UK nation
+#              ("Szkocja", "Anglia"), as Hitchwiki treats those as countries too; its code ("pl", "gb-sct")
+#              goes into a `hitch` field, which the app turns into a flag
+#   location   any other page with coordinates
+#   lat/lng    from the English page with the same title (--gazetteer), else the middle of the page's spots
+#   country    by following IsIn/JestW upwards (Kraków -> małopolskie -> Polska). Many pages copied from the
+#              English wiki still say {{IsIn|Scotland}}, so English country names count too; last resort is
+#              the country of the English page with the same title.
+if _args.language != 'en':
+    # UK nations: English name, then names in other languages
+    NATIONS = {'gb-eng': ['England', 'Anglia'], 'gb-sct': ['Scotland', 'Szkocja'],
+               'gb-wls': ['Wales', 'Walia'], 'gb-nir': ['Northern Ireland', 'Irlandia Północna']}
+    local_names, name_codes = {}, {}   # lower-case name -> code; local_names only in this wiki's language
+    try:
+        from babel import Locale
+        for lang in (_args.language, 'en'):
+            for code, name in Locale(lang).territories.items():
+                if len(code) == 2 and code.isalpha():
+                    name_codes.setdefault(name.lower(), code.lower())
+                    if lang == _args.language:
+                        local_names[name.lower()] = code.lower()
+    except Exception as e:   # babel missing: only the names below
+        print('babel unavailable, few countries detected:', e)
+    # Spellings the English wiki uses that CLDR doesn't
+    for name, code in {'usa': 'us', 'united states of america': 'us', 'uk': 'gb', 'great britain': 'gb',
+                       'the netherlands': 'nl', 'holland': 'nl', 'czech republic': 'cz', 'republic of ireland': 'ie',
+                       'turkey': 'tr', 'ivory coast': 'ci', 'macedonia': 'mk', 'republic of the congo': 'cg',
+                       'democratic republic of the congo': 'cd', 'swaziland': 'sz', 'burma': 'mm', 'east timor': 'tl',
+                       'vatican city': 'va', 'cape verde': 'cv'}.items():
+        name_codes.setdefault(name, code)
+    for code, names in NATIONS.items():
+        for name in names:
+            name_codes[name.lower()] = code
+            local_names[name.lower()] = code
+
+    def code_for(name):
+        return name_codes.get(re.sub(r'\s+', ' ', str(name)).strip().lower()) if name else None
+
+    gazetteer = sqlite3.connect(_args.gazetteer) if _args.gazetteer else None
+    def english_position(title):
+        if gazetteer is None:
+            return None
+        return gazetteer.execute("""
+            SELECT lat, lng FROM pages WHERE title = ?1 COLLATE NOCASE AND lat IS NOT NULL
+            UNION ALL
+            SELECT p.lat, p.lng FROM redirects r JOIN pages p ON p.title = r.target
+            WHERE r.title = ?1 COLLATE NOCASE AND p.lat IS NOT NULL LIMIT 1""", (title,)).fetchone()
+
+    def english_country_position(code):
+        """Where the English wiki puts the country with `code`."""
+        if gazetteer is None:
+            return None
+        if code in NATIONS:
+            return english_position(NATIONS[code][0])
+        return gazetteer.execute("""SELECT p.lat, p.lng FROM infobox_fields f JOIN pages p ON p.id = f.page_id
+                                    WHERE f.name = 'hitch' AND lower(f.value) = ? AND p.lat IS NOT NULL LIMIT 1""",
+                                 ('uk' if code == 'gb' else code,)).fetchone()
+
+    def english_country(title):
+        """The `country` of the English page with this title (or a redirect to it), e.g. 'Scotland'."""
+        if gazetteer is None:
+            return None
+        row = gazetteer.execute("""
+            SELECT country FROM pages WHERE title = ?1 COLLATE NOCASE
+            UNION ALL
+            SELECT p.country FROM redirects r JOIN pages p ON p.title = r.target WHERE r.title = ?1 COLLATE NOCASE
+            LIMIT 1""", (title,)).fetchone()
+        return row[0] if row else None
+
+    rows = db.execute('SELECT id, title, is_in, lat, lng FROM pages WHERE infobox_type IS NULL').fetchall()
+    parents = {title: json.loads(is_in or '[]') for _, title, is_in, _, _ in rows}
+    countries, country_by_code = {}, {}
+    # Pages named in this wiki's language first, so "Wielka Brytania" wins over a stray "United Kingdom" page
+    for page_id, title, _, _, _ in sorted(rows, key=lambda r: r[1].lower() not in local_names):
+        code = code_for(title)
+        if code and code not in country_by_code:
+            countries[title] = code
+            country_by_code[code] = title
+            db.execute("UPDATE pages SET infobox_type = 'country', country = ? WHERE id = ?", (title, page_id))
+            db.execute('INSERT INTO infobox_fields VALUES(?,?,?,?)', (page_id, 'hitch', code, None))
+
+    def country_of(name, depth=0):
+        """The country page for a page or an IsIn value, following IsIn/JestW upwards."""
+        if name in countries:
+            return name
+        code = code_for(name)   # an IsIn value naming a country, possibly in English ("Scotland")
+        if code in country_by_code:
+            return country_by_code[code]
+        if depth > 4:
+            return None
+        for parent in parents.get(name, []):
+            found = country_of(resolve_link(parent) or parent, depth + 1)
+            if found:
+                return found
+        return None
+
+    located = borrowed = 0
+    for page_id, title, _, lat, lng in rows:
+        if lat is None:
+            position = english_country_position(countries[title]) if title in countries else english_position(title)
+            if position:
+                borrowed += 1
+            else:
+                spots = db.execute('SELECT lat, lng FROM spots WHERE page_id = ?', (page_id,)).fetchall()
+                position = (sum(s[0] for s in spots) / len(spots), sum(s[1] for s in spots) / len(spots)) if spots else None
+            if position:
+                db.execute('UPDATE pages SET lat = ?, lng = ? WHERE id = ?', (position[0], position[1], page_id))
+                lat = position[0]
+        if title in countries:
+            continue
+        country = country_of(title) or country_by_code.get(code_for(english_country(title)))
+        if country:
+            db.execute('UPDATE pages SET country = ? WHERE id = ?', (country, page_id))
+        if lat is not None:
+            located += 1
+            db.execute("UPDATE pages SET infobox_type = 'location' WHERE id = ?", (page_id,))
+    print(f'no-infobox wiki: {len(countries)} countries, {located} located places ({borrowed} positions from the gazetteer)')
+
 # Version info the app reads to decide whether a downloaded database is newer / compatible.
 # Bump SCHEMA_VERSION whenever tables or columns the app reads change (and the app's supportedSchemaVersion with it).
 import datetime
 SCHEMA_VERSION = 1
 now = datetime.datetime.now(datetime.timezone.utc)
 # Default: the newest edit in the dump, so the same dump always gives the same version wherever it's built.
-version = _args.version or int(newest_edit or now.strftime('%Y%m%d%H%M'))
+version = max(_args.version or int(newest_edit or now.strftime('%Y%m%d%H%M')), _args.min_version)
 db.execute('CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT)')
 db.executemany('INSERT INTO meta VALUES(?,?)', [
     ('schema_version', str(SCHEMA_VERSION)),
     ('version', str(version)),
     ('generated_at', now.strftime('%Y-%m-%dT%H:%M:%SZ')),
     ('source_sha256', _args.source_sha256),
+    ('language', _args.language),
     ('pages', str(n)),
     ('spots', str(db.execute('SELECT COUNT(*) FROM spots').fetchone()[0])),
 ])
-print('version:', version, 'schema:', SCHEMA_VERSION)
+print('version:', version, 'schema:', SCHEMA_VERSION, 'language:', _args.language)
+# What the app keys on (infobox types such as 'country'), to spot a wiki that names its templates differently.
+for row in db.execute('SELECT infobox_type, COUNT(*) FROM pages GROUP BY 1 ORDER BY 2 DESC LIMIT 12'):
+    print('  infobox', row[0], row[1])
 db.executescript("CREATE INDEX i1 ON infobox_fields(page_id); CREATE INDEX i2 ON sections(page_id); "
                  "CREATE INDEX i3 ON spots(page_id); CREATE INDEX i4 ON links(target); CREATE INDEX i5 ON categories(name); CREATE INDEX i6 ON section_links(page_id);")
 db.commit(); db.execute('VACUUM'); db.close()

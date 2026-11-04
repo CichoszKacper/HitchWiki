@@ -78,10 +78,12 @@ struct CountryCard: View {
     private var stats: some View {
         HStack(spacing: 8) {
             if self.country.placeCount > 0 {
-                StatPill(text: Self.count(self.country.placeCount, "place", "places"), systemImage: "building.2.fill")
+                StatPill(text: String(localized: "\(self.country.placeCount) places", comment: "Cities and areas in a country"),
+                         systemImage: "building.2.fill")
             }
             if self.country.spotCount > 0 {
-                StatPill(text: Self.count(self.country.spotCount, "spot", "spots"), systemImage: "hand.thumbsup.fill")
+                StatPill(text: String(localized: "\(self.country.spotCount) spots", comment: "Number of hitchhiking spots"),
+                         systemImage: "hand.thumbsup.fill")
             }
             if let hitchability = self.country.hitchability {
                 StatPill(text: hitchability, systemImage: "star.fill")
@@ -98,13 +100,13 @@ struct CountryCard: View {
     private var facts: [(label: String, value: String)] {
         var facts = [(label: String, value: String)]()
         if let capital = self.country.capital {
-            facts.append((label: "Capital", value: capital))
+            facts.append((label: String(localized: "Capital", comment: "Infobox label"), value: capital))
         }
         if let language = self.country.mainLanguage {
-            facts.append((label: "Language", value: language))
+            facts.append((label: String(localized: "Language", comment: "Infobox label"), value: language))
         }
         if let currency = self.country.shortCurrency {
-            facts.append((label: "Money", value: currency))
+            facts.append((label: String(localized: "Money", comment: "Country card: the currency"), value: currency))
         }
         return facts
     }
@@ -135,10 +137,6 @@ struct CountryCard: View {
         }
         .padding(.vertical, 12)
         .background(.white.opacity(0.14), in: .rect(cornerRadius: Theme.smallCornerRadius, style: .continuous))
-    }
-
-    private static func count(_ value: Int, _ singular: String, _ plural: String) -> String {
-        "\(value.formatted()) \(value == 1 ? singular : plural)"
     }
 }
 

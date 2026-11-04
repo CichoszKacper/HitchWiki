@@ -4,6 +4,7 @@
 //
 //  The home screen: the country the user is in, the closest cities, and the pages opened
 //  recently. Typing in the search field swaps all that for the matching pages.
+//  Every text is in Localizable.xcstrings (English + Polish).
 //
 
 import SwiftUI
@@ -20,6 +21,11 @@ struct HomeView: View {
 
     private var recents: RecentPages { .shared }
 
+    /// Recently viewed pages from the guide in use.
+    private var recentPages: [RecentPage] {
+        self.recents.pages(in: self.sync.dataLanguage)
+    }
+
     private var showsAllResults: Bool {
         self.isSearching || !self.viewModel.query.isEmpty
     }
@@ -33,7 +39,7 @@ struct HomeView: View {
                     self.dashboard
                 }
             }
-            .navigationTitle("HitchWiki")
+            .navigationTitle("HitchWise")
             // An explicit placement keeps a single search field under the title. Without it, iOS 26
             // can show the field both in the navigation bar and in the bottom toolbar above the tab bar.
             .searchable(text: self.$viewModel.query,
@@ -57,13 +63,19 @@ struct HomeView: View {
         }
         .environment(self.router)
         // One position is enough for "Near you": stop as soon as it arrives.
+        // On first launch wait for the guide language screen, so the location prompt doesn't cover it.
         .onAppear {
+            if !LanguageManager.shared.needsGuideLanguageChoice {
+                self.location.start()
+            }
+        }
+        .onChange(of: LanguageManager.shared.guideLanguage) {
             self.location.start()
         }
         .onDisappear {
             self.location.stop()
         }
-        .onChange(of: self.sync.dataVersion) {
+        .onChange(of: self.sync.revision) {
             self.viewModel.reload(location: self.location.location)
             self.viewModel.search()
         }
@@ -95,7 +107,7 @@ struct HomeView: View {
             .padding(.bottom, 32)
             .animation(Theme.spring, value: self.viewModel.country)
             .animation(Theme.spring, value: self.viewModel.hasLoadedNearby)
-            .animation(Theme.spring, value: self.recents.pages)
+            .animation(Theme.spring, value: self.recentPages)
         }
         .background(Theme.background)
     }
@@ -139,19 +151,19 @@ struct HomeView: View {
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HomeSectionHeader("Recently viewed", systemImage: "clock.fill") {
-                if !self.recents.pages.isEmpty {
+                if !self.recentPages.isEmpty {
                     Button("Clear") {
-                        self.recents.removeAll()
+                        self.recents.removeAll(in: self.sync.dataLanguage)
                     }
                     .font(.subheadline.weight(.semibold))
                 }
             }
 
             Group {
-                if self.recents.pages.isEmpty {
+                if self.recentPages.isEmpty {
                     RecentPagesEmptyCard()
                 } else {
-                    RecentPagesList(pages: Array(self.recents.pages.prefix(5)), transition: self.transition) { page in
+                    RecentPagesList(pages: Array(self.recentPages.prefix(5)), transition: self.transition) { page in
                         self.recents.remove(page)
                     }
                 }

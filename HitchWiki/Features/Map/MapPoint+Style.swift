@@ -51,11 +51,11 @@ extension MapPoint {
     /// "Hitchhiking spot · Warsaw", "Service station", "Place"...
     var subtitle: String {
         switch self.category {
-        case .spot: return "Hitchhiking spot · \(self.pageTitle)"
-        case .serviceStation: return "Service station"
-        case .country: return "Country"
-        case .region: return "Region"
-        case .place: return "Place"
+        case .spot: return String(localized: "Hitchhiking spot · \(self.pageTitle)", comment: "Map point subtitle; the page the spot is on")
+        case .serviceStation: return String(localized: "Service station", comment: "Kind of page")
+        case .country: return String(localized: "Country", comment: "Kind of page")
+        case .region: return String(localized: "Region", comment: "Kind of page")
+        case .place: return String(localized: "Place", comment: "Kind of page: a city, town or area")
         }
     }
 }

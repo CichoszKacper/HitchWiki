@@ -34,10 +34,10 @@ struct SectionCard: Identifiable, Hashable, Sendable {
         let parts = self.subsections.filter { $0.level == self.heading.level + 1 }.count
         var pieces = [String]()
         if parts > 0 {
-            pieces.append(parts == 1 ? "1 part" : "\(parts) parts")
+            pieces.append(String(localized: "\(parts) parts", comment: "Number of subsections in a page section"))
         }
         if self.spotCount > 0 {
-            pieces.append(self.spotCount == 1 ? "1 spot" : "\(self.spotCount) spots")
+            pieces.append(String(localized: "\(self.spotCount) spots", comment: "Number of hitchhiking spots"))
         }
         return pieces.isEmpty ? nil : pieces.joined(separator: " · ")
     }
@@ -77,6 +77,8 @@ struct MapFrame: Hashable, Sendable {
 
 struct PageContent: Sendable {
     let record: PageRecord
+    /// The Hitchwiki the page comes from.
+    let language: AppLanguage
     /// "City · Poland"
     let subtitle: String?
     /// Shown on the header when there is no map.
@@ -100,7 +102,7 @@ struct PageContent: Sendable {
         guard let encoded = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
             return nil
         }
-        return URL(string: "https://hitchwiki.org/en/\(encoded)")
+        return URL(string: self.language.wikiBaseURL.absoluteString + encoded)
     }
 }
 
@@ -108,21 +110,26 @@ struct PageContent: Sendable {
 
 extension PageContent {
     /// Infobox fields shown as chips, in this order.
-    private static let factStyles: [(field: String, label: String, systemImage: String)] = [
-        ("country", "Country", "globe.europe.africa.fill"),
-        ("state", "Region", "map.fill"),
-        ("capital", "Capital", "building.columns.fill"),
-        ("language", "Language", "character.bubble.fill"),
-        ("pop", "Population", "person.3.fill"),
-        ("currency", "Currency", "banknote.fill"),
-        ("plate", "Plates", "car.fill"),
-        ("motorways", "Motorways", "road.lanes"),
-        ("expressways", "Expressways", "road.lanes")
-    ]
+    private static var factStyles: [(field: String, label: String, systemImage: String)] {
+        [
+            ("country", String(localized: "Country", comment: "Infobox label"), "globe.europe.africa.fill"),
+            ("state", String(localized: "Region", comment: "Infobox label"), "map.fill"),
+            ("capital", String(localized: "Capital", comment: "Infobox label"), "building.columns.fill"),
+            ("language", String(localized: "Language", comment: "Infobox label"), "character.bubble.fill"),
+            ("pop", String(localized: "Population", comment: "Infobox label"), "person.3.fill"),
+            ("currency", String(localized: "Currency", comment: "Infobox label"), "banknote.fill"),
+            ("plate", String(localized: "Plates", comment: "Infobox label: car registration plates"), "car.fill"),
+            ("motorways", String(localized: "Motorways", comment: "Infobox label"), "road.lanes"),
+            ("expressways", String(localized: "Expressways", comment: "Infobox label"), "road.lanes")
+        ]
+    }
 
-    /// - Parameter resolve: turns a wiki link target into the title of a page we have, or nil.
-    init(record: PageRecord, resolve: (String) -> String?) {
+    /// - Parameters:
+    ///   - language: the Hitchwiki the record comes from.
+    ///   - resolve: turns a wiki link target into the title of a page we have, or nil.
+    init(record: PageRecord, language: AppLanguage = .english, resolve: (String) -> String?) {
         self.record = record
+        self.language = language
         self.subtitle = Self.subtitle(for: record)
         self.headerSymbol = Self.headerSymbol(for: record.infoboxType)
 
@@ -196,13 +203,13 @@ extension PageContent {
         case nil:
             kind = nil
         case "country"?:
-            kind = "Country"
+            kind = String(localized: "Country", comment: "Kind of page")
         case "servicestation"?:
-            kind = "Service station"
+            kind = String(localized: "Service station", comment: "Kind of page")
         case "district"?:
-            kind = "District"
+            kind = String(localized: "District", comment: "Kind of page")
         case let type? where type.contains("location"):
-            kind = "Place"
+            kind = String(localized: "Place", comment: "Kind of page: a city, town or area")
         case let type?:
             kind = type.capitalized
         }
@@ -224,26 +231,26 @@ extension PageContent {
         }
     }
 
-    /// An icon that matches common Hitchwiki headings.
+    /// An icon that matches common Hitchwiki headings (English and Polish wiki).
     static func symbol(forHeading heading: String) -> String {
         let heading = heading.lowercased()
         let rules: [(keywords: [String], symbol: String)] = [
-            (["hitchhiking out", "getting out", "leaving"], "arrow.up.forward.circle.fill"),
-            (["hitchhiking in", "getting in", "arriving", "into"], "arrow.down.forward.circle.fill"),
-            (["legal", "law"], "checkmark.shield.fill"),
-            (["safety", "danger", "warning"], "exclamationmark.shield.fill"),
-            (["tip"], "lightbulb.fill"),
-            (["camp", "sleep", "accommodation", "couch"], "tent.fill"),
-            (["experience", "stories", "story"], "quote.bubble.fill"),
-            (["border", "visa"], "signpost.right.fill"),
-            (["public transport", "transport", "bus", "train", "metro"], "tram.fill"),
-            (["food", "eat", "drink"], "fork.knife"),
-            (["language", "phrase"], "character.bubble.fill"),
-            (["motorway", "highway", "road", "autobahn"], "road.lanes"),
-            (["map", "spot"], "mappin.and.ellipse"),
-            (["history"], "clock.fill"),
-            (["see also", "external", "links"], "link"),
-            (["hitchhiking", "hitching"], "hand.thumbsup.fill")
+            (["hitchhiking out", "getting out", "leaving", "wyjazd", "wydostać", "wylot"], "arrow.up.forward.circle.fill"),
+            (["hitchhiking in", "getting in", "arriving", "into", "dojazd", "przyjazd", "wjazd"], "arrow.down.forward.circle.fill"),
+            (["legal", "law", "legaln", "prawo", "przepis"], "checkmark.shield.fill"),
+            (["safety", "danger", "warning", "bezpiecz", "niebezpie", "uwaga"], "exclamationmark.shield.fill"),
+            (["tip", "porad", "wskazów", "rady"], "lightbulb.fill"),
+            (["camp", "sleep", "accommodation", "couch", "nocleg", "spanie", "biwak"], "tent.fill"),
+            (["experience", "stories", "story", "doświadcz", "relacj"], "quote.bubble.fill"),
+            (["border", "visa", "granic", "wiza"], "signpost.right.fill"),
+            (["public transport", "transport", "bus", "train", "metro", "autobus", "pociąg", "tramwaj", "komunikacja"], "tram.fill"),
+            (["food", "eat", "drink", "jedzenie", "picie"], "fork.knife"),
+            (["language", "phrase", "język", "rozmówki"], "character.bubble.fill"),
+            (["motorway", "highway", "road", "autobahn", "autostrad", "drog"], "road.lanes"),
+            (["map", "spot", "mapa", "miejsc"], "mappin.and.ellipse"),
+            (["history", "histori"], "clock.fill"),
+            (["see also", "external", "links", "zobacz też", "linki"], "link"),
+            (["hitchhiking", "hitching", "autostop", "stop"], "hand.thumbsup.fill")
         ]
         return rules.first { rule in rule.keywords.contains { heading.contains($0) } }?.symbol ?? "text.alignleft"
     }

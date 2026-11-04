@@ -47,10 +47,10 @@ final class HomeViewModel {
     /// True once the nearby places have been looked up for a location (the list may still be empty).
     private(set) var hasLoadedNearby = false
 
-    /// Titles containing any of these are hidden (carried over from the old main menu).
+    /// Titles containing any of these are hidden (carried over from the old main menu, plus the Polish wiki's own pages).
     nonisolated static let stringsToExclude = ["Main Page", "MediaWiki", "User", "Template", "Hitch", "Category", "Top", "Help",
                                                "phrasebook", "Talk", "What to", "How to", "File:", "Encyclopedia", "Academy",
-                                               "Sign Up", "Portal:", "Resources"]
+                                               "Sign Up", "Portal:", "Resources", "Strona główna", "Autostopwiki"]
 
     private nonisolated static let nearbyCount = 8
 
@@ -196,12 +196,23 @@ final class HomeViewModel {
 // MARK: - Country display
 
 extension CountryOverview {
-    /// The flag emoji, from the two-letter code in the `hitch` field (England, Scotland and Wales have their own).
+    /// The flag emoji, from the two-letter code in the `hitch` field. England, Scotland and Wales have
+    /// their own flags (English wiki: by title; other languages: codes "gb-eng", "gb-sct", "gb-wls").
     var flag: String? {
+        let england = "\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}"
+        let scotland = "\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}"
+        let wales = "\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}"
         switch self.title {
-        case "England": return "\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}"
-        case "Scotland": return "\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}"
-        case "Wales": return "\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}"
+        case "England": return england
+        case "Scotland": return scotland
+        case "Wales": return wales
+        default: break
+        }
+        switch self.hitchField?.lowercased() {
+        case "gb-eng": return england
+        case "gb-sct": return scotland
+        case "gb-wls": return wales
+        case "gb-nir": return "\u{1F1EC}\u{1F1E7}"   // no emoji of its own: the UK flag
         default: break
         }
         guard var code = self.hitchField?.lowercased(), code.count == 2,
@@ -224,7 +235,7 @@ extension CountryOverview {
 
     /// "Very good", when the `hitch` field holds a rating rather than a country code.
     var hitchability: String? {
-        guard let value = self.hitchField, value.count > 2 else {
+        guard let value = self.hitchField, value.count > 2, !value.lowercased().hasPrefix("gb-") else {
             return nil
         }
         let cleaned = value

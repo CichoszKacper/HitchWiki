@@ -1,13 +1,17 @@
-# Rebuilds the app database from the latest Hitchwiki dump and publishes it for the app to download.
+# Rebuilds the app databases from the latest Hitchwiki dumps and publishes them for the app to download.
+# One database per guide language, built one after another:
+#   en  English (the app also bundles a copy). Dump, in order: the "dump_url" input, the repository
+#       variable HITCHWIKI_DUMP_URL, or a file uploaded to a release tagged "dump-source".
+#   pl  Polish (downloaded when the user picks it). Dump: the "dump_url_pl" input, the variable
+#       HITCHWIKI_DUMP_URL_PL, or https://dumps.hitchwiki.org/hitchwiki-current-pl.xml.gz
 #
 # Runs every Monday and can be started by hand (Actions tab -> Update Hitchwiki database -> Run workflow).
-# Free on public repositories. Where the dump comes from, in order:
-#   1. the "dump_url" input when started by hand
-#   2. the repository variable HITCHWIKI_DUMP_URL (Settings -> Secrets and variables -> Actions -> Variables)
-#   3. a file uploaded to a release tagged "dump-source" (upload the .xml / .xml.gz / .xml.bz2 / .7z there)
+# Free on public repositories.
 #
-# Output: release "database-latest" with manifest.json and hitchwiki-<version>.sqlite.deflate.
-# The app reads https://github.com/<owner>/<repo>/releases/download/database-latest/manifest.json on launch.
+# Output: release "database-latest" with
+#   manifest.json      + hitchwiki-<version>.sqlite.deflate      (English)
+#   manifest-pl.json   + hitchwiki-pl-<version>.sqlite.deflate   (Polish)
+# The app reads https://github.com/<owner>/<repo>/releases/download/database-latest/manifest[-pl].json
 
 name: Update Hitchwiki database
 
@@ -16,8 +20,17 @@ on:
     - cron: '17 3 * * 1'   # Mondays 03:17 UTC
   workflow_dispatch:
     inputs:
+      languages:
+        description: 'Which databases to build'
+        type: choice
+        options: [all, en, pl]
+        default: all
       dump_url:
-        description: 'Dump URL (overrides the HITCHWIKI_DUMP_URL variable)'
+        description: 'English dump URL (overrides the HITCHWIKI_DUMP_URL variable)'
+        required: false
+        default: ''
+      dump_url_pl:
+        description: 'Polish dump URL (overrides HITCHWIKI_DUMP_URL_PL and the default)'
         required: false
         default: ''
       force:
@@ -40,6 +53,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      # One at a time: both upload to the same release.
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        language: ${{ fromJSON(inputs.languages == 'en' && '["en"]' || inputs.languages == 'pl' && '["pl"]' || '["en","pl"]') }}
+    env:
+      LANGUAGE: ${{ matrix.language }}
+      # English keeps the original file names, so app versions without language support keep working.
+      SUFFIX: ${{ matrix.language != 'en' && format('-{0}', matrix.language) || '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -48,19 +71,25 @@ jobs:
           python-version: '3.12'
 
       - name: Install parser
-        run: pip install mwparserfromhell==0.7.2 mwxml==0.3.8
+        # babel: country names per language, for wikis without infoboxes (Polish)
+        run: pip install mwparserfromhell==0.7.2 mwxml==0.3.8 babel==2.16.0
 
       - name: Download dump
         id: dump
         env:
-          DUMP_URL: ${{ inputs.dump_url || vars.HITCHWIKI_DUMP_URL }}
+          DUMP_URL_EN: ${{ inputs.dump_url || vars.HITCHWIKI_DUMP_URL }}
+          DUMP_URL_PL: ${{ inputs.dump_url_pl || vars.HITCHWIKI_DUMP_URL_PL || 'https://dumps.hitchwiki.org/hitchwiki-current-pl.xml.gz' }}
         run: |
           set -euo pipefail
           mkdir -p work
+          if [ "$LANGUAGE" = "en" ]; then DUMP_URL="${DUMP_URL_EN}"; else DUMP_URL="${DUMP_URL_PL}"; fi
+          if [ -z "${DUMP_URL}" ] && [ "$LANGUAGE" != "en" ]; then
+            echo "::error::No dump URL for ${LANGUAGE}"; exit 1
+          fi
           if [ -n "${DUMP_URL}" ]; then
             echo "Downloading ${DUMP_URL}"
             curl -fL --retry 3 --retry-delay 10 \
-              -A "HitchWikiAppDatabaseBuilder/1.0 (+https://github.com/${GITHUB_REPOSITORY})" \
+              -A "HitchWiseDatabaseBuilder/1.0 (+https://github.com/${GITHUB_REPOSITORY})" \
               -o work/dump.download "${DUMP_URL}"
           else
             echo "No dump URL set: using the file uploaded to the dump-source release"
@@ -81,14 +110,17 @@ jobs:
             head -c 500 work/dump.xml
             exit 1
           fi
-          echo "Dump: $(du -h work/dump.xml | cut -f1)"
+          echo "Dump (${LANGUAGE}): $(du -h work/dump.xml | cut -f1)"
           echo "sha256=$(sha256sum work/dump.xml | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
       - name: Compare with the published database
         id: previous
         run: |
-          previous=$(gh release download "$RELEASE_TAG" --pattern manifest.json --output - 2>/dev/null \
-            | python3 -c "import json, sys; print(json.load(sys.stdin).get('source_sha256', ''))" || true)
+          gh release download "$RELEASE_TAG" --pattern "manifest${SUFFIX}.json" --output work/previous.json 2>/dev/null || echo '{}' > work/previous.json
+          previous=$(python3 -c "import json; print(json.load(open('work/previous.json')).get('source_sha256', ''))")
+          # Every build gets a higher version than the last one, so apps also pick up a rebuild of the same
+          # dump with an improved parser (published with "force").
+          echo "min_version=$(python3 -c "import json; print(int(json.load(open('work/previous.json')).get('version', 0)) + 1)")" >> "$GITHUB_OUTPUT"
           if [ "$previous" = "${{ steps.dump.outputs.sha256 }}" ] && [ "${{ inputs.force }}" != "true" ]; then
             echo "Dump unchanged since the last build: nothing to publish."
             echo "unchanged=true" >> "$GITHUB_OUTPUT"
@@ -99,9 +131,13 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/slim_dump.py work/dump.xml work/hitchwiki-latest.xml
-          python3 tools/extract.py work/hitchwiki-latest.xml work/output \
+          # Other languages borrow city positions from the English database bundled in the repo.
+          gazetteer=()
+          if [ "$LANGUAGE" != "en" ]; then gazetteer=(--gazetteer HitchWiki/hitchwiki.sqlite); fi
+          python3 tools/extract.py work/hitchwiki-latest.xml work/output --language "$LANGUAGE" "${gazetteer[@]}" \
+            --min-version "${{ steps.previous.outputs.min_version }}" \
             --app-db work/hitchwiki.sqlite --source-sha256 "${{ steps.dump.outputs.sha256 }}"
-          python3 tools/package_database.py work/hitchwiki.sqlite work/publish \
+          python3 tools/package_database.py work/hitchwiki.sqlite work/publish --language "$LANGUAGE" \
             --base-url "https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}"
 
       - name: Publish
@@ -110,16 +146,16 @@ jobs:
           set -euo pipefail
           if ! gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
             gh release create "$RELEASE_TAG" --title "Hitchwiki database" --latest=false \
-              --notes "Database the app downloads on launch. Rebuilt weekly from the Hitchwiki dump by .github/workflows/update-database.yml."
+              --notes "Databases the app downloads. Rebuilt weekly from the Hitchwiki dumps by .github/workflows/update-database.yml."
           fi
           database=$(basename work/publish/*.sqlite.deflate)
           # Database first, then the manifest that points at it, so the app never sees a manifest for a missing file.
           gh release upload "$RELEASE_TAG" "work/publish/${database}" --clobber
-          gh release upload "$RELEASE_TAG" work/publish/manifest.json --clobber
-          # Keep the new database and the previous one (for apps that fetched the old manifest moments ago);
-          # delete anything older. Names contain the version, so they sort oldest first.
+          gh release upload "$RELEASE_TAG" "work/publish/manifest${SUFFIX}.json" --clobber
+          # Keep this language's new database and the previous one (for apps that fetched the old manifest
+          # moments ago); delete anything older. Names contain the version, so they sort oldest first.
           gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' \
-            | { grep '\.sqlite\.deflate$' || true; } | { grep -v -Fx "${database}" || true; } \
+            | { grep -E "^hitchwiki${SUFFIX}-[0-9]+\.sqlite\.deflate$" || true; } | { grep -v -Fx "${database}" || true; } \
             | sort | head -n -1 \
             | while read -r old; do gh release delete-asset "$RELEASE_TAG" "$old" --yes; done
-          cat work/publish/manifest.json >> "$GITHUB_STEP_SUMMARY"
+          cat "work/publish/manifest${SUFFIX}.json" >> "$GITHUB_STEP_SUMMARY"
