@@ -75,7 +75,7 @@ struct MapTabView: View {
         .onDisappear {
             self.location.stop()
         }
-        .onChange(of: self.sync.dataVersion) {
+        .onChange(of: self.sync.revision) {
             Task {
                 await self.viewModel.reload(location: self.location.location)
             }

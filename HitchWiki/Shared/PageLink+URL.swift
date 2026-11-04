@@ -41,6 +41,6 @@ extension PageSpot {
     /// The heading the spot was written under, e.g. "Option 1, S8 onramp".
     var name: String {
         let name = self.sectionPath.components(separatedBy: " > ").last ?? ""
-        return name.isEmpty ? "Hitchhiking spot" : name
+        return name.isEmpty ? String(localized: "Hitchhiking spot") : name
     }
 }

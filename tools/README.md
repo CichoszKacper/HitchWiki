@@ -39,10 +39,28 @@ SELECT title FROM pages_fts WHERE pages_fts MATCH 'mitfahrbank';
 - ~4,900 of the ~5,900 `{{Coords}}` in articles are `0|0` placeholders on the wiki itself, so only ~870 spots have real coordinates.
 - Highway tables (`{{ramp}}`, `{{gas}}`, `{{good}}`) are kept as wikitext in `sections.wikitext`, not yet parsed into rows.
 
+## Languages
+
+The app has one database per guide language. English is bundled with the app; Polish is downloaded when the
+user picks it (first launch or Settings). Build a Polish one by hand with:
+
+```sh
+curl -L -o output/pl.xml.gz https://dumps.hitchwiki.org/hitchwiki-current-pl.xml.gz && gunzip -f output/pl.xml.gz
+python3 slim_dump.py output/pl.xml output/hitchwiki-latest-pl.xml
+.venv/bin/python extract.py output/hitchwiki-latest-pl.xml output/pl --language pl --app-db output/hitchwiki-pl.sqlite
+```
+
+`--language` is stored in the `meta` table; the app refuses a database whose language doesn't match the one it asked for.
+`extract.py` prints the most common infobox types at the end: the app recognises countries by `infobox_type = 'country'`,
+so check that line when adding a language.
+
 ## Automatic updates (GitHub Actions → app)
 
-`.github/workflows/update-database.yml` rebuilds the database every Monday (or on demand from the Actions tab)
-and publishes it to the release **`database-latest`**:
+`.github/workflows/update-database.yml` rebuilds the databases every Monday (or on demand from the Actions tab),
+English first, then Polish, and publishes them to the release **`database-latest`**
+(`manifest.json` + `hitchwiki-<version>.sqlite.deflate` for English, `manifest-pl.json` + `hitchwiki-pl-<version>.sqlite.deflate` for Polish).
+The Polish dump comes from https://dumps.hitchwiki.org/hitchwiki-current-pl.xml.gz unless the `dump_url_pl` input or the
+`HITCHWIKI_DUMP_URL_PL` variable says otherwise. For English:
 
 1. Downloads the dump from the `dump_url` input, else the `HITCHWIKI_DUMP_URL` repository variable,
    else the largest file uploaded to a release tagged **`dump-source`** (`.xml`, `.xml.gz`, `.xml.bz2` or `.7z`).
@@ -56,7 +74,7 @@ release and attach the dump, then run the workflow once by hand.
 The app (`Networking/DatabaseUpdater.swift`, `Shared/DatabaseSync.swift`) downloads `manifest.json` when it opens
 or returns to the foreground (at most every 30 minutes). If `version` is newer and `schema_version` matches
 `HitchwikiDatabase.supportedSchemaVersion`, it downloads the database in the background (not on Low Data Mode),
-checks it, swaps it in and shows a small "Syncing Hitchwiki data…" banner. Offline it silently keeps the data it has.
+checks it, swaps it in and shows a small "Updating the guide…" banner. Offline it silently keeps the data it has.
 
 **When you change the tables or columns the app reads**, bump `SCHEMA_VERSION` in `extract.py` and
 `supportedSchemaVersion` in `HitchwikiDatabase.swift` together, so older app versions don't download a database they can't read.

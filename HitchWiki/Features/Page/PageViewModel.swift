@@ -57,7 +57,8 @@ final class PageViewModel {
         // Open the first couple of sections; long pages stay easy to scan.
         self.expandedCards = Set(content.cards.prefix(2).map(\.id))
         // Shown under "Recently viewed" on the home screen.
-        RecentPages.shared.record(title: content.title, subtitle: content.subtitle, systemImage: content.headerSymbol)
+        RecentPages.shared.record(title: content.title, subtitle: content.subtitle, systemImage: content.headerSymbol,
+                                  language: content.language)
         withAnimation(Theme.spring) {
             self.state = .loaded(content)
         }
@@ -79,7 +80,7 @@ final class PageViewModel {
         guard let database, let record = try? database.page(titled: title) else {
             return nil
         }
-        return PageContent(record: record) { target in
+        return PageContent(record: record, language: database.language) { target in
             try? database.resolveTitle(target)
         }
     }

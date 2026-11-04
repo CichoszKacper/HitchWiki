@@ -71,7 +71,9 @@ struct SubsectionView: View {
                 // Wraps onto more lines when there are many spots
                 FlowLayout(spacing: 8, lineSpacing: 8) {
                     ForEach(Array(self.spots.enumerated()), id: \.element.id) { index, spot in
-                        SpotButton(title: self.spots.count == 1 ? "Show on map" : "Spot \(index + 1)") {
+                        SpotButton(title: self.spots.count == 1
+                                   ? String(localized: "Show on map")
+                                   : String(localized: "Spot \(index + 1)", comment: "Button showing the n-th hitchhiking spot on a map")) {
                             self.onShowSpot(spot)
                         }
                     }

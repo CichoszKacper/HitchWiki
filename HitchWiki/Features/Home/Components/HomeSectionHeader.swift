@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct HomeSectionHeader<Trailing: View>: View {
-    let title: String
+    let title: LocalizedStringKey
     let systemImage: String
     let trailing: Trailing
 
-    init(_ title: String, systemImage: String, @ViewBuilder trailing: () -> Trailing) {
+    init(_ title: LocalizedStringKey, systemImage: String, @ViewBuilder trailing: () -> Trailing) {
         self.title = title
         self.systemImage = systemImage
         self.trailing = trailing()
@@ -34,7 +34,7 @@ struct HomeSectionHeader<Trailing: View>: View {
 }
 
 extension HomeSectionHeader where Trailing == EmptyView {
-    init(_ title: String, systemImage: String) {
+    init(_ title: LocalizedStringKey, systemImage: String) {
         self.init(title, systemImage: systemImage) {
             EmptyView()
         }
@@ -62,9 +62,15 @@ struct LocationPromptCard: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
                 Button(action: self.onEnable) {
-                    Text(self.isDenied ? "Open Settings" : "Turn On Location")
-                        .font(.subheadline.weight(.semibold))
-                        .padding(.horizontal, 4)
+                    Group {
+                        if self.isDenied {
+                            Text("Open Settings")
+                        } else {
+                            Text("Turn On Location")
+                        }
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.horizontal, 4)
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)

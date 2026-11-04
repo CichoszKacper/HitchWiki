@@ -92,14 +92,14 @@ struct PageHeroHeader: View {
             Spacer(minLength: 0)
             if let onOpenMap = self.onOpenMap, self.mapFrame != nil {
                 Button(action: onOpenMap) {
-                    Label(self.spots.isEmpty ? "Map" : "\(self.spots.count)", systemImage: "map.fill")
+                    Label(self.spots.isEmpty ? String(localized: "Map") : self.spots.count.formatted(), systemImage: "map.fill")
                         .font(.subheadline.weight(.semibold))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
                         .background(.regularMaterial, in: .capsule)
                 }
                 .buttonStyle(.pressable)
-                .accessibilityLabel(self.spots.isEmpty ? "Open map" : "Open map with \(self.spots.count) spots")
+                .accessibilityLabel(self.spots.isEmpty ? Text("Open map") : Text("Open map with \(self.spots.count) spots"))
             }
         }
         .padding(.horizontal, 20)

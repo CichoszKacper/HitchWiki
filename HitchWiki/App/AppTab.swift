@@ -2,8 +2,8 @@
 //  AppTab.swift
 //  HitchWiki
 //
-//  The tabs in the bottom bar. Saved and Profile are placeholders for now:
-//  rename them / change their icons here.
+//  The tabs in the bottom bar. Saved is a placeholder for now:
+//  rename tabs / change their icons here.
 //
 
 import Foundation
@@ -12,16 +12,16 @@ enum AppTab: String, CaseIterable, Identifiable, Hashable {
     case home
     case map
     case saved
-    case profile
+    case settings
 
     var id: Self { self }
 
     var title: String {
         switch self {
-        case .home: return "Home"
-        case .map: return "Map"
-        case .saved: return "Saved"
-        case .profile: return "Profile"
+        case .home: return String(localized: "Home", comment: "Tab bar")
+        case .map: return String(localized: "Map", comment: "Tab bar")
+        case .saved: return String(localized: "Saved", comment: "Tab bar")
+        case .settings: return String(localized: "Settings", comment: "Tab bar")
         }
     }
 
@@ -30,7 +30,7 @@ enum AppTab: String, CaseIterable, Identifiable, Hashable {
         case .home: return "house.fill"
         case .map: return "map.fill"
         case .saved: return "bookmark.fill"
-        case .profile: return "person.crop.circle.fill"
+        case .settings: return "gearshape.fill"
         }
     }
 }

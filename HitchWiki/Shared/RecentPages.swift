@@ -3,7 +3,8 @@
 //  HitchWiki
 //
 //  The pages the user opened most recently, newest first, kept between launches.
-//  PageView records a page once it has loaded; the home screen lists them.
+//  PageView records a page once it has loaded; the home screen lists the ones from the
+//  guide language in use (a Polish page title means nothing in the English database).
 //
 
 import Foundation
@@ -16,8 +17,10 @@ struct RecentPage: Codable, Hashable, Identifiable, Sendable {
     /// SF Symbol matching the kind of page (country, city, service station...).
     let systemImage: String
     let viewedAt: Date
+    /// Guide language of the page; nil for entries saved before languages existed (English).
+    var language: AppLanguage? = nil
 
-    var id: String { self.title }
+    var id: String { "\((self.language ?? .english).rawValue)/\(self.title)" }
 }
 
 @MainActor
@@ -41,21 +44,28 @@ final class RecentPages {
         }
     }
 
+    /// The pages from the `language` guide, newest first.
+    func pages(in language: AppLanguage) -> [RecentPage] {
+        self.pages.filter { ($0.language ?? .english) == language }
+    }
+
     /// Moves the page to the top of the list.
-    func record(title: String, subtitle: String?, systemImage: String) {
-        var pages = self.pages.filter { $0.title != title }
-        pages.insert(RecentPage(title: title, subtitle: subtitle, systemImage: systemImage, viewedAt: .now), at: 0)
+    func record(title: String, subtitle: String?, systemImage: String, language: AppLanguage) {
+        let page = RecentPage(title: title, subtitle: subtitle, systemImage: systemImage, viewedAt: .now, language: language)
+        var pages = self.pages.filter { $0.id != page.id }
+        pages.insert(page, at: 0)
         self.pages = Array(pages.prefix(Self.limit))
         self.save()
     }
 
     func remove(_ page: RecentPage) {
-        self.pages.removeAll { $0.title == page.title }
+        self.pages.removeAll { $0.id == page.id }
         self.save()
     }
 
-    func removeAll() {
-        self.pages = []
+    /// Clears the list for one guide language.
+    func removeAll(in language: AppLanguage) {
+        self.pages.removeAll { ($0.language ?? .english) == language }
         self.save()
     }
 

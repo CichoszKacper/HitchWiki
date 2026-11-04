@@ -91,7 +91,7 @@ struct NearbyPlaceCard: View {
     private var badge: some View {
         let spots = self.place.summary?.spotCount ?? 0
         if spots > 0 {
-            Label(spots == 1 ? "1 spot" : "\(spots) spots", systemImage: "hand.thumbsup.fill")
+            Label(String(localized: "\(spots) spots", comment: "Number of hitchhiking spots"), systemImage: "hand.thumbsup.fill")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(Color.accentColor)
                 .padding(.horizontal, 9)

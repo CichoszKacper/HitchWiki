@@ -62,7 +62,10 @@ struct MapPointCard: View {
 
             HStack(spacing: 10) {
                 NavigationLink(value: PageRoute(title: self.point.pageTitle)) {
-                    Label(self.point.kind == .spot ? "Read about \(self.point.pageTitle)" : "Open page", systemImage: "book.fill")
+                    Label(self.point.kind == .spot
+                          ? String(localized: "Read about \(self.point.pageTitle)", comment: "Opens the page a hitchhiking spot is on")
+                          : String(localized: "Open page"),
+                          systemImage: "book.fill")
                         .lineLimit(1)
                         .frame(maxWidth: .infinity)
                 }

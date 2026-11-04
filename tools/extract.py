@@ -4,7 +4,7 @@
 Usage:
     python3 -m venv .venv && .venv/bin/pip install mwparserfromhell mwxml
     .venv/bin/python extract.py output/hitchwiki-latest.xml output/ [--app-db ../HitchWiki/hitchwiki.sqlite]
-                     [--version 202610311200] [--source-sha256 <hash of the dump>]
+                     [--version 202610311200] [--source-sha256 <hash of the dump>] [--language pl]
 
 Writes:
     output/pages.jsonl   one JSON object per article (ns 0), easy to grep / jq / load in pandas
@@ -19,6 +19,7 @@ _ap.add_argument('src'); _ap.add_argument('outdir')
 _ap.add_argument('--app-db', help='also write a slim copy (no raw wikitext) for bundling in the iOS app, e.g. ../HitchWiki/hitchwiki.sqlite')
 _ap.add_argument('--version', type=int, help='data version stored in the meta table (default: time of the newest edit in the dump as YYYYMMDDHHMM); the app updates to a higher one')
 _ap.add_argument('--source-sha256', default='', help='SHA-256 of the dump this was built from, stored in the meta table')
+_ap.add_argument('--language', default='en', help="which Hitchwiki the dump is from ('en', 'pl'), stored in the meta table; the app checks it")
 _args = _ap.parse_args()
 src, outdir = _args.src, _args.outdir
 MAP_RE = re.compile(r"""<map[^>]*?lat=['"]([-\d.]+)['"][^>]*?lng=['"]([-\d.]+)['"]""", re.I)
@@ -299,10 +300,14 @@ db.executemany('INSERT INTO meta VALUES(?,?)', [
     ('version', str(version)),
     ('generated_at', now.strftime('%Y-%m-%dT%H:%M:%SZ')),
     ('source_sha256', _args.source_sha256),
+    ('language', _args.language),
     ('pages', str(n)),
     ('spots', str(db.execute('SELECT COUNT(*) FROM spots').fetchone()[0])),
 ])
-print('version:', version, 'schema:', SCHEMA_VERSION)
+print('version:', version, 'schema:', SCHEMA_VERSION, 'language:', _args.language)
+# What the app keys on (infobox types such as 'country'), to spot a wiki that names its templates differently.
+for row in db.execute('SELECT infobox_type, COUNT(*) FROM pages GROUP BY 1 ORDER BY 2 DESC LIMIT 12'):
+    print('  infobox', row[0], row[1])
 db.executescript("CREATE INDEX i1 ON infobox_fields(page_id); CREATE INDEX i2 ON sections(page_id); "
                  "CREATE INDEX i3 ON spots(page_id); CREATE INDEX i4 ON links(target); CREATE INDEX i5 ON categories(name); CREATE INDEX i6 ON section_links(page_id);")
 db.commit(); db.execute('VACUUM'); db.close()

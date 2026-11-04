@@ -1,6 +1,6 @@
 //
 //  RootTabView.swift
-//  HitchWiki
+//  HitchWise
 //
 
 import SwiftUI
@@ -20,19 +20,26 @@ struct RootTabView: View {
             Tab(AppTab.saved.title, systemImage: AppTab.saved.systemImage, value: AppTab.saved) {
                 PlaceholderTabView(tab: .saved)
             }
-            Tab(AppTab.profile.title, systemImage: AppTab.profile.systemImage, value: AppTab.profile) {
-                PlaceholderTabView(tab: .profile)
+            Tab(AppTab.settings.title, systemImage: AppTab.settings.systemImage, value: AppTab.settings) {
+                SettingsView()
             }
         }
         .tint(Color.accentColor)
         .sensoryFeedback(.selection, trigger: self.selection)
-        // "Syncing Hitchwiki data…" while a new database downloads.
+        // "Updating the guide…" while a new database downloads.
         .overlay(alignment: .top) {
             if self.sync.showsBanner {
                 SyncBanner(phase: self.sync.phase)
                     .padding(.top, 4)
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
+        }
+        // First launch: pick the guide language (English bundled, Polish downloaded).
+        // Read here in body so the screen closes as soon as LanguageManager gets a guide language.
+        .fullScreenCover(isPresented: .constant(LanguageManager.shared.needsGuideLanguageChoice)) {
+            GuideLanguageOnboarding()
+                .environment(self.sync)
+                .interactiveDismissDisabled()
         }
     }
 }
