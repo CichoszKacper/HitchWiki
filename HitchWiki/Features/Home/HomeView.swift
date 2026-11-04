@@ -4,6 +4,7 @@
 //
 //  The home screen: the country the user is in, the closest cities, and the pages opened
 //  recently. Typing in the search field swaps all that for the matching pages.
+//  Tapping the Home tab always comes back here: search closed, pages popped, scrolled to the top.
 //  Every text is in Localizable.xcstrings (English + Polish).
 //
 
@@ -11,7 +12,11 @@ import SwiftUI
 import UIKit
 
 struct HomeView: View {
+    /// Changes every time the Home tab is tapped (RootTabView): go back to the start of the screen.
+    var returnToStartTrigger = 0
+
     @State private var viewModel = HomeViewModel()
+    @State private var scrollPosition = ScrollPosition(edge: .top)
     @State private var router = Router()
     @State private var location = LocationManager()
     @State private var isSearching = false
@@ -75,6 +80,9 @@ struct HomeView: View {
         .onDisappear {
             self.location.stop()
         }
+        .onChange(of: self.returnToStartTrigger) {
+            self.returnToStart()
+        }
         .onChange(of: self.sync.revision) {
             self.viewModel.reload(location: self.location.location)
             self.viewModel.search()
@@ -85,6 +93,18 @@ struct HomeView: View {
                 self.location.stop()
             }
         }
+    }
+
+    /// Closes the search (and the keyboard), leaves any open page and scrolls back to the top.
+    private func returnToStart() {
+        withAnimation(Theme.spring) {
+            self.isSearching = false
+            self.viewModel.query = ""
+            self.router.popToRoot()
+            self.scrollPosition.scrollTo(edge: .top)
+        }
+        // The search field can keep the keyboard up for a moment after isSearching turns false.
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
     // MARK: - Dashboard
@@ -109,6 +129,7 @@ struct HomeView: View {
             .animation(Theme.spring, value: self.viewModel.hasLoadedNearby)
             .animation(Theme.spring, value: self.recentPages)
         }
+        .scrollPosition(self.$scrollPosition)
         .background(Theme.background)
     }
 

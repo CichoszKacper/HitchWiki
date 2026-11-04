@@ -7,12 +7,14 @@ import SwiftUI
 
 struct RootTabView: View {
     @State private var selection: AppTab = .home
+    /// Goes up every time the Home tab is tapped, also when it's already selected.
+    @State private var homeTabTaps = 0
     @Environment(DatabaseSync.self) private var sync
 
     var body: some View {
-        TabView(selection: self.$selection) {
+        TabView(selection: self.tabSelection) {
             Tab(AppTab.home.title, systemImage: AppTab.home.systemImage, value: AppTab.home) {
-                HomeView()
+                HomeView(returnToStartTrigger: self.homeTabTaps)
             }
             Tab(AppTab.map.title, systemImage: AppTab.map.systemImage, value: AppTab.map) {
                 MapTabView()
@@ -41,6 +43,22 @@ struct RootTabView: View {
                 .environment(self.sync)
                 .interactiveDismissDisabled()
         }
+    }
+}
+
+extension RootTabView {
+    /// TabView sets the selection on every tap, even on the tab that's already showing,
+    /// which is how a tap on Home can take the home screen back to its start.
+    private var tabSelection: Binding<AppTab> {
+        Binding(
+            get: { self.selection },
+            set: { tab in
+                if tab == .home {
+                    self.homeTabTaps += 1
+                }
+                self.selection = tab
+            }
+        )
     }
 }
 
