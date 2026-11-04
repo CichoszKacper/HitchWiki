@@ -56,6 +56,8 @@ final class PageViewModel {
         }
         // Open the first couple of sections; long pages stay easy to scan.
         self.expandedCards = Set(content.cards.prefix(2).map(\.id))
+        // Shown under "Recently viewed" on the home screen.
+        RecentPages.shared.record(title: content.title, subtitle: content.subtitle, systemImage: content.headerSymbol)
         withAnimation(Theme.spring) {
             self.state = .loaded(content)
         }

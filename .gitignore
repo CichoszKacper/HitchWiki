@@ -1,18 +1,32 @@
+# ---------------------------------------------------------------
+# macOS
+# ---------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ---------------------------------------------------------------
 # Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
-
-## User settings
+# ---------------------------------------------------------------
+# Per-user window layout, breakpoints and scheme lists
 xcuserdata/
-
-## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
+*.xcuserstate
 *.xcscmblueprint
 *.xccheckout
 
-## compatibility with Xcode 3 and earlier (ignoring not required starting Xcode 4)
+# Build output
 build/
 DerivedData/
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
 *.moved-aside
+
+# Old Xcode per-user files
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -22,74 +36,54 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 
-## Obj-C/Swift specific
-*.hmap
-
-## App packaging
-*.ipa
-*.dSYM.zip
-*.dSYM
-
-## Playgrounds
+# Playgrounds
 timeline.xctimeline
 playground.xcworkspace
 
+# Backup copies of the project
+*.xcodeproj.zip
+
+# ---------------------------------------------------------------
 # Swift Package Manager
-#
-# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
-# Package.resolved
-# *.xcodeproj
-#
-# Xcode automatically generates this directory with a .xcworkspacedata file and xcuserdata
-# hence it is not needed unless you have added a package configuration file to your project
-# .swiftpm
-
+# (Package.resolved inside the .xcodeproj stays tracked, so everyone gets the same versions)
+# ---------------------------------------------------------------
 .build/
+.swiftpm/
 
-# CocoaPods
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
-# Pods/
-#
-# Add this line if you want to avoid checking in source code from the Xcode workspace
-# *.xcworkspace
-
-# Carthage
-#
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
-
-Carthage/Build/
-
-# Accio dependency management
-Dependencies/
-.accio/
-
+# ---------------------------------------------------------------
 # fastlane
-#
-# It is recommended to not store the screenshots in the git repo.
-# Instead, use fastlane to re-generate the screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
+# ---------------------------------------------------------------
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
-# Code Injection
-#
-# After new code Injection tools there's a generated folder /iOSInjectionProject
-# https://github.com/johnno1962/injectionforxcode
+# ---------------------------------------------------------------
+# Python (tools/)
+# ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
 
-iOSInjectionProject/
-
-# Hitchwiki dumps and generated data (too big for git; regenerate with tools/)
+# ---------------------------------------------------------------
+# Hitchwiki data
+# Dumps and intermediate files are too big for git; rebuild them with tools/.
+# HitchWiki/hitchwiki.sqlite is NOT ignored: the app bundles it.
+# ---------------------------------------------------------------
 HitchWiki/hitchwiki-full-en.xml
+HitchWiki/hitchwiki.json
+*.xml.bz2
+*.xml.gz
 tools/output/
 tools/.venv/
+
+# ---------------------------------------------------------------
+# Editors and local tool settings
+# ---------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*~
+.claude/settings.local.json

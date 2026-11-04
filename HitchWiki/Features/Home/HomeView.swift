@@ -2,11 +2,12 @@
 //  HomeView.swift
 //  HitchWiki
 //
-//  Plain home screen: the title, a search field, the places nearest to the user,
-//  and while searching the matching pages. The redesign of this screen comes later.
+//  The home screen: the country the user is in, the closest cities, and the pages opened
+//  recently. Typing in the search field swaps all that for the matching pages.
 //
 
 import SwiftUI
+import UIKit
 
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
@@ -14,7 +15,10 @@ struct HomeView: View {
     @State private var location = LocationManager()
     @State private var isSearching = false
     @Environment(DatabaseSync.self) private var sync
+    @Environment(\.openURL) private var openURL
     @Namespace private var transition
+
+    private var recents: RecentPages { .shared }
 
     private var showsAllResults: Bool {
         self.isSearching || !self.viewModel.query.isEmpty
@@ -22,52 +26,20 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack(path: self.$router.path) {
-            List {
-                if !self.viewModel.nearbyMatches.isEmpty {
-                    Section("Near you") {
-                        ForEach(self.viewModel.nearbyMatches) { place in
-                            NavigationLink(value: PageRoute(title: place.page.title, zoomsFromSource: true)) {
-                                HStack {
-                                    Label(place.page.title, systemImage: "location.fill")
-                                    Spacer()
-                                    Text(place.distance.formattedDistance)
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            .matchedTransitionSource(id: place.page.title, in: self.transition)
-                        }
-                    }
-                }
-
+            Group {
                 if self.showsAllResults {
-                    Section {
-                        ForEach(self.viewModel.otherMatches) { page in
-                            NavigationLink(value: PageRoute(title: page.title, zoomsFromSource: true)) {
-                                Text(page.title)
-                            }
-                            .matchedTransitionSource(id: page.title, in: self.transition)
-                        }
-                    } header: {
-                        if !self.viewModel.nearbyMatches.isEmpty {
-                            Text("All places")
-                        }
-                    }
+                    self.searchResults
                 } else {
-                    Section {
-                        Text("Search for a city or a country")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .overlay {
-                if self.showsAllResults && !self.viewModel.query.isEmpty
-                    && self.viewModel.nearbyMatches.isEmpty && self.viewModel.otherMatches.isEmpty {
-                    ContentUnavailableView.search(text: self.viewModel.query)
+                    self.dashboard
                 }
             }
             .navigationTitle("HitchWiki")
-            .searchable(text: self.$viewModel.query, isPresented: self.$isSearching, prompt: "Type a city or a country...")
+            // An explicit placement keeps a single search field under the title. Without it, iOS 26
+            // can show the field both in the navigation bar and in the bottom toolbar above the tab bar.
+            .searchable(text: self.$viewModel.query,
+                        isPresented: self.$isSearching,
+                        placement: .navigationBarDrawer(displayMode: .always),
+                        prompt: "Type a city or a country...")
             .onChange(of: self.viewModel.query) {
                 self.viewModel.search()
             }
@@ -75,9 +47,9 @@ struct HomeView: View {
                 self.viewModel.loadData()
             }
             .navigationDestination(for: PageRoute.self) { route in
-                if route.zoomsFromSource {
+                if let sourceID = route.sourceID {
                     PageView(title: route.title)
-                        .navigationTransition(.zoom(sourceID: route.title, in: self.transition))
+                        .navigationTransition(.zoom(sourceID: sourceID, in: self.transition))
                 } else {
                     PageView(title: route.title)
                 }
@@ -99,6 +71,134 @@ struct HomeView: View {
             if let newLocation {
                 self.viewModel.updateNearby(from: newLocation)
                 self.location.stop()
+            }
+        }
+    }
+
+    // MARK: - Dashboard
+
+    private var dashboard: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 30) {
+                if let country = self.viewModel.country {
+                    self.countryCard(country)
+                        .transition(.scale(scale: 0.95).combined(with: .opacity))
+                }
+
+                self.nearbySection
+                    .staggeredAppear(index: 1)
+
+                self.recentSection
+                    .staggeredAppear(index: 2)
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 32)
+            .animation(Theme.spring, value: self.viewModel.country)
+            .animation(Theme.spring, value: self.viewModel.hasLoadedNearby)
+            .animation(Theme.spring, value: self.recents.pages)
+        }
+        .background(Theme.background)
+    }
+
+    private func countryCard(_ country: CountryOverview) -> some View {
+        let sourceID = "country-\(country.title)"
+        return NavigationLink(value: PageRoute(title: country.title, sourceID: sourceID)) {
+            CountryCard(country: country)
+        }
+        .buttonStyle(PressableButtonStyle(scale: 0.98))
+        .matchedTransitionSource(id: sourceID, in: self.transition) { source in
+            source.clipShape(.rect(cornerRadius: Theme.cornerRadius + 4, style: .continuous))
+        }
+        .padding(.horizontal, Theme.screenPadding)
+    }
+
+    @ViewBuilder
+    private var nearbySection: some View {
+        if self.location.isDenied {
+            LocationPromptCard(isDenied: true) {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    self.openURL(url)
+                }
+            }
+            .padding(.horizontal, Theme.screenPadding)
+        } else if !self.viewModel.hasLoadedNearby {
+            VStack(alignment: .leading, spacing: 12) {
+                HomeSectionHeader("Near you", systemImage: "location.fill")
+                NearbyPlacesPlaceholder()
+            }
+            .transition(.opacity)
+        } else if !self.viewModel.nearby.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                HomeSectionHeader("Near you", systemImage: "location.fill")
+                NearbyPlacesRow(places: self.viewModel.nearby, transition: self.transition)
+            }
+            .transition(.opacity)
+        }
+    }
+
+    private var recentSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HomeSectionHeader("Recently viewed", systemImage: "clock.fill") {
+                if !self.recents.pages.isEmpty {
+                    Button("Clear") {
+                        self.recents.removeAll()
+                    }
+                    .font(.subheadline.weight(.semibold))
+                }
+            }
+
+            Group {
+                if self.recents.pages.isEmpty {
+                    RecentPagesEmptyCard()
+                } else {
+                    RecentPagesList(pages: Array(self.recents.pages.prefix(5)), transition: self.transition) { page in
+                        self.recents.remove(page)
+                    }
+                }
+            }
+            .padding(.horizontal, Theme.screenPadding)
+        }
+    }
+
+    // MARK: - Search
+
+    private var searchResults: some View {
+        List {
+            if !self.viewModel.nearbyMatches.isEmpty {
+                Section("Near you") {
+                    ForEach(self.viewModel.nearbyMatches) { place in
+                        let sourceID = "search-\(place.page.title)"
+                        NavigationLink(value: PageRoute(title: place.page.title, sourceID: sourceID)) {
+                            HStack {
+                                Label(place.page.title, systemImage: "location.fill")
+                                Spacer()
+                                Text(place.distance.formattedDistance)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .matchedTransitionSource(id: sourceID, in: self.transition)
+                    }
+                }
+            }
+
+            Section {
+                ForEach(self.viewModel.otherMatches) { page in
+                    let sourceID = "search-\(page.title)"
+                    NavigationLink(value: PageRoute(title: page.title, sourceID: sourceID)) {
+                        Text(page.title)
+                    }
+                    .matchedTransitionSource(id: sourceID, in: self.transition)
+                }
+            } header: {
+                if !self.viewModel.nearbyMatches.isEmpty {
+                    Text("All places")
+                }
+            }
+        }
+        .overlay {
+            if !self.viewModel.query.isEmpty && self.viewModel.nearbyMatches.isEmpty && self.viewModel.otherMatches.isEmpty {
+                ContentUnavailableView.search(text: self.viewModel.query)
             }
         }
     }

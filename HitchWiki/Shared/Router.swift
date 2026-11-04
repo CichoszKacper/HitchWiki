@@ -12,8 +12,9 @@ import Observation
 /// Opens a Hitchwiki page.
 struct PageRoute: Hashable {
     let title: String
-    /// Zoom from the row that was tapped (only rows in the home list are zoom sources).
-    var zoomsFromSource = false
+    /// The `matchedTransitionSource` id of the card or row that was tapped, to zoom from it.
+    /// Nil opens the page with the normal push.
+    var sourceID: String? = nil
 }
 
 @MainActor

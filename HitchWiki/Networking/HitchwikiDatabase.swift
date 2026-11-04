@@ -127,6 +127,34 @@ struct SpotDetails: Hashable, Sendable {
     let links: [PageLink]
 }
 
+/// What the home screen shows about a nearby place besides its title.
+struct PlaceSummary: Hashable, Sendable {
+    let id: Int64
+    let infoboxType: String?
+    /// "Poland", or the first "is in" entry when the page names no country.
+    let country: String?
+    /// The region or state, e.g. "Lesser Poland (Voivodeship)".
+    let region: String?
+    let spotCount: Int
+}
+
+/// A country page, summed up for the "You're in" card.
+struct CountryOverview: Hashable, Sendable {
+    let id: Int64
+    let title: String
+    /// The `hitch` infobox field: usually a two-letter country code ("pl", "uk"), sometimes a rating ("{{very good}}").
+    let hitchField: String?
+    let capital: String?
+    let language: String?
+    let currency: String?
+    /// The first paragraph of the page's hitchhiking section (or of its intro).
+    let summary: String?
+    /// Cities, areas and districts in the country.
+    let placeCount: Int
+    /// Hitchhiking spots on the country's page and its places' pages.
+    let spotCount: Int
+}
+
 enum DatabaseError: Error {
     case missingFile
     case cannotOpen(String)
@@ -415,6 +443,82 @@ final class HitchwikiDatabase: @unchecked Sendable {
         return MapPoint(kind: kind, rowID: Self.int(statement, 1), title: title, pageTitle: Self.text(statement, 3) ?? "",
                         infoboxType: Self.text(statement, 4),
                         latitude: Self.double(statement, 5) ?? 0, longitude: Self.double(statement, 6) ?? 0)
+    }
+
+    // MARK: - Home
+
+    /// Country, region and number of hitchhiking spots for each page id.
+    func placeSummaries(ids: [Int64]) throws -> [Int64: PlaceSummary] {
+        guard !ids.isEmpty else {
+            return [:]
+        }
+        let placeholders = Array(repeating: "?", count: ids.count).joined(separator: ", ")
+        let sql = """
+            SELECT p.id, p.infobox_type, p.country, p.is_in,
+                   (SELECT f.value FROM infobox_fields f WHERE f.page_id = p.id AND f.name = 'state' LIMIT 1),
+                   (SELECT COUNT(*) FROM spots s WHERE s.page_id = p.id)
+            FROM pages p WHERE p.id IN (\(placeholders))
+            """
+        let summaries = try self.query(sql, ids.map { $0 as Any }) { statement -> PlaceSummary in
+            let country = Self.cleanValue(Self.text(statement, 2)) ?? Self.stringArray(Self.text(statement, 3)).first
+            return PlaceSummary(id: Self.int(statement, 0), infoboxType: Self.text(statement, 1), country: country,
+                                region: Self.cleanValue(Self.text(statement, 4)), spotCount: Int(Self.int(statement, 5)))
+        }
+        return Dictionary(summaries.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    /// The country page called `name` (redirects followed, "USA" -> "United States of America"),
+    /// or nil if there is no such country page.
+    func countryOverview(named name: String) throws -> CountryOverview? {
+        guard let resolved = try self.resolveTitle(name),
+              let page = try self.query("SELECT id, title FROM pages WHERE title = ? COLLATE NOCASE AND infobox_type = 'country'",
+                                        [resolved], map: { (id: Self.int($0, 0), title: Self.text($0, 1) ?? "") }).first else {
+            return nil
+        }
+
+        var fields = [String: String]()
+        for field in try self.query("SELECT name, value FROM infobox_fields WHERE page_id = ? ORDER BY rowid", [page.id],
+                                    map: { (name: Self.text($0, 0) ?? "", value: Self.text($0, 1)) }) {
+            if fields[field.name.lowercased()] == nil, let value = Self.cleanValue(field.value) {
+                fields[field.name.lowercased()] = value
+            }
+        }
+
+        // The hitchhiking overview ("Hitchhiking", "Hitchhiking in Poland"), else the intro.
+        let sections = try self.query("SELECT level, title, text FROM sections WHERE page_id = ? AND text != '' ORDER BY idx", [page.id]) {
+            (level: Int(Self.int($0, 0)), title: (Self.text($0, 1) ?? "").lowercased(), text: Self.text($0, 2) ?? "")
+        }
+        let overview = sections.first { section in
+            section.level > 0 && (section.title.contains("hitchhiking") || section.title.contains("hitching"))
+                && !section.title.contains("legal")
+        } ?? sections.first { $0.level == 0 }
+        let summary = overview?.text
+            .components(separatedBy: "\n")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .first { !$0.isEmpty }
+
+        let inCountry = "(p.country = ?2 COLLATE NOCASE OR p.is_in LIKE ?3)"
+        let arguments: [Any] = [page.id, page.title, "%\"\(page.title)\"%"]
+        let placeCount = try self.query("""
+            SELECT COUNT(*) FROM pages p
+            WHERE p.id != ?1 AND COALESCE(p.infobox_type, '') NOT IN ('country', 'servicestation', 'region') AND \(inCountry)
+            """, arguments) { Int(Self.int($0, 0)) }.first ?? 0
+        let spotCount = try self.query("""
+            SELECT COUNT(*) FROM spots s JOIN pages p ON p.id = s.page_id WHERE p.id = ?1 OR \(inCountry)
+            """, arguments) { Int(Self.int($0, 0)) }.first ?? 0
+
+        return CountryOverview(id: page.id, title: page.title, hitchField: fields["hitch"], capital: fields["capital"],
+                               language: fields["language"], currency: fields["currency"], summary: summary,
+                               placeCount: placeCount, spotCount: spotCount)
+    }
+
+    /// Nil for empty and placeholder ("-", "?") infobox values.
+    private static func cleanValue(_ value: String?) -> String? {
+        guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !value.isEmpty, value != "-", value != "?" else {
+            return nil
+        }
+        return value
     }
 
     // MARK: - SQLite helpers
