@@ -31,3 +31,15 @@ extension View {
             .shadow(color: .black.opacity(0.06), radius: 14, x: 0, y: 6)
     }
 }
+
+extension View {
+    /// Liquid Glass on iOS 26 and later, a translucent material before that.
+    @ViewBuilder
+    func glassBackground(in shape: some Shape) -> some View {
+        if #available(iOS 26.0, *) {
+            self.glassEffect(.regular, in: shape)
+        } else {
+            self.background(.ultraThinMaterial, in: shape)
+        }
+    }
+}

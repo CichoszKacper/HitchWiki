@@ -3,12 +3,14 @@
 //  HitchWiki
 //
 //  A slowly drifting gradient. The same seed (e.g. a page title) always gets the same colours.
+//  Pass isAnimated: false for small or many copies (cards in a list) to keep scrolling smooth.
 //
 
 import SwiftUI
 
 struct AnimatedMeshBackground: View {
     let seed: String
+    var isAnimated = true
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private static let palettes: [[Color]] = [
@@ -19,9 +21,14 @@ struct AnimatedMeshBackground: View {
         [.purple, .indigo, .blue]       // dusk
     ]
 
+    /// The three colours used for `seed`, also handy for icons that should match a page's header.
+    static func palette(for seed: String) -> [Color] {
+        let hash = seed.unicodeScalars.reduce(0) { $0 &+ Int($1.value) }
+        return self.palettes[abs(hash) % self.palettes.count]
+    }
+
     private var colors: [Color] {
-        let hash = self.seed.unicodeScalars.reduce(0) { $0 &+ Int($1.value) }
-        let palette = Self.palettes[abs(hash) % Self.palettes.count]
+        let palette = Self.palette(for: self.seed)
         return [
             palette[0], palette[0], palette[1],
             palette[1], palette[1], palette[2],
@@ -30,7 +37,7 @@ struct AnimatedMeshBackground: View {
     }
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: self.reduceMotion)) { timeline in
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: self.reduceMotion || !self.isAnimated)) { timeline in
             let time = Float(timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 3600))
             let centerX: Float = 0.5 + 0.18 * sin(time * 0.5)
             let centerY: Float = 0.5 + 0.14 * cos(time * 0.4)
