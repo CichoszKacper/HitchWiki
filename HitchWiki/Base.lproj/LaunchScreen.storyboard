@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  HitchWise launch screen: the language screen's dusk gradient, a glass circle with a thumbs-up and the name.
-  Launch screens can't use user-defined runtime attributes (no layer.cornerRadius), so the circle is
-  the LaunchCircle image: white at 18% opacity, like the Circle in SplashView.
-  SplashView (Shared/Components/SplashView.swift) starts from exactly this layout and animates into the app,
+  HitchWise launch screen: the language screen's dusk gradient, the HitchWise mark (a hitchhiker's cardboard
+  sign with a thumbs-up sticker, two layered images from tools/brand/mark.py) and the name.
+  SplashView (Shared/Components/SplashView.swift) starts from exactly this layout and animates the two layers,
   so keep the sizes and offsets of both in step:
-    circle 112 x 112, centre 28 pt above the screen centre; thumbs-up 46 pt bold;
+    LaunchSign + LaunchThumb 210 x 210 pt, centre 56 pt above the screen centre;
     "HitchWise" system heavy 44 pt, centre 74 pt below the screen centre.
+  (Launch screens can't use runtime attributes or system symbols reliably: everything is plain images.)
 -->
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
@@ -29,19 +29,21 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <imageReference key="image" image="LaunchBackground"/>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="cir-Vw-001">
-                                <rect key="frame" x="151" y="364" width="112" height="112"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="sgn-Im-001">
+                                <rect key="frame" x="102" y="287" width="210" height="210"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="112" id="cir-Cw-001"/>
-                                    <constraint firstAttribute="height" constant="112" id="cir-Ch-001"/>
+                                    <constraint firstAttribute="width" constant="210" id="sgn-Cw-001"/>
+                                    <constraint firstAttribute="height" constant="210" id="sgn-Ch-001"/>
                                 </constraints>
-                                <imageReference key="image" image="LaunchCircle"/>
+                                <imageReference key="image" image="LaunchSign"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="thm-Im-001">
-                                <rect key="frame" x="181" y="394" width="52" height="52"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <imageReference key="image" image="hand.thumbsup.fill" catalog="system"/>
-                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="46" weight="bold"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="thm-Im-001">
+                                <rect key="frame" x="102" y="287" width="210" height="210"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="210" id="thm-Cw-001"/>
+                                    <constraint firstAttribute="height" constant="210" id="thm-Ch-001"/>
+                                </constraints>
+                                <imageReference key="image" image="LaunchThumb"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HitchWise" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ttl-Lb-001">
                                 <rect key="frame" x="97" y="495.5" width="220" height="53"/>
@@ -57,10 +59,10 @@
                             <constraint firstItem="bgI-mg-001" firstAttribute="bottom" secondItem="Ze5-6b-2t3" secondAttribute="bottom" id="bgI-Ct-002"/>
                             <constraint firstItem="bgI-mg-001" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="bgI-Ct-003"/>
                             <constraint firstItem="bgI-mg-001" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="bgI-Ct-004"/>
-                            <constraint firstItem="cir-Vw-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="cir-Ct-001"/>
-                            <constraint firstItem="cir-Vw-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-28" id="cir-Ct-002"/>
-                            <constraint firstItem="thm-Im-001" firstAttribute="centerX" secondItem="cir-Vw-001" secondAttribute="centerX" id="thm-Ct-001"/>
-                            <constraint firstItem="thm-Im-001" firstAttribute="centerY" secondItem="cir-Vw-001" secondAttribute="centerY" id="thm-Ct-002"/>
+                            <constraint firstItem="sgn-Im-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="sgn-Ct-001"/>
+                            <constraint firstItem="sgn-Im-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-56" id="sgn-Ct-002"/>
+                            <constraint firstItem="thm-Im-001" firstAttribute="centerX" secondItem="sgn-Im-001" secondAttribute="centerX" id="thm-Ct-001"/>
+                            <constraint firstItem="thm-Im-001" firstAttribute="centerY" secondItem="sgn-Im-001" secondAttribute="centerY" id="thm-Ct-002"/>
                             <constraint firstItem="ttl-Lb-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="ttl-Ct-001"/>
                             <constraint firstItem="ttl-Lb-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="74" id="ttl-Ct-002"/>
                         </constraints>
@@ -73,7 +75,7 @@
     </scenes>
     <resources>
         <image name="LaunchBackground" width="860" height="1864"/>
-        <image name="LaunchCircle" width="112" height="112"/>
-        <image name="hand.thumbsup.fill" catalog="system" width="128" height="122"/>
+        <image name="LaunchSign" width="210" height="210"/>
+        <image name="LaunchThumb" width="210" height="210"/>
     </resources>
 </document>

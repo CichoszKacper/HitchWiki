@@ -3,8 +3,9 @@
 //  HitchWise
 //
 //  Picks up where the launch screen (Base.lproj/LaunchScreen.storyboard) leaves off: it starts with
-//  exactly the same picture, gives the thumbs-up a little wave with a ring pulsing out of the circle,
-//  then grows and fades away to reveal the app. Keep the sizes and offsets in step with the storyboard.
+//  exactly the same picture, then the cardboard sign swings and the thumbs-up sticker pops and waves,
+//  and everything grows and fades away to reveal the app. Keep the sizes and offsets in step with the
+//  storyboard.
 //
 
 import SwiftUI
@@ -12,56 +13,60 @@ import SwiftUI
 struct SplashView: View {
     var onFinished: () -> Void
 
-    @State private var waveTrigger = 0
-    @State private var isPulsing = false
+    @State private var trigger = 0
     @State private var isLeaving = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Same layout as the storyboard: offsets from the centre of the whole screen.
-    private static let circleSize: CGFloat = 112
-    private static let circleOffset: CGFloat = -28
+    private static let markSize: CGFloat = 210
+    private static let markOffset: CGFloat = -56
     private static let titleOffset: CGFloat = 74
+    /// Where the layers turn, as a fraction of the 210 pt canvas (see tools/brand/mark.py):
+    /// the sign hangs from its tape, the thumb pivots on the wrist.
+    private static let signPivot = UnitPoint(x: 0.5, y: 0.37)
+    private static let thumbPivot = UnitPoint(x: 0.6, y: 0.76)
 
     var body: some View {
         ZStack {
-            // Ring pulsing out of the circle
-            Circle()
-                .stroke(.white.opacity(0.6), lineWidth: 2)
-                .frame(width: Self.circleSize, height: Self.circleSize)
-                .scaleEffect(self.isPulsing ? 1.9 : 1)
-                .opacity(self.isPulsing ? 0 : 1)
-                .offset(y: Self.circleOffset)
-
-            // The same image as on the launch screen, so the hand-off is seamless.
-            Image("LaunchCircle")
+            Image("LaunchSign")
                 .resizable()
-                .frame(width: Self.circleSize, height: Self.circleSize)
-                .offset(y: Self.circleOffset)
-
-            Image(systemName: "hand.thumbsup.fill")
-                .font(.system(size: 46, weight: .bold))
-                .foregroundStyle(.white)
-                .keyframeAnimator(initialValue: Wave(), trigger: self.waveTrigger) { content, wave in
-                    content
-                        .rotationEffect(.degrees(wave.angle), anchor: .bottom)
-                        .scaleEffect(wave.scale)
-                        .offset(y: wave.lift)
+                .frame(width: Self.markSize, height: Self.markSize)
+                .keyframeAnimator(initialValue: 0.0, trigger: self.trigger) { content, angle in
+                    content.rotationEffect(.degrees(angle), anchor: Self.signPivot)
                 } keyframes: { _ in
-                    KeyframeTrack(\.angle) {
-                        SpringKeyframe(-20, duration: 0.18)
-                        SpringKeyframe(12, duration: 0.18)
-                        SpringKeyframe(0, duration: 0.3)
+                    KeyframeTrack {
+                        SpringKeyframe(-6, duration: 0.22)
+                        SpringKeyframe(4, duration: 0.22)
+                        SpringKeyframe(0, duration: 0.35)
                     }
+                }
+                .offset(y: Self.markOffset)
+
+            Image("LaunchThumb")
+                .resizable()
+                .frame(width: Self.markSize, height: Self.markSize)
+                .keyframeAnimator(initialValue: Pop(), trigger: self.trigger) { content, pop in
+                    content
+                        .rotationEffect(.degrees(pop.angle), anchor: Self.thumbPivot)
+                        .scaleEffect(pop.scale, anchor: Self.thumbPivot)
+                        .offset(y: pop.lift)
+                } keyframes: { _ in
                     KeyframeTrack(\.scale) {
-                        SpringKeyframe(1.22, duration: 0.2)
+                        SpringKeyframe(1.14, duration: 0.2)
                         SpringKeyframe(1, duration: 0.45)
                     }
                     KeyframeTrack(\.lift) {
-                        SpringKeyframe(-10, duration: 0.2)
+                        SpringKeyframe(-14, duration: 0.2)
                         SpringKeyframe(0, duration: 0.45)
                     }
+                    KeyframeTrack(\.angle) {
+                        LinearKeyframe(0, duration: 0.08)
+                        SpringKeyframe(-12, duration: 0.16)
+                        SpringKeyframe(9, duration: 0.16)
+                        SpringKeyframe(0, duration: 0.3)
+                    }
                 }
-                .offset(y: Self.circleOffset)
+                .offset(y: Self.markOffset)
 
             Text(verbatim: "HitchWise")
                 .font(.system(size: 44, weight: .heavy))
@@ -94,11 +99,8 @@ struct SplashView: View {
             return
         }
         try? await Task.sleep(for: .milliseconds(120))
-        self.waveTrigger += 1
-        withAnimation(.easeOut(duration: 0.8)) {
-            self.isPulsing = true
-        }
-        try? await Task.sleep(for: .milliseconds(700))
+        self.trigger += 1
+        try? await Task.sleep(for: .milliseconds(800))
         withAnimation(.easeIn(duration: 0.32)) {
             self.isLeaving = true
         }
@@ -106,10 +108,10 @@ struct SplashView: View {
         self.onFinished()
     }
 
-    private struct Wave {
-        var angle: Double = 0
+    private struct Pop {
         var scale: Double = 1
         var lift: Double = 0
+        var angle: Double = 0
     }
 }
 

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 280 280"><defs>
+<linearGradient id="kraft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4CF97"/><stop offset="1" stop-color="#DCA463"/></linearGradient>
+<linearGradient id="skin" gradientUnits="userSpaceOnUse" x1="0" y1="25" x2="0" y2="185"><stop offset="0" stop-color="#FFC27C"/><stop offset="1" stop-color="#EE6A2C"/></linearGradient>
+<filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="9" stdDeviation="9" flood-color="#000" flood-opacity="0.32"/></filter>
+<filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.28"/></filter>
+</defs><g transform="rotate(-8 120 142)" filter="url(#sh)"><rect x="14" y="84" width="212" height="116" rx="12" fill="url(#kraft)"/><rect x="14" y="84" width="212" height="116" rx="12" fill="none" stroke="#B57E45" stroke-opacity="0.55" stroke-width="3"/><path d="M28 186 H212" stroke="#B57E45" stroke-opacity="0.25" stroke-width="2" stroke-dasharray="2 5"/><rect x="30" y="72" width="40" height="18" rx="3" fill="#fff" fill-opacity="0.8" transform="rotate(-14 50 81)"/></g></svg>

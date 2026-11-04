@@ -62,12 +62,17 @@ struct GuideLanguageOnboarding: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Image(systemName: "hand.thumbsup.fill")
-                .font(.system(size: 32, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 72, height: 72)
-                .glassBackground(in: .circle)
-                .accessibilityHidden(true)
+            // The HitchWise mark, as on the launch screen (the images have room for shadows around them).
+            ZStack {
+                Image("LaunchSign")
+                    .resizable()
+                Image("LaunchThumb")
+                    .resizable()
+            }
+            .frame(width: 130, height: 130)
+            .padding(.leading, -18)
+            .padding(.vertical, -14)
+            .accessibilityHidden(true)
             Text("Welcome to HitchWise")
                 .font(.system(size: 38, weight: .heavy, design: .rounded))
                 .foregroundStyle(.white)
