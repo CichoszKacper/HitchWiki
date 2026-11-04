@@ -6,6 +6,11 @@
 //  Points close together are grouped into bubbles (tap to zoom in); the row at the bottom
 //  shows what's nearest to the user.
 //
+//  Offline, Apple's map only has the tiles it cached earlier. Where it has none, MapKit can stop
+//  taking touches (seen after selecting and closing a marker fully zoomed in, in Airplane Mode),
+//  so an invisible polygon under the markers always gives it something to hit-test. Offline the
+//  map is also flat (3D terrain needs data too) and a capsule explains the missing background.
+//
 
 import SwiftUI
 import MapKit
@@ -16,9 +21,14 @@ struct MapTabView: View {
     @State private var router = Router()
     @Environment(DatabaseSync.self) private var sync
 
+    private var network: NetworkMonitor { .shared }
+
     var body: some View {
         NavigationStack(path: self.$router.path) {
             Map(position: self.$viewModel.position, selection: self.$viewModel.selectedID) {
+                // Keeps gestures working where MapKit has no tiles (offline). Fully transparent.
+                MapPolygon(coordinates: self.viewModel.touchArea)
+                    .foregroundStyle(.clear)
                 UserAnnotation()
                 ForEach(self.viewModel.clusters) { cluster in
                     Annotation("", coordinate: cluster.coordinate, anchor: .center) {
@@ -37,7 +47,7 @@ struct MapTabView: View {
                         .tag(point.id)
                 }
             }
-            .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
+            .mapStyle(.standard(elevation: self.network.isOnline ? .realistic : .flat, pointsOfInterest: .excludingAll))
             .mapControls {
                 MapUserLocationButton()
                 MapCompass()
@@ -61,6 +71,20 @@ struct MapTabView: View {
                 self.bottomPanel
                     .padding(.bottom, 8)
             }
+            .overlay(alignment: .top) {
+                if !self.network.isOnline {
+                    Label("Offline: the map only shows areas you've looked at before", systemImage: "wifi.slash")
+                        .font(.footnote.weight(.semibold))
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 9)
+                        .glassBackground(in: .capsule)
+                        .padding(.horizontal, 60)   // clear of the map controls
+                        .padding(.top, 4)
+                        .allowsHitTesting(false)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .animation(Theme.spring, value: self.network.isOnline)
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: PageRoute.self) { route in
                 PageView(title: route.title)

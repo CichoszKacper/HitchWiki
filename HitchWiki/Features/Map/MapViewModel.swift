@@ -83,7 +83,35 @@ final class MapViewModel {
     /// Call when the map stops moving.
     func regionChanged(_ region: MKCoordinateRegion) {
         self.region = region
+        self.touchArea = Self.makeTouchArea(around: region)
         self.recluster()
+    }
+
+    /// An invisible polygon three times the visible area (see MapTabView). Without network and cached
+    /// tiles MapKit has nothing under the finger and stops responding to gestures; this gives it a surface.
+    private(set) var touchArea = MapViewModel.makeTouchArea(around: MapViewModel.europe)
+
+    private static func makeTouchArea(around region: MKCoordinateRegion) -> [CLLocationCoordinate2D] {
+        let latitudeRadius = min(region.span.latitudeDelta * 1.5, 170)
+        let longitudeRadius = min(region.span.longitudeDelta * 1.5, 360)
+        let south = max(region.center.latitude - latitudeRadius, -85)
+        let north = min(region.center.latitude + latitudeRadius, 85)
+        var west = region.center.longitude - longitudeRadius
+        var east = region.center.longitude + longitudeRadius
+        if west < -180 || east > 180 {
+            // Across the date line: cover every longitude rather than wrap.
+            west = -180
+            east = 180
+        }
+        let middle = (west + east) / 2
+        return [
+            CLLocationCoordinate2D(latitude: north, longitude: west),
+            CLLocationCoordinate2D(latitude: north, longitude: middle),
+            CLLocationCoordinate2D(latitude: north, longitude: east),
+            CLLocationCoordinate2D(latitude: south, longitude: east),
+            CLLocationCoordinate2D(latitude: south, longitude: middle),
+            CLLocationCoordinate2D(latitude: south, longitude: west)
+        ]
     }
 
     func mapSizeChanged(_ size: CGSize) {

@@ -1133,6 +1133,17 @@
           }
         }
       }
+    },
+    "Offline: the map only shows areas you've looked at before" : {
+      "comment" : "Map tab, no internet connection",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline: mapa pokazuje tylko obszary oglądane wcześniej"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

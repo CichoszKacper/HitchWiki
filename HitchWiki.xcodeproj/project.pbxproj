@@ -61,6 +61,7 @@
 		4BDB13010000000000000006 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB13010000000000000005 /* SettingsView.swift */; };
 		4BDB13010000000000000008 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB13010000000000000007 /* Localizable.xcstrings */; };
 		4BDB1301000000000000000A /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB13010000000000000009 /* InfoPlist.xcstrings */; };
+		4BDB14010000000000000002 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB14010000000000000001 /* NetworkMonitor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -120,6 +121,7 @@
 		4BDB13010000000000000005 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4BDB13010000000000000007 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		4BDB13010000000000000009 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		4BDB14010000000000000001 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -276,6 +278,7 @@
 				4BDB0E01000000000000000D /* LocationManager.swift */,
 				4BDB0C010000000000000026 /* Theme.swift */,
 				4BDB0C010000000000000028 /* Router.swift */,
+				4BDB14010000000000000001 /* NetworkMonitor.swift */,
 				4BDB13010000000000000001 /* LanguageManager.swift */,
 				4BDB12010000000000000001 /* RecentPages.swift */,
 				4BDB11010000000000000003 /* DatabaseSync.swift */,
@@ -416,6 +419,7 @@
 				4BDB0C010000000000000007 /* RootTabView.swift in Sources */,
 				4BDB0C01000000000000000B /* HomeView.swift in Sources */,
 				4BDB0C01000000000000000D /* HomeViewModel.swift in Sources */,
+				4BDB14010000000000000002 /* NetworkMonitor.swift in Sources */,
 				4BDB13010000000000000002 /* LanguageManager.swift in Sources */,
 				4BDB13010000000000000004 /* GuideLanguageOnboarding.swift in Sources */,
 				4BDB13010000000000000006 /* SettingsView.swift in Sources */,
