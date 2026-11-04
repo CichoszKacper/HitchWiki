@@ -47,10 +47,10 @@ final class HomeViewModel {
     /// True once the nearby places have been looked up for a location (the list may still be empty).
     private(set) var hasLoadedNearby = false
 
-    /// Titles containing any of these are hidden (carried over from the old main menu).
+    /// Titles containing any of these are hidden (carried over from the old main menu, plus the Polish wiki's own pages).
     nonisolated static let stringsToExclude = ["Main Page", "MediaWiki", "User", "Template", "Hitch", "Category", "Top", "Help",
                                                "phrasebook", "Talk", "What to", "How to", "File:", "Encyclopedia", "Academy",
-                                               "Sign Up", "Portal:", "Resources"]
+                                               "Sign Up", "Portal:", "Resources", "Strona główna", "Autostopwiki"]
 
     private nonisolated static let nearbyCount = 8
 

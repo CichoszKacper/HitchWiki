@@ -20,6 +20,8 @@ _ap.add_argument('--app-db', help='also write a slim copy (no raw wikitext) for 
 _ap.add_argument('--version', type=int, help='data version stored in the meta table (default: time of the newest edit in the dump as YYYYMMDDHHMM); the app updates to a higher one')
 _ap.add_argument('--source-sha256', default='', help='SHA-256 of the dump this was built from, stored in the meta table')
 _ap.add_argument('--language', default='en', help="which Hitchwiki the dump is from ('en', 'pl'), stored in the meta table; the app checks it")
+_ap.add_argument('--gazetteer', help='an English hitchwiki.sqlite; pages of another language without coordinates borrow them '
+                                     'from the English page with the same title or a redirect to it (e.g. ../HitchWiki/hitchwiki.sqlite)')
 _args = _ap.parse_args()
 src, outdir = _args.src, _args.outdir
 MAP_RE = re.compile(r"""<map[^>]*?lat=['"]([-\d.]+)['"][^>]*?lng=['"]([-\d.]+)['"]""", re.I)
@@ -190,7 +192,7 @@ def parse_page(title, text):
                 ex = mwp.parse(expand(raw))
                 fields[k] = {'text': clean(ex), 'links': links_in(ex), 'raw': raw} if '[[' in str(ex) else clean(ex)
             page['infobox'] = {'type': n[len('infobox'):].strip() or 'generic', 'fields': fields}
-        elif n == 'isin':
+        elif n in ('isin', 'jestw'):   # {{JestW|Polska}} is the Polish wiki's {{IsIn}}
             page['is_in'] += [clean(p.value) for p in t.params if not p.showkey]
 
     for l in code.filter_wikilinks():
@@ -286,6 +288,99 @@ with open(os.path.join(outdir, 'pages.jsonl'), 'w', encoding='utf-8') as jl:
         db.executemany('INSERT INTO categories VALUES(?,?)', [(p.id, c) for c in d['categories']])
         n += 1
 db.execute("INSERT INTO pages_fts(pages_fts) VALUES('rebuild')")
+
+# ---------- wikis without infoboxes (e.g. Polish) ----------
+# The app finds countries by infobox_type = 'country', places near the user by their coordinates and a
+# place's country by pages.country. The Polish wiki has no infoboxes, so fill those in:
+#   country    a page titled like a country in this language (CLDR names via babel, "Polska", "Niemcy");
+#              its two-letter code goes into a `hitch` field, which the app turns into a flag
+#   location   any other page with coordinates
+#   lat/lng    from the English page with the same title (--gazetteer), else the middle of the page's spots
+#   country    by following IsIn/JestW upwards (Kraków -> małopolskie -> Polska)
+if _args.language != 'en':
+    try:
+        from babel import Locale
+        country_codes = {name.lower(): code.lower() for code, name in Locale(_args.language).territories.items()
+                         if len(code) == 2 and code.isalpha()}
+    except Exception as e:   # babel missing: no countries, everything else still works
+        print('babel unavailable, countries not detected:', e)
+        country_codes = {}
+
+    gazetteer = sqlite3.connect(_args.gazetteer) if _args.gazetteer else None
+    def english_position(title):
+        if gazetteer is None:
+            return None
+        row = gazetteer.execute("""
+            SELECT lat, lng FROM pages WHERE title = ?1 COLLATE NOCASE AND lat IS NOT NULL
+            UNION ALL
+            SELECT p.lat, p.lng FROM redirects r JOIN pages p ON p.title = r.target
+            WHERE r.title = ?1 COLLATE NOCASE AND p.lat IS NOT NULL LIMIT 1""", (title,)).fetchone()
+        return row
+
+    def english_country_code(title=None, code=None):
+        """The English page's country as a two-letter code (via its `hitch` field), or the position of
+        the English country page with `code`."""
+        if gazetteer is None:
+            return None
+        if code:
+            return gazetteer.execute("""SELECT p.lat, p.lng FROM infobox_fields f JOIN pages p ON p.id = f.page_id
+                                        WHERE f.name = 'hitch' AND lower(f.value) = ? AND p.lat IS NOT NULL LIMIT 1""",
+                                     ('uk' if code == 'gb' else code,)).fetchone()
+        row = gazetteer.execute("""
+            SELECT country FROM pages WHERE title = ?1 COLLATE NOCASE
+            UNION ALL
+            SELECT p.country FROM redirects r JOIN pages p ON p.title = r.target WHERE r.title = ?1 COLLATE NOCASE
+            LIMIT 1""", (title,)).fetchone()
+        if not row or not row[0]:
+            return None
+        found = gazetteer.execute("""SELECT lower(f.value) FROM pages p JOIN infobox_fields f ON f.page_id = p.id
+                                     WHERE p.title = ? COLLATE NOCASE AND f.name = 'hitch' LIMIT 1""", (row[0],)).fetchone()
+        return ('gb' if found[0] == 'uk' else found[0]) if found and len(found[0]) == 2 else None
+
+    rows = db.execute('SELECT id, title, is_in, lat, lng FROM pages WHERE infobox_type IS NULL').fetchall()
+    parents = {title: json.loads(is_in or '[]') for _, title, is_in, _, _ in rows}
+    countries = {}
+    for page_id, title, _, _, _ in rows:
+        code = country_codes.get(title.lower())
+        if code:
+            countries[title] = code
+            db.execute("UPDATE pages SET infobox_type = 'country', country = ? WHERE id = ?", (title, page_id))
+            db.execute('INSERT INTO infobox_fields VALUES(?,?,?,?)', (page_id, 'hitch', code, None))
+
+    def country_of(title, depth=0):
+        if title in countries:
+            return title
+        if depth > 4:
+            return None
+        for parent in parents.get(title, []):
+            found = country_of(resolve_link(parent) or parent, depth + 1)
+            if found:
+                return found
+        return None
+
+    country_by_code = {code: title for title, code in countries.items()}
+    located = borrowed = 0
+    for page_id, title, _, lat, lng in rows:
+        if lat is None:
+            position = english_country_code(code=countries[title]) if title in countries else english_position(title)
+            if position:
+                borrowed += 1
+            else:
+                spots = db.execute('SELECT lat, lng FROM spots WHERE page_id = ?', (page_id,)).fetchall()
+                position = (sum(s[0] for s in spots) / len(spots), sum(s[1] for s in spots) / len(spots)) if spots else None
+            if position:
+                db.execute('UPDATE pages SET lat = ?, lng = ? WHERE id = ?', (position[0], position[1], page_id))
+                lat = position[0]
+        if title in countries:
+            continue
+        # IsIn/JestW first, else the country of the English page with the same title
+        country = country_of(title) or country_by_code.get(english_country_code(title=title))
+        if country:
+            db.execute('UPDATE pages SET country = ? WHERE id = ?', (country, page_id))
+        if lat is not None:
+            located += 1
+            db.execute("UPDATE pages SET infobox_type = 'location' WHERE id = ?", (page_id,))
+    print(f'no-infobox wiki: {len(countries)} countries, {located} located places ({borrowed} positions from the gazetteer)')
 
 # Version info the app reads to decide whether a downloaded database is newer / compatible.
 # Bump SCHEMA_VERSION whenever tables or columns the app reads change (and the app's supportedSchemaVersion with it).

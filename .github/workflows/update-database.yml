@@ -71,7 +71,8 @@ jobs:
           python-version: '3.12'
 
       - name: Install parser
-        run: pip install mwparserfromhell==0.7.2 mwxml==0.3.8
+        # babel: country names per language, for wikis without infoboxes (Polish)
+        run: pip install mwparserfromhell==0.7.2 mwxml==0.3.8 babel==2.16.0
 
       - name: Download dump
         id: dump
@@ -127,7 +128,10 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/slim_dump.py work/dump.xml work/hitchwiki-latest.xml
-          python3 tools/extract.py work/hitchwiki-latest.xml work/output --language "$LANGUAGE" \
+          # Other languages borrow city positions from the English database bundled in the repo.
+          gazetteer=()
+          if [ "$LANGUAGE" != "en" ]; then gazetteer=(--gazetteer HitchWiki/hitchwiki.sqlite); fi
+          python3 tools/extract.py work/hitchwiki-latest.xml work/output --language "$LANGUAGE" "${gazetteer[@]}" \
             --app-db work/hitchwiki.sqlite --source-sha256 "${{ steps.dump.outputs.sha256 }}"
           python3 tools/package_database.py work/hitchwiki.sqlite work/publish --language "$LANGUAGE" \
             --base-url "https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}"

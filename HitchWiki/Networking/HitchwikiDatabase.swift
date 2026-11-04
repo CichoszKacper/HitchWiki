@@ -508,12 +508,12 @@ final class HitchwikiDatabase: @unchecked Sendable {
             }
         }
 
-        // The hitchhiking overview ("Hitchhiking", "Hitchhiking in Poland", "Autostop"), else the intro.
+        // The hitchhiking overview ("Hitchhiking", "Hitchhiking in Poland", "Ogólne informacje o stopowaniu"), else the intro.
         let sections = try self.query("SELECT level, title, text FROM sections WHERE page_id = ? AND text != '' ORDER BY idx", [page.id]) {
             (level: Int(Self.int($0, 0)), title: (Self.text($0, 1) ?? "").lowercased(), text: Self.text($0, 2) ?? "")
         }
         let overview = sections.first { section in
-            section.level > 0 && ["hitchhiking", "hitching", "autostop"].contains { section.title.contains($0) }
+            section.level > 0 && ["hitchhiking", "hitching", "autostop", "stopowa", "łapanie stopa"].contains { section.title.contains($0) }
                 && !["legal", "legaln", "prawo"].contains { section.title.contains($0) }
         } ?? sections.first { $0.level == 0 }
         let summary = overview?.text

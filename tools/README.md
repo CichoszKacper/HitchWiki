@@ -47,8 +47,16 @@ user picks it (first launch or Settings). Build a Polish one by hand with:
 ```sh
 curl -L -o output/pl.xml.gz https://dumps.hitchwiki.org/hitchwiki-current-pl.xml.gz && gunzip -f output/pl.xml.gz
 python3 slim_dump.py output/pl.xml output/hitchwiki-latest-pl.xml
-.venv/bin/python extract.py output/hitchwiki-latest-pl.xml output/pl --language pl --app-db output/hitchwiki-pl.sqlite
+.venv/bin/pip install babel
+.venv/bin/python extract.py output/hitchwiki-latest-pl.xml output/pl --language pl \
+    --gazetteer ../HitchWiki/hitchwiki.sqlite --app-db output/hitchwiki-pl.sqlite
 ```
+
+The Polish wiki has no infoboxes, so for languages other than English `extract.py` fills in what the app needs:
+pages titled like a country ("Polska", "Niemcy", names from CLDR via `babel`) become `country` pages with their flag code,
+other pages with a position become `location`s, positions come from the English page with the same title (`--gazetteer`)
+or the middle of the page's spots, and a place's country comes from `{{JestW}}`/`{{IsIn}}` or the English page.
+With the October 2026 dump that gives 67 countries and 282 places with a position out of 569 articles.
 
 `--language` is stored in the `meta` table; the app refuses a database whose language doesn't match the one it asked for.
 `extract.py` prints the most common infobox types at the end: the app recognises countries by `infobox_type = 'country'`,
