@@ -116,8 +116,11 @@ jobs:
       - name: Compare with the published database
         id: previous
         run: |
-          previous=$(gh release download "$RELEASE_TAG" --pattern "manifest${SUFFIX}.json" --output - 2>/dev/null \
-            | python3 -c "import json, sys; print(json.load(sys.stdin).get('source_sha256', ''))" || true)
+          gh release download "$RELEASE_TAG" --pattern "manifest${SUFFIX}.json" --output work/previous.json 2>/dev/null || echo '{}' > work/previous.json
+          previous=$(python3 -c "import json; print(json.load(open('work/previous.json')).get('source_sha256', ''))")
+          # Every build gets a higher version than the last one, so apps also pick up a rebuild of the same
+          # dump with an improved parser (published with "force").
+          echo "min_version=$(python3 -c "import json; print(int(json.load(open('work/previous.json')).get('version', 0)) + 1)")" >> "$GITHUB_OUTPUT"
           if [ "$previous" = "${{ steps.dump.outputs.sha256 }}" ] && [ "${{ inputs.force }}" != "true" ]; then
             echo "Dump unchanged since the last build: nothing to publish."
             echo "unchanged=true" >> "$GITHUB_OUTPUT"
@@ -132,6 +135,7 @@ jobs:
           gazetteer=()
           if [ "$LANGUAGE" != "en" ]; then gazetteer=(--gazetteer HitchWiki/hitchwiki.sqlite); fi
           python3 tools/extract.py work/hitchwiki-latest.xml work/output --language "$LANGUAGE" "${gazetteer[@]}" \
+            --min-version "${{ steps.previous.outputs.min_version }}" \
             --app-db work/hitchwiki.sqlite --source-sha256 "${{ steps.dump.outputs.sha256 }}"
           python3 tools/package_database.py work/hitchwiki.sqlite work/publish --language "$LANGUAGE" \
             --base-url "https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}"
