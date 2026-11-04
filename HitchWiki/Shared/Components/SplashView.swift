@@ -32,8 +32,9 @@ struct SplashView: View {
                 .opacity(self.isPulsing ? 0 : 1)
                 .offset(y: Self.circleOffset)
 
-            Circle()
-                .fill(.white.opacity(0.18))
+            // The same image as on the launch screen, so the hand-off is seamless.
+            Image("LaunchCircle")
+                .resizable()
                 .frame(width: Self.circleSize, height: Self.circleSize)
                 .offset(y: Self.circleOffset)
 
