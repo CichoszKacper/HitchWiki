@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HitchWise launch screen: the language screen's dusk gradient, a glass circle with a thumbs-up and the name.
+  SplashView (Shared/Components/SplashView.swift) starts from exactly this layout and animates into the app,
+  so keep the sizes and offsets of both in step:
+    circle 112 x 112, centre 28 pt above the screen centre; thumbs-up 46 pt bold;
+    "HitchWise" system heavy 44 pt, centre 74 pt below the screen centre.
+-->
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -16,20 +23,49 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HitchWiki" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cqr-2B-Hsb">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
-                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="45"/>
-                                <color key="textColor" red="0.58847770305595015" green="0.2189082169325362" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="bgI-mg-001">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <imageReference key="image" image="LaunchBackground"/>
+                            </imageView>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cir-Vw-001">
+                                <rect key="frame" x="151" y="364" width="112" height="112"/>
+                                <color key="backgroundColor" white="1" alpha="0.18000000000000002" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="112" id="cir-Cw-001"/>
+                                    <constraint firstAttribute="height" constant="112" id="cir-Ch-001"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="56"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="thm-Im-001">
+                                <rect key="frame" x="181" y="394" width="52" height="52"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <imageReference key="image" image="hand.thumbsup.fill" catalog="system"/>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="46" weight="bold"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HitchWise" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ttl-Lb-001">
+                                <rect key="frame" x="97" y="495.5" width="220" height="53"/>
+                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="44"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" systemColor="systemYellowColor"/>
+                        <color key="backgroundColor" red="0.20" green="0.20" blue="0.55" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="cqr-2B-Hsb" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="BJ4-Sf-rJ0"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="cqr-2B-Hsb" secondAttribute="trailing" id="CJU-lD-cyx"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="cqr-2B-Hsb" secondAttribute="bottom" id="Hva-mX-dLl"/>
-                            <constraint firstItem="cqr-2B-Hsb" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="jED-y6-CVc"/>
+                            <constraint firstItem="bgI-mg-001" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="bgI-Ct-001"/>
+                            <constraint firstItem="bgI-mg-001" firstAttribute="bottom" secondItem="Ze5-6b-2t3" secondAttribute="bottom" id="bgI-Ct-002"/>
+                            <constraint firstItem="bgI-mg-001" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="bgI-Ct-003"/>
+                            <constraint firstItem="bgI-mg-001" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="bgI-Ct-004"/>
+                            <constraint firstItem="cir-Vw-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="cir-Ct-001"/>
+                            <constraint firstItem="cir-Vw-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-28" id="cir-Ct-002"/>
+                            <constraint firstItem="thm-Im-001" firstAttribute="centerX" secondItem="cir-Vw-001" secondAttribute="centerX" id="thm-Ct-001"/>
+                            <constraint firstItem="thm-Im-001" firstAttribute="centerY" secondItem="cir-Vw-001" secondAttribute="centerY" id="thm-Ct-002"/>
+                            <constraint firstItem="ttl-Lb-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="ttl-Ct-001"/>
+                            <constraint firstItem="ttl-Lb-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="74" id="ttl-Ct-002"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -39,8 +75,7 @@
         </scene>
     </scenes>
     <resources>
-        <systemColor name="systemYellowColor">
-            <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
+        <image name="LaunchBackground" width="860" height="1864"/>
+        <image name="hand.thumbsup.fill" catalog="system" width="128" height="122"/>
     </resources>
 </document>

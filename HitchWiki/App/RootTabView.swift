@@ -6,6 +6,9 @@
 import SwiftUI
 
 struct RootTabView: View {
+    /// False while the splash animation plays, so the first-launch screen waits for it.
+    var isReadyForOnboarding = true
+
     @State private var selection: AppTab = .home
     /// Goes up every time the Home tab is tapped, also when it's already selected.
     @State private var homeTabTaps = 0
@@ -38,7 +41,7 @@ struct RootTabView: View {
         }
         // First launch: pick the guide language (English bundled, Polish downloaded).
         // Read here in body so the screen closes as soon as LanguageManager gets a guide language.
-        .fullScreenCover(isPresented: .constant(LanguageManager.shared.needsGuideLanguageChoice)) {
+        .fullScreenCover(isPresented: .constant(self.isReadyForOnboarding && LanguageManager.shared.needsGuideLanguageChoice)) {
             GuideLanguageOnboarding()
                 .environment(self.sync)
                 .interactiveDismissDisabled()

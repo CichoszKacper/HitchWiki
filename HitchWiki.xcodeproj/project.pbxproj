@@ -37,6 +37,7 @@
 		4BDB0C010000000000000034 /* PressableButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000033 /* PressableButtonStyle.swift */; };
 		4BDB0C010000000000000036 /* Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000035 /* Shimmer.swift */; };
 		4BDB0C010000000000000038 /* StaggeredAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000037 /* StaggeredAppear.swift */; };
+		4BDB15010000000000000002 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB15010000000000000001 /* SplashView.swift */; };
 		4BDB0C01000000000000003A /* AnimatedMeshBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */; };
 		4BDB0D010000000000000002 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0D010000000000000001 /* FlowLayout.swift */; };
 		4BDB0E010000000000000003 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000002 /* MapTabView.swift */; };
@@ -96,6 +97,7 @@
 		4BDB0C010000000000000033 /* PressableButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PressableButtonStyle.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000035 /* Shimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmer.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000037 /* StaggeredAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaggeredAppear.swift; sourceTree = "<group>"; };
+		4BDB15010000000000000001 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedMeshBackground.swift; sourceTree = "<group>"; };
 		4BDB0D010000000000000001 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		4BDB0E010000000000000002 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 				4BDB0C010000000000000033 /* PressableButtonStyle.swift */,
 				4BDB0C010000000000000035 /* Shimmer.swift */,
 				4BDB0C010000000000000037 /* StaggeredAppear.swift */,
+				4BDB15010000000000000001 /* SplashView.swift */,
 				4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */,
 			);
 			path = Components;
@@ -447,6 +450,7 @@
 				4BDB0C010000000000000034 /* PressableButtonStyle.swift in Sources */,
 				4BDB0C010000000000000036 /* Shimmer.swift in Sources */,
 				4BDB0C010000000000000038 /* StaggeredAppear.swift in Sources */,
+				4BDB15010000000000000002 /* SplashView.swift in Sources */,
 				4BDB0C01000000000000003A /* AnimatedMeshBackground.swift in Sources */,
 				4BDB0A012F2E000000000001 /* HitchwikiDatabase.swift in Sources */,
 				4BDB11010000000000000002 /* DatabaseUpdater.swift in Sources */,
