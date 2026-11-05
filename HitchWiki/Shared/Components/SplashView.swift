@@ -23,7 +23,7 @@ struct SplashView: View {
     private static let titleOffset: CGFloat = 74
     /// Where the layers turn, as a fraction of the 210 pt canvas (see tools/brand/mark.py):
     /// the sign hangs from its tape, the thumb pivots on the wrist.
-    nonisolated private static let signPivot = UnitPoint(x: 0.5, y: 0.37)
+    nonisolated private static let signPivot = UnitPoint(x: 0.5, y: 0.33)
     nonisolated private static let thumbPivot = UnitPoint(x: 0.6, y: 0.76)
 
     var body: some View {

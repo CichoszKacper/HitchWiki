@@ -5,57 +5,58 @@
 #   python3 mark.py                      -> launch-sign.svg, launch-thumb.svg
 #   render each at 210, 420 and 630 px with a transparent background (any SVG renderer, e.g. a
 #   headless browser) into HitchWiki/Assets.xcassets/LaunchSign|LaunchThumb.imageset
-THUMB = "M86 106 C78 84 80 56 92 33 C99 20 119 20 122 35 C125 56 119 76 121 96 Z"
-PARTS = [
-    ('rect', dict(x=64, y=96, width=62, height=86, rx=16)),
-    ('rect', dict(x=96, y=96, width=70, height=24, rx=12)),
-    ('rect', dict(x=100, y=117, width=68, height=23, rx=11.5)),
-    ('rect', dict(x=100, y=137, width=64, height=23, rx=11.5)),
-    ('rect', dict(x=98, y=157, width=56, height=23, rx=11.5)),
-]
+
 def el(kind, attrs, extra=''):
     a = ' '.join(f'{k.replace("_","-")}="{v}"' for k, v in attrs.items())
     return f'<{kind} {a} {extra}/>'
-def hand(fill, sleeve, outline='#fff', outline_w=16, creases='#C9531E', nail=True):
-    parts = [('path', dict(d=THUMB))] + PARTS
-    out = []
-    if outline:
-        out.append(f'<g stroke="{outline}" stroke-width="{outline_w}" stroke-linejoin="round" fill="{outline}">')
-        out.append(el('rect', dict(x=34, y=96, width=34, height=86, rx=9)))
-        out += [el(k, a) for k, a in parts]
-        out.append('</g>')
-    out.append(el('rect', dict(x=34, y=96, width=34, height=86, rx=9), f'fill="{sleeve}"'))
-    out.append(f'<g fill="{fill}">' + ''.join(el(k, a) for k, a in parts) + '</g>')
-    out.append(f'<g stroke="{creases}" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round" fill="none">'
-               '<path d="M118 118.5 H160"/><path d="M118 138.5 H158"/><path d="M116 158.5 H150"/></g>')
-    if nail:
-        out.append('<path d="M97 44 C99 34 112 32 115 42 L114 54 C109 51 102 51 97 54 Z" fill="#fff" fill-opacity="0.35"/>')
-    return ''.join(out)
+
+# --- The hand (200-unit canvas): sleeve on the left, fingers curled to the right, a short broad thumb with a nail.
+SLEEVE = dict(x=34, y=104, width=30, height=78, rx=8)
+FIST = [
+    ('rect', dict(x=60, y=100, width=62, height=82, rx=16)),
+    ('rect', dict(x=92, y=100, width=66, height=22, rx=11)),
+    ('rect', dict(x=96, y=120, width=66, height=21, rx=10.5)),
+    ('rect', dict(x=96, y=139, width=62, height=21, rx=10.5)),
+    ('rect', dict(x=94, y=158, width=54, height=22, rx=11)),
+]
+THUMB = 'M64 106 C58 92 62 74 74 64 C84 55 104 56 108 68 C111 78 104 88 108 102 Z'
+NAIL = 'M84 63 C90 58 101 59 104 66 C105 71 99 73 93 72 C87 71 83 68 84 63 Z'
+
+def hand():
+    parts = [('path', dict(d=THUMB))] + FIST
+    return ''.join([
+        # white die-cut sticker edge: every part stroked thick, fills drawn over it
+        '<g stroke="#fff" stroke-width="14" stroke-linejoin="round" fill="#fff">',
+        el('rect', SLEEVE), *[el(k, a) for k, a in parts], '</g>',
+        el('rect', SLEEVE, 'fill="#2E3192"'),
+        '<g fill="url(#skin)">' + ''.join(el(k, a) for k, a in parts) + '</g>',
+        '<g stroke="#C9531E" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round" fill="none">'
+        '<path d="M114 121 H156"/><path d="M114 140 H154"/><path d="M112 159 H146"/>'
+        '<path d="M72 104 C80 98 92 97 100 100"/></g>',
+        f'<path d="{NAIL}" fill="#FFE2C4" fill-opacity="0.9" stroke="#E07A3F" stroke-opacity="0.5" stroke-width="1.5"/>',
+    ])
 
 DEFS = '''<defs>
 <linearGradient id="kraft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4CF97"/><stop offset="1" stop-color="#DCA463"/></linearGradient>
-<linearGradient id="skin" gradientUnits="userSpaceOnUse" x1="0" y1="25" x2="0" y2="185"><stop offset="0" stop-color="#FFC27C"/><stop offset="1" stop-color="#EE6A2C"/></linearGradient>
+<linearGradient id="skin" gradientUnits="userSpaceOnUse" x1="0" y1="50" x2="0" y2="185"><stop offset="0" stop-color="#FFC27C"/><stop offset="1" stop-color="#EE6A2C"/></linearGradient>
 <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="9" stdDeviation="9" flood-color="#000" flood-opacity="0.32"/></filter>
 <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.28"/></filter>
 </defs>'''
 
-def sign(x, y, w, h, angle, cx, cy, extra=''):
-    return (f'<g transform="rotate({angle} {cx} {cy})" filter="url(#sh)">'
+def sign():
+    x, y, w, h = 14, 70, 212, 128
+    return (f'<g transform="rotate(-8 120 134)" filter="url(#sh)">'
             f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" fill="url(#kraft)"/>'
             f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" fill="none" stroke="#B57E45" stroke-opacity="0.55" stroke-width="3"/>'
-            # cardboard corrugation hint
             f'<path d="M{x+14} {y+h-14} H{x+w-14}" stroke="#B57E45" stroke-opacity="0.25" stroke-width="2" stroke-dasharray="2 5"/>'
-            f'{extra}</g>')
-
-def svg(body):
-    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">{DEFS}{body}</svg>'
+            '<rect x="30" y="58" width="40" height="18" rx="3" fill="#fff" fill-opacity="0.8" transform="rotate(-14 50 67)"/>'
+            '</g>')
 
 def layer(body):
     # 20-unit margin all round so the shadows aren't cut off
     return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 280 280">{DEFS}{body}</svg>'
 
-sign_layer = layer(sign(14, 84, 212, 116, -8, 120, 142,
-                        '<rect x="30" y="72" width="40" height="18" rx="3" fill="#fff" fill-opacity="0.8" transform="rotate(-14 50 81)"/>'))
-thumb_layer = layer(f'<g transform="translate(50 6) scale(1.02) rotate(8 100 110)" filter="url(#sh2)">{hand("url(#skin)", "#2E3192")}</g>')
-open('launch-sign.svg', 'w').write(sign_layer)
-open('launch-thumb.svg', 'w').write(thumb_layer)
+open('launch-sign.svg', 'w').write(layer(sign()))
+# The thumb sits on the right half of the sign and only just peeks over its top edge.
+open('launch-thumb.svg', 'w').write(layer(
+    f'<g transform="translate(66 26) scale(0.86) rotate(6 100 120)" filter="url(#sh2)">{hand()}</g>'))
