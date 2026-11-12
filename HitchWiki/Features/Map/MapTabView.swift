@@ -2,9 +2,10 @@
 //  MapTabView.swift
 //  HitchWiki
 //
-//  Every Hitchwiki page with coordinates and every hitchhiking spot on one map.
-//  Points close together are grouped into bubbles (tap to zoom in); the row at the bottom
-//  shows what's nearest to the user.
+//  Every Hitchwiki page with coordinates and every hitchhiking spot on one map: the spots written in the guide
+//  and the ~47,000 where people logged rides (coloured by rating). Points close together are grouped into
+//  bubbles (tap to zoom in); the row at the bottom shows what's nearest to the user. The data's credit
+//  stays visible at the top, as its licence asks.
 //
 
 import SwiftUI
@@ -25,7 +26,7 @@ struct MapTabView: View {
                         Button {
                             self.viewModel.zoom(into: cluster)
                         } label: {
-                            ClusterBubble(count: cluster.count, tint: cluster.representative.tint)
+                            ClusterBubble(count: cluster.count, tint: cluster.representative.clusterTint)
                         }
                         .buttonStyle(.pressable)
                     }
@@ -34,6 +35,8 @@ struct MapTabView: View {
                 ForEach(self.viewModel.singles) { point in
                     Marker(point.title, systemImage: point.systemImage, coordinate: point.coordinate)
                         .tint(point.tint)
+                        // Every ride spot is called "Hitchhiking spot": the colour says more than the title.
+                        .annotationTitles(point.kind == .rideSpot ? .hidden : .automatic)
                         .tag(point.id)
                 }
             }
@@ -56,6 +59,12 @@ struct MapTabView: View {
             }
             .onChange(of: self.viewModel.selectedID) {
                 self.viewModel.selectionChanged()
+            }
+            .overlay(alignment: .topLeading) {
+                MapAttribution()
+                    .padding(.leading, Theme.screenPadding)
+                    .padding(.top, 4)
+                    .padding(.trailing, 64)   // clear of the map's buttons
             }
             .safeAreaInset(edge: .bottom) {
                 self.bottomPanel
@@ -94,6 +103,8 @@ struct MapTabView: View {
         if let point = self.viewModel.selectedPoint {
             MapPointCard(point: point, distance: self.viewModel.distance(to: point),
                          spotDetails: self.viewModel.selectedSpotDetails,
+                         rideSpotDetails: self.viewModel.selectedRideSpotDetails,
+                         rideSpotPlace: self.viewModel.selectedRideSpotPlace,
                          isLoadingSpotDetails: self.viewModel.isLoadingSpotDetails) {
                 self.viewModel.clearSelection()
             }

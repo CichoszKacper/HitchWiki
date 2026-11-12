@@ -59,9 +59,10 @@ private struct NearbyCard: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
-                Text(self.item.distance.formattedDistance)
+                Text(self.detail)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
         }
         .padding(.vertical, 12)
@@ -70,5 +71,14 @@ private struct NearbyCard: View {
         .frame(width: 230, alignment: .leading)
         .background(.regularMaterial, in: .rect(cornerRadius: Theme.smallCornerRadius, style: .continuous))
         .shadow(color: .black.opacity(0.1), radius: 12, y: 6)
+    }
+
+    /// "350 m", or for a ride spot "350 m · ★ 4.3".
+    private var detail: String {
+        let distance = self.item.distance.formattedDistance
+        guard self.item.point.kind == .rideSpot, let rating = self.item.point.rating else {
+            return distance
+        }
+        return "\(distance) · ★ \(rating.formatted(.number.precision(.fractionLength(1))))"
     }
 }

@@ -90,23 +90,31 @@ struct PageRecord: Hashable, Sendable {
     }
 }
 
-/// Something with coordinates to show on the map: a page (city, service station, country...) or a hitchhiking spot.
+/// Something with coordinates to show on the map: a page (city, service station, country...),
+/// a hitchhiking spot from a wiki page, or a spot where people logged rides (SpotsDatabase).
 struct MapPoint: Identifiable, Hashable, Sendable {
     enum Kind: String, Sendable {
         case page
+        /// A {{Coords}} on a wiki page.
         case spot
+        /// A spot from the rides dataset (hitchspots.sqlite).
+        case rideSpot = "ride"
     }
 
     let kind: Kind
-    /// Page id or spot row id.
+    /// Page id, spot row id, or for a ride spot its id in hitchspots.sqlite.
     let rowID: Int64
-    /// Page title, or for a spot the heading it was written under.
+    /// Page title, for a spot the heading it was written under, for a ride spot "Hitchhiking spot".
     let title: String
-    /// The page this point belongs to (the page itself, or the page the spot is on).
+    /// The page this point belongs to (the page itself, or the page the spot is on). Empty for ride spots.
     let pageTitle: String
     let infoboxType: String?
     let latitude: Double
     let longitude: Double
+    /// Ride spots: average rating, 1 (senseless) to 5 (very good).
+    var rating: Double? = nil
+    /// Ride spots: number of rides logged there.
+    var rideCount = 0
 
     var id: String { "\(self.kind.rawValue)-\(self.rowID)" }
 

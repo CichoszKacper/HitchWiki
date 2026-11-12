@@ -1,9 +1,13 @@
-# Rebuilds the app databases from the latest Hitchwiki dumps and publishes them for the app to download.
-# One database per guide language, built one after another:
+# Rebuilds the app databases from the latest Hitchwiki dumps and the Hitchhiking Rides Dataset and publishes
+# them for the app to download. One database per guide language, built one after another:
 #   en  English (the app also bundles a copy). Dump, in order: the "dump_url" input, the repository
 #       variable HITCHWIKI_DUMP_URL, or a file uploaded to a release tagged "dump-source".
 #   pl  Polish (downloaded when the user picks it). Dump: the "dump_url_pl" input, the variable
 #       HITCHWIKI_DUMP_URL_PL, or https://dumps.hitchwiki.org/hitchwiki-current-pl.xml.gz
+#   spots  Hitchhiking spots with ratings, waits and comments, the same for every language (the app also bundles
+#       a copy). Built from rides.parquet, published weekly by maps.hitchwiki.org on Hugging Face
+#       (the "rides_url" input overrides it). The result is an ODbL database, so it is also published as a
+#       plain hitchspots.sqlite.gz for anyone to download, as the ODbL's share-alike asks.
 #
 # Runs every Monday and can be started by hand (Actions tab -> Update Hitchwiki database -> Run workflow).
 # Free on public repositories.
@@ -11,7 +15,8 @@
 # Output: release "database-latest" with
 #   manifest.json      + hitchwiki-<version>.sqlite.deflate      (English)
 #   manifest-pl.json   + hitchwiki-pl-<version>.sqlite.deflate   (Polish)
-# The app reads https://github.com/<owner>/<repo>/releases/download/database-latest/manifest[-pl].json
+#   manifest-spots.json + hitchspots-<version>.sqlite.deflate    (spots), plus hitchspots.sqlite.gz
+# The app reads https://github.com/<owner>/<repo>/releases/download/database-latest/manifest[-pl|-spots].json
 
 name: Update Hitchwiki database
 
@@ -23,7 +28,7 @@ on:
       languages:
         description: 'Which databases to build'
         type: choice
-        options: [all, en, pl]
+        options: [all, en, pl, spots]
         default: all
       dump_url:
         description: 'English dump URL (overrides the HITCHWIKI_DUMP_URL variable)'
@@ -31,6 +36,10 @@ on:
         default: ''
       dump_url_pl:
         description: 'Polish dump URL (overrides HITCHWIKI_DUMP_URL_PL and the default)'
+        required: false
+        default: ''
+      rides_url:
+        description: 'rides.parquet URL for the spots (overrides the Hugging Face default)'
         required: false
         default: ''
       force:
@@ -51,6 +60,7 @@ env:
 
 jobs:
   build:
+    if: inputs.languages != 'spots'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -159,3 +169,79 @@ jobs:
             | sort | head -n -1 \
             | while read -r old; do gh release delete-asset "$RELEASE_TAG" "$old" --yes; done
           cat "work/publish/manifest${SUFFIX}.json" >> "$GITHUB_STEP_SUMMARY"
+
+  spots:
+    # After the guides (they upload to the same release), whether or not they succeeded.
+    needs: build
+    if: always() && (inputs.languages == '' || inputs.languages == null || inputs.languages == 'all' || inputs.languages == 'spots')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RIDES_URL: ${{ inputs.rides_url || 'https://huggingface.co/datasets/Hitchwiki/hitchhiking-rides-dataset/resolve/main/rides.parquet' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install parquet reader
+        run: pip install pyarrow==17.0.0
+
+      - name: Download rides dataset
+        id: rides
+        run: |
+          set -euo pipefail
+          mkdir -p work
+          echo "Downloading ${RIDES_URL}"
+          curl -fL --retry 3 --retry-delay 10 \
+            -A "HitchWiseDatabaseBuilder/1.0 (+https://github.com/${GITHUB_REPOSITORY})" \
+            -o work/rides.parquet "${RIDES_URL}"
+          if [ "$(head -c 4 work/rides.parquet)" != "PAR1" ]; then
+            echo "::error::The download is not a parquet file"
+            head -c 500 work/rides.parquet
+            exit 1
+          fi
+          echo "Rides dataset: $(du -h work/rides.parquet | cut -f1)"
+          echo "sha256=$(sha256sum work/rides.parquet | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Compare with the published database
+        id: previous
+        run: |
+          gh release download "$RELEASE_TAG" --pattern "manifest-spots.json" --output work/previous.json 2>/dev/null || echo '{}' > work/previous.json
+          previous=$(python3 -c "import json; print(json.load(open('work/previous.json')).get('source_sha256', ''))")
+          echo "min_version=$(python3 -c "import json; print(int(json.load(open('work/previous.json')).get('version', 0)) + 1)")" >> "$GITHUB_OUTPUT"
+          if [ "$previous" = "${{ steps.rides.outputs.sha256 }}" ] && [ "${{ inputs.force }}" != "true" ]; then
+            echo "Rides dataset unchanged since the last build: nothing to publish."
+            echo "unchanged=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build database
+        if: steps.previous.outputs.unchanged != 'true'
+        run: |
+          set -euo pipefail
+          python3 tools/build_spots.py work/rides.parquet work/hitchspots.sqlite \
+            --min-version "${{ steps.previous.outputs.min_version }}" --source-sha256 "${{ steps.rides.outputs.sha256 }}"
+          python3 tools/package_database.py work/hitchspots.sqlite work/publish \
+            --base-url "https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}"
+          # The plain database for anyone who wants the data (ODbL share-alike).
+          gzip -9 -c work/hitchspots.sqlite > work/publish/hitchspots.sqlite.gz
+
+      - name: Publish
+        if: steps.previous.outputs.unchanged != 'true'
+        run: |
+          set -euo pipefail
+          if ! gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --title "Hitchwiki database" --latest=false \
+              --notes "Databases the app downloads. Rebuilt weekly by .github/workflows/update-database.yml. hitchspots.sqlite.gz: hitchhiking spots from the Hitchhiking Rides Dataset (maps.hitchwiki.org, Hitchmap and contributors), Open Database License (ODbL) 1.0; comments CC BY-SA 4.0."
+          fi
+          database=$(basename work/publish/hitchspots-*.sqlite.deflate)
+          # Database first, then the manifest that points at it, so the app never sees a manifest for a missing file.
+          gh release upload "$RELEASE_TAG" "work/publish/${database}" work/publish/hitchspots.sqlite.gz --clobber
+          gh release upload "$RELEASE_TAG" work/publish/manifest-spots.json --clobber
+          # Keep the new database and the previous one; delete anything older.
+          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' \
+            | { grep -E "^hitchspots-[0-9]+\.sqlite\.deflate$" || true; } | { grep -v -Fx "${database}" || true; } \
+            | sort | head -n -1 \
+            | while read -r old; do gh release delete-asset "$RELEASE_TAG" "$old" --yes; done
+          cat work/publish/manifest-spots.json >> "$GITHUB_STEP_SUMMARY"

@@ -46,12 +46,19 @@ struct SettingsView: View {
                 Section("About") {
                     LabeledContent("Guides", value: self.articleCount)
                     LabeledContent("Guide data from", value: self.dataDate)
+                    LabeledContent("Hitchhiking spots", value: self.spotCount)
                     Link(destination: self.sync.dataLanguage.wikiBaseURL) {
                         Label("Open Hitchwiki.org", systemImage: "safari.fill")
                     }
                     Text("The guide's content comes from Hitchwiki, written by hitchhikers and shared under the Creative Commons Attribution-ShareAlike licence.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                    Text("Hitchhiking spots, ratings and waiting times come from the Hitchhiking Rides Dataset by maps.hitchwiki.org, Hitchmap and their contributors, under the Open Database License (ODbL). Riders' comments are shared under CC BY-SA 4.0.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Link(destination: RideSpotDetailsView.copyrightURL) {
+                        Label("Data licence", systemImage: "doc.text.fill")
+                    }
                     LabeledContent("Version", value: Self.appVersion)
                 }
             }
@@ -116,6 +123,13 @@ struct SettingsView: View {
 
     private var articleCount: String {
         let count = HitchwikiDatabase.shared?.articleCount ?? 0
+        return count > 0 ? count.formatted() : "–"
+    }
+
+    private var spotCount: String {
+        // Read again when new data is installed.
+        _ = self.sync.revision
+        let count = SpotsDatabase.shared?.spotCount ?? 0
         return count > 0 ? count.formatted() : "–"
     }
 
