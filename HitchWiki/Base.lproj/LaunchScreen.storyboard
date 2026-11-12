@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HitchWise launch screen: the logo (LaunchLogo) in the middle of a plain background that follows the
+  system appearance, white in light mode and black in dark mode. No text.
+  SplashView (Shared/Components/SplashView.swift) starts from exactly this layout: logo 240 x 240 pt,
+  centred on the screen. Keep both in step.
+-->
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -16,20 +23,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HitchWiki" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cqr-2B-Hsb">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
-                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="45"/>
-                                <color key="textColor" red="0.58847770305595015" green="0.2189082169325362" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="lgo-Im-001">
+                                <rect key="frame" x="87" y="328" width="240" height="240"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="240" id="lgo-Cw-001"/>
+                                    <constraint firstAttribute="height" constant="240" id="lgo-Ch-001"/>
+                                </constraints>
+                                <imageReference key="image" image="LaunchLogo"/>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" systemColor="systemYellowColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="cqr-2B-Hsb" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="BJ4-Sf-rJ0"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="cqr-2B-Hsb" secondAttribute="trailing" id="CJU-lD-cyx"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="cqr-2B-Hsb" secondAttribute="bottom" id="Hva-mX-dLl"/>
-                            <constraint firstItem="cqr-2B-Hsb" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="jED-y6-CVc"/>
+                            <constraint firstItem="lgo-Im-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="lgo-Ct-001"/>
+                            <constraint firstItem="lgo-Im-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="lgo-Ct-002"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -39,8 +46,9 @@
         </scene>
     </scenes>
     <resources>
-        <systemColor name="systemYellowColor">
-            <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <image name="LaunchLogo" width="418" height="418"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>

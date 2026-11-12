@@ -62,11 +62,11 @@ struct GuideLanguageOnboarding: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Image(systemName: "hand.thumbsup.fill")
-                .font(.system(size: 32, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 72, height: 72)
-                .glassBackground(in: .circle)
+            // The logo from the launch screen.
+            Image("LaunchLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 110, height: 110)
                 .accessibilityHidden(true)
             Text("Welcome to HitchWise")
                 .font(.system(size: 38, weight: .heavy, design: .rounded))

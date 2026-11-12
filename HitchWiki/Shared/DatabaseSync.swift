@@ -47,8 +47,9 @@ final class DatabaseSync {
     @ObservationIgnored private var task: Task<Void, Never>?
     @ObservationIgnored private var lastCheck: Date?
 
-    init(languages: LanguageManager = .shared) {
-        self.languages = languages
+    /// `nil` means `LanguageManager.shared`; a default argument can't reach the main actor.
+    init(languages: LanguageManager? = nil) {
+        self.languages = languages ?? .shared
     }
 
     /// Call when the app becomes active. Offline it fails quickly and keeps the current data.
