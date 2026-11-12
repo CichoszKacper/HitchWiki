@@ -4,7 +4,8 @@
 //
 //  Keeps the guide data current and in the language the user picked:
 //   • checks for newer data when the app opens or comes back to the foreground and installs it
-//     in the background (banner at the top while it downloads);
+//     in the background (banner at the top while it downloads); the spots database is checked
+//     at the same time;
 //   • switches the guide language: uses a copy already on the phone straight away, otherwise
 //     downloads it while the user waits (first launch, Settings).
 //  Screens reload their lists when `revision` changes.
@@ -115,6 +116,13 @@ final class DatabaseSync {
         }
     }
 
+    private func use(_ spots: SpotsDatabase) {
+        SpotsDatabase.replaceShared(with: spots)
+        withAnimation(Theme.spring) {
+            self.revision += 1
+        }
+    }
+
     private nonisolated static func openLocal(for language: AppLanguage) async -> HitchwikiDatabase? {
         HitchwikiDatabase.openLocal(for: language)
     }
@@ -123,9 +131,9 @@ final class DatabaseSync {
         self.phase = .checking
         // Data in another language (the chosen one couldn't be downloaded before): any version is newer.
         let currentVersion = self.dataLanguage == language ? self.dataVersion : 0
-        let manifest: DatabaseManifest?
+        let guideUpdate: DatabaseManifest?
         do {
-            manifest = try await self.updater.availableUpdate(for: language, currentVersion: currentVersion)
+            guideUpdate = try await self.updater.availableUpdate(for: language, currentVersion: currentVersion)
         } catch {
             // Offline or the server is unreachable: nothing to tell the user, and check again
             // as soon as the app comes back to the foreground.
@@ -133,7 +141,10 @@ final class DatabaseSync {
             self.phase = .idle
             return
         }
-        guard let manifest else {
+        // The guide's manifest came through, so we are online. If the spots one doesn't
+        // (e.g. it hasn't been published yet), keep the spots we have.
+        let spotsUpdate = try? await self.updater.availableSpotsUpdate(currentVersion: SpotsDatabase.shared?.version ?? 0)
+        guard guideUpdate != nil || spotsUpdate != nil else {
             self.phase = .idle
             return
         }
@@ -141,31 +152,56 @@ final class DatabaseSync {
         withAnimation(Theme.spring) {
             self.phase = .syncing
         }
-        do {
-            let database = try await self.updater.install(manifest, language: language)
-            // The user may have switched language while this was downloading.
-            if self.languages.guideLanguage == language {
-                self.use(database)
-            }
-            withAnimation(Theme.spring) {
-                self.phase = .updated
-            }
-        } catch let error as URLError where error.networkUnavailableReason == .constrained {
+        var outcomes = [InstallOutcome]()
+        if let guideUpdate {
+            outcomes.append(await self.attempt {
+                let database = try await self.updater.install(guideUpdate, language: language)
+                // The user may have switched language while this was downloading.
+                if self.languages.guideLanguage == language {
+                    self.use(database)
+                }
+            })
+        }
+        if let spotsUpdate, !outcomes.contains(.skipped) {
+            outcomes.append(await self.attempt {
+                let spots = try await self.updater.installSpots(spotsUpdate)
+                self.use(spots)
+            })
+        }
+
+        if outcomes.contains(.skipped) {
             // Low Data Mode: skip quietly; lastCheck stays set, so no retry for a while.
             withAnimation(Theme.spring) {
                 self.phase = .idle
             }
             return
-        } catch {
-            // Keep lastCheck: the next try is in 30 minutes, not on every return to the app.
-            print("Database update failed: \(error)")
-            withAnimation(Theme.spring) {
-                self.phase = .failed
-            }
+        }
+        // On failure keep lastCheck: the next try is in 30 minutes, not on every return to the app.
+        withAnimation(Theme.spring) {
+            self.phase = outcomes.contains(.failed) ? .failed : .updated
         }
         try? await Task.sleep(for: .seconds(2.5))
         withAnimation(Theme.spring) {
             self.phase = .idle
+        }
+    }
+
+    private enum InstallOutcome {
+        case installed
+        /// Not downloaded because of Low Data Mode.
+        case skipped
+        case failed
+    }
+
+    private func attempt(_ install: () async throws -> Void) async -> InstallOutcome {
+        do {
+            try await install()
+            return .installed
+        } catch let error as URLError where error.networkUnavailableReason == .constrained {
+            return .skipped
+        } catch {
+            print("Database update failed: \(error)")
+            return .failed
         }
     }
 }

@@ -4,6 +4,91 @@
     "" : {
 
     },
+    "Anonymous" : {
+      "comment" : "Author of a comment posted without a name",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anonim"
+          }
+        }
+      }
+    },
+    "Average" : {
+      "comment" : "Rating of a hitchhiking spot, 3 of 5",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przeciętna"
+          }
+        }
+      }
+    },
+    "Bad" : {
+      "comment" : "Rating of a hitchhiking spot, 2 of 5",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Słaba"
+          }
+        }
+      }
+    },
+    "Data © Hitchwiki & Hitchmap contributors · ODbL, CC BY-SA" : {
+      "comment" : "Credit shown on the map for the spots and guide data",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dane © współtwórcy Hitchwiki i Hitchmap · ODbL, CC BY-SA"
+          }
+        }
+      }
+    },
+    "Data licence" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licencja danych"
+          }
+        }
+      }
+    },
+    "Good" : {
+      "comment" : "Rating of a hitchhiking spot, 4 of 5",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dobra"
+          }
+        }
+      }
+    },
+    "Hitchhiking spots" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miejscówki na stopa"
+          }
+        }
+      }
+    },
+    "Hitchhiking spots, ratings and waiting times come from the Hitchhiking Rides Dataset by maps.hitchwiki.org, Hitchmap and their contributors, under the Open Database License (ODbL). Riders' comments are shared under CC BY-SA 4.0." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miejscówki, oceny i czasy czekania pochodzą z Hitchhiking Rides Dataset od maps.hitchwiki.org, Hitchmap i ich współtwórców, na licencji Open Database License (ODbL). Komentarze autostopowiczów są udostępniane na licencji CC BY-SA 4.0."
+          }
+        }
+      }
+    },
     "“%@” isn't in the offline Hitchwiki." : {
       "localizations" : {
         "pl" : {
@@ -166,6 +251,59 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld miejsca"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld rides" : {
+      "comment" : "Number of rides logged at a hitchhiking spot",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ride"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rides"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld przejazd"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld przejazdy"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld przejazdów"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld przejazdu"
                 }
               }
             }
@@ -652,6 +790,17 @@
         }
       }
     },
+    "Near %@" : {
+      "comment" : "Map card subtitle: the closest city to a hitchhiking spot",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W pobliżu: %@"
+          }
+        }
+      }
+    },
     "Near you" : {
       "localizations" : {
         "pl" : {
@@ -848,6 +997,28 @@
         }
       }
     },
+    "Rated %lld of 5" : {
+      "comment" : "Accessibility: one rider's rating of a spot",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocena %lld na 5"
+          }
+        }
+      }
+    },
+    "Rating %@ of 5" : {
+      "comment" : "Accessibility: average rating of a hitchhiking spot",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocena %@ na 5"
+          }
+        }
+      }
+    },
     "Read about %@" : {
       "comment" : "Opens the page a hitchhiking spot is on",
       "localizations" : {
@@ -900,6 +1071,17 @@
         }
       }
     },
+    "Rides from %@ · %@" : {
+      "comment" : "Credit under a hitchhiking spot: the websites the rides were logged on, then their licences",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przejazdy z: %@ · %@"
+          }
+        }
+      }
+    },
     "Saved" : {
       "comment" : "Tab bar",
       "localizations" : {
@@ -917,6 +1099,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zobacz, co jest w pobliżu"
+          }
+        }
+      }
+    },
+    "Senseless" : {
+      "comment" : "Rating of a hitchhiking spot, 1 of 5",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bez sensu"
           }
         }
       }
@@ -939,6 +1132,59 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ustawienia"
+          }
+        }
+      }
+    },
+    "Show all %lld comments" : {
+      "comment" : "Expands the list of comments about a hitchhiking spot",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Show %lld comment"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Show all %lld comments"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pokaż %lld komentarz"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pokaż wszystkie %lld komentarze"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pokaż wszystkie %lld komentarzy"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pokaż wszystkie %lld komentarza"
+                }
+              }
+            }
           }
         }
       }
@@ -1064,6 +1310,17 @@
         }
       }
     },
+    "Typical wait %@" : {
+      "comment" : "Accessibility: median waiting time at a hitchhiking spot",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zwykle czeka się %@"
+          }
+        }
+      }
+    },
     "Updating the guide…" : {
       "localizations" : {
         "pl" : {
@@ -1090,6 +1347,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wersja"
+          }
+        }
+      }
+    },
+    "Very good" : {
+      "comment" : "Rating of a hitchhiking spot, 5 of 5",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bardzo dobra"
+          }
+        }
+      }
+    },
+    "Waited %@" : {
+      "comment" : "How long one rider waited at a hitchhiking spot",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czekanie: %@"
           }
         }
       }

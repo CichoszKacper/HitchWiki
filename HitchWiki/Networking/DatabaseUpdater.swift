@@ -2,10 +2,11 @@
 //  DatabaseUpdater.swift
 //  HitchWiki
 //
-//  Keeps the offline databases up to date, one per guide language. The heavy work (downloading the
-//  Hitchwiki dump and parsing it) happens weekly on GitHub Actions (.github/workflows/update-database.yml),
-//  which publishes a ready database plus a manifest per language (manifest.json for English,
-//  manifest-pl.json for Polish). The app only:
+//  Keeps the offline databases up to date: one guide database per language, plus the spots database
+//  (the same for every language). The heavy work (downloading the Hitchwiki dump and the rides dataset and
+//  parsing them) happens weekly on GitHub Actions (.github/workflows/update-database.yml), which publishes
+//  a ready database plus a manifest for each (manifest.json for English, manifest-pl.json for Polish,
+//  manifest-spots.json for the spots). The app only:
 //    1. downloads the small manifest and compares its version with the database in use,
 //    2. downloads the compressed database when it's newer (not on Low Data Mode),
 //    3. unpacks and checks it (size, SHA-256, schema, opens it), then swaps it in atomically.
@@ -31,9 +32,14 @@ enum DatabaseFiles {
         self.directory.appending(path: language == .english ? "hitchwiki.sqlite" : "hitchwiki-\(language.rawValue).sqlite")
     }
 
+    /// The downloaded spots database (the same for every guide language).
+    static var spotsURL: URL {
+        self.directory.appending(path: "\(SpotsDatabase.fileName).sqlite")
+    }
+
     /// Removes half-installed downloads left behind by an interrupted update.
     static func removeLeftovers() {
-        let installed = Set(AppLanguage.allCases.map { self.installedURL(for: $0).lastPathComponent })
+        let installed = Set(AppLanguage.allCases.map { self.installedURL(for: $0).lastPathComponent } + [self.spotsURL.lastPathComponent])
         let files = (try? FileManager.default.contentsOfDirectory(at: self.directory, includingPropertiesForKeys: nil)) ?? []
         for file in files where !installed.contains(file.lastPathComponent) {
             try? FileManager.default.removeItem(at: file)
@@ -59,9 +65,10 @@ struct DatabaseManifest: Decodable, Sendable {
     let schemaVersion: Int
     let version: Int64
     let generatedAt: String
-    /// Missing in manifests published before languages were added: those are English.
+    /// Missing in manifests published before languages were added (those are English) and for the spots.
     let language: String?
     let database: File
+    /// Guide databases only.
     let stats: Stats?
 }
 
@@ -79,11 +86,16 @@ actor DatabaseUpdater {
         self.releaseURL.appending(path: language == .english ? "manifest.json" : "manifest-\(language.rawValue).json")
     }
 
+    static let spotsManifestURL = DatabaseUpdater.releaseURL.appending(path: "manifest-spots.json")
+
     /// A downloaded database must have at least this many articles to be used
     /// (the Polish Hitchwiki is much smaller than the English one).
     private static func minimumArticles(for language: AppLanguage) -> Int {
         language == .english ? 1_000 : 20
     }
+
+    /// A downloaded spots database must have at least this many spots (about 47,000 in November 2026).
+    private static let minimumSpots = 10_000
 
     private let session: URLSession
     private let downloadSession: URLSession
@@ -100,7 +112,7 @@ actor DatabaseUpdater {
         let downloads = URLSessionConfiguration.default
         downloads.timeoutIntervalForRequest = 60
         downloads.waitsForConnectivity = false
-        downloads.allowsConstrainedNetworkAccess = false     // respect Low Data Mode for the ~8 MB file
+        downloads.allowsConstrainedNetworkAccess = false     // respect Low Data Mode for the ~8 MB files
         self.downloadSession = URLSession(configuration: downloads)
 
         let requested = URLSessionConfiguration.default
@@ -109,13 +121,11 @@ actor DatabaseUpdater {
         self.requestedDownloadSession = URLSession(configuration: requested)
     }
 
+    // MARK: - Guide
+
     /// The published manifest for `language`.
     func manifest(for language: AppLanguage) async throws -> DatabaseManifest {
-        let (data, response) = try await self.session.data(from: Self.manifestURL(for: language))
-        try Self.check(response)
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return try decoder.decode(DatabaseManifest.self, from: data)
+        try await self.manifest(at: Self.manifestURL(for: language))
     }
 
     /// The manifest of a newer, compatible database in `language`, or nil when the one in use is current.
@@ -134,6 +144,64 @@ actor DatabaseUpdater {
         guard manifest.schemaVersion == HitchwikiDatabase.supportedSchemaVersion else {
             throw DatabaseUpdateError.corrupted("schema \(manifest.schemaVersion) isn't supported")
         }
+        let destination = DatabaseFiles.installedURL(for: language)
+        try await self.downloadAndInstall(manifest, staging: "staging-\(language.rawValue)-\(manifest.version).sqlite",
+                                          destination: destination, userRequested: userRequested) { staging in
+            let candidate = try HitchwikiDatabase(url: staging)
+            guard candidate.schemaVersion == HitchwikiDatabase.supportedSchemaVersion,
+                  candidate.version == manifest.version,
+                  candidate.language == language,
+                  try candidate.pageCount() >= Self.minimumArticles(for: language) else {
+                throw DatabaseUpdateError.corrupted("unexpected contents")
+            }
+        }
+        return try HitchwikiDatabase(url: destination)
+    }
+
+    // MARK: - Spots
+
+    /// The manifest of a newer, compatible spots database, or nil when the one in use is current.
+    func availableSpotsUpdate(currentVersion: Int64) async throws -> DatabaseManifest? {
+        let manifest = try await self.manifest(at: Self.spotsManifestURL)
+        guard manifest.schemaVersion == SpotsDatabase.supportedSchemaVersion,
+              manifest.version > currentVersion else {
+            return nil
+        }
+        return manifest
+    }
+
+    /// Downloads, verifies and installs the spots database described by `manifest`, and opens it.
+    func installSpots(_ manifest: DatabaseManifest) async throws -> SpotsDatabase {
+        guard manifest.schemaVersion == SpotsDatabase.supportedSchemaVersion else {
+            throw DatabaseUpdateError.corrupted("spots schema \(manifest.schemaVersion) isn't supported")
+        }
+        let destination = DatabaseFiles.spotsURL
+        try await self.downloadAndInstall(manifest, staging: "staging-spots-\(manifest.version).sqlite",
+                                          destination: destination, userRequested: false) { staging in
+            let candidate = try SpotsDatabase(url: staging)
+            guard candidate.schemaVersion == SpotsDatabase.supportedSchemaVersion,
+                  candidate.version == manifest.version,
+                  try candidate.countSpots() >= Self.minimumSpots else {
+                throw DatabaseUpdateError.corrupted("unexpected spots contents")
+            }
+        }
+        return try SpotsDatabase(url: destination)
+    }
+
+    // MARK: - Private
+
+    private func manifest(at url: URL) async throws -> DatabaseManifest {
+        let (data, response) = try await self.session.data(from: url)
+        try Self.check(response)
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try decoder.decode(DatabaseManifest.self, from: data)
+    }
+
+    /// Downloads the database, checks its size and checksum, writes it to `staging` next to the installed file,
+    /// runs `validate` on it, then swaps it in for `destination`.
+    private func downloadAndInstall(_ manifest: DatabaseManifest, staging stagingName: String, destination: URL,
+                                    userRequested: Bool, validate: (URL) throws -> Void) async throws {
         guard manifest.database.compression == "deflate" else {
             throw DatabaseUpdateError.unsupportedCompression(manifest.database.compression)
         }
@@ -155,22 +223,15 @@ actor DatabaseUpdater {
 
         // Write next to the installed file, check it opens and looks right, then swap it in.
         DatabaseFiles.removeLeftovers()
-        let staging = DatabaseFiles.directory.appending(path: "staging-\(language.rawValue)-\(manifest.version).sqlite")
+        let staging = DatabaseFiles.directory.appending(path: stagingName)
         try data.write(to: staging, options: .atomic)
         do {
-            let candidate = try HitchwikiDatabase(url: staging)
-            guard candidate.schemaVersion == HitchwikiDatabase.supportedSchemaVersion,
-                  candidate.version == manifest.version,
-                  candidate.language == language,
-                  try candidate.pageCount() >= Self.minimumArticles(for: language) else {
-                throw DatabaseUpdateError.corrupted("unexpected contents")
-            }
+            try validate(staging)
         } catch {
             try? FileManager.default.removeItem(at: staging)
             throw error
         }
 
-        let destination = DatabaseFiles.installedURL(for: language)
         do {
             if FileManager.default.fileExists(atPath: destination.path) {
                 // Atomic rename: a connection still reading the old file keeps working until it's released.
@@ -186,8 +247,6 @@ actor DatabaseUpdater {
         values.isExcludedFromBackup = true   // it can always be downloaded again
         var excluded = destination
         try? excluded.setResourceValues(values)
-
-        return try HitchwikiDatabase(url: destination)
     }
 
     private static func check(_ response: URLResponse) throws {

@@ -10,6 +10,9 @@ Writes (English, the default):
 Other languages (the language comes from the database's meta table, or --language):
     <out dir>/hitchwiki-pl-<version>.sqlite.deflate
     <out dir>/manifest-pl.json
+The spots database (hitchspots.sqlite from build_spots.py, recognised by kind = 'spots' in its meta table):
+    <out dir>/hitchspots-<version>.sqlite.deflate
+    <out dir>/manifest-spots.json
 
 The app downloads manifest.json on launch, and the database only when `version` is higher than its own
 and `schema_version` is one it supports.
@@ -27,15 +30,20 @@ db = sqlite3.connect(args.database)
 meta = dict(db.execute('SELECT key, value FROM meta'))
 db.close()
 version = int(meta['version'])
-language = args.language or meta.get('language', 'en')
-suffix = '' if language == 'en' else f'-{language}'
+is_spots = meta.get('kind') == 'spots'
+language = None if is_spots else (args.language or meta.get('language', 'en'))
+if is_spots:
+    prefix, manifest_name = 'hitchspots', 'manifest-spots.json'
+else:
+    suffix = '' if language == 'en' else f'-{language}'
+    prefix, manifest_name = f'hitchwiki{suffix}', f'manifest{suffix}.json'
 
 data = open(args.database, 'rb').read()
 compressor = zlib.compressobj(9, zlib.DEFLATED, -15)   # -15: raw DEFLATE, no zlib/gzip header
 deflated = compressor.compress(data) + compressor.flush()
 
 os.makedirs(args.outdir, exist_ok=True)
-name = f'hitchwiki{suffix}-{version}.sqlite.deflate'
+name = f'{prefix}-{version}.sqlite.deflate'
 with open(os.path.join(args.outdir, name), 'wb') as f:
     f.write(deflated)
 
@@ -43,7 +51,6 @@ manifest = {
     'schema_version': int(meta['schema_version']),
     'version': version,
     'generated_at': meta.get('generated_at', ''),
-    'language': language,
     'source_sha256': meta.get('source_sha256', ''),
     'database': {
         'url': args.base_url.rstrip('/') + '/' + name,
@@ -52,8 +59,14 @@ manifest = {
         'size': len(data),
         'compressed_size': len(deflated),
     },
-    'stats': {'pages': int(meta.get('pages', 0)), 'spots': int(meta.get('spots', 0))},
 }
-with open(os.path.join(args.outdir, f'manifest{suffix}.json'), 'w') as f:
+if is_spots:
+    # Not "stats": the app reads that as the guide's page and spot counts.
+    manifest['contents'] = {key: int(meta.get(key, 0)) for key in ('spots', 'rides', 'comments')}
+    manifest['license'] = meta.get('license', '')
+else:
+    manifest['language'] = language
+    manifest['stats'] = {'pages': int(meta.get('pages', 0)), 'spots': int(meta.get('spots', 0))}
+with open(os.path.join(args.outdir, manifest_name), 'w') as f:
     json.dump(manifest, f, indent=2)
 print(json.dumps(manifest, indent=2))

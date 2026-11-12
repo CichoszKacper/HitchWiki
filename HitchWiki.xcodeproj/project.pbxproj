@@ -13,6 +13,10 @@
 		4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 4B89024A2717499F00C8C4B1 /* Algorithms */; };
 		4BDB0A012F2E000000000001 /* HitchwikiDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */; };
 		4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000004 /* hitchwiki.sqlite */; };
+		4BDB16010000000000000002 /* SpotsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000001 /* SpotsDatabase.swift */; };
+		4BDB16010000000000000004 /* RideSpotDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000003 /* RideSpotDetailsView.swift */; };
+		4BDB16010000000000000006 /* MapAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000005 /* MapAttribution.swift */; };
+		4BDB16010000000000000008 /* hitchspots.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000007 /* hitchspots.sqlite */; };
 		4BDB0C010000000000000003 /* HitchWikiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000002 /* HitchWikiApp.swift */; };
 		4BDB0C010000000000000005 /* AppTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000004 /* AppTab.swift */; };
 		4BDB0C010000000000000007 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000006 /* RootTabView.swift */; };
@@ -73,6 +77,10 @@
 		4B87E7592713556500C73578 /* hitchwiki.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hitchwiki.json; sourceTree = "<group>"; };
 		4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchwikiDatabase.swift; sourceTree = "<group>"; };
 		4BDB0A012F2E000000000004 /* hitchwiki.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchwiki.sqlite; sourceTree = "<group>"; };
+		4BDB16010000000000000001 /* SpotsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsDatabase.swift; sourceTree = "<group>"; };
+		4BDB16010000000000000003 /* RideSpotDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideSpotDetailsView.swift; sourceTree = "<group>"; };
+		4BDB16010000000000000005 /* MapAttribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapAttribution.swift; sourceTree = "<group>"; };
+		4BDB16010000000000000007 /* hitchspots.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchspots.sqlite; sourceTree = "<group>"; };
 		4BDB0C010000000000000002 /* HitchWikiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchWikiApp.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000004 /* AppTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTab.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000006 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
@@ -160,6 +168,7 @@
 				4BDB0C010000000000000025 /* Shared */,
 				4B87E7592713556500C73578 /* hitchwiki.json */,
 				4BDB0A012F2E000000000004 /* hitchwiki.sqlite */,
+				4BDB16010000000000000007 /* hitchspots.sqlite */,
 				4B87E74D27134E9C00C73578 /* Networking */,
 				4B4FCD832709B68500BC520E /* Assets.xcassets */,
 				4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */,
@@ -176,6 +185,7 @@
 			children = (
 				4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */,
 				4BDB11010000000000000001 /* DatabaseUpdater.swift */,
+				4BDB16010000000000000001 /* SpotsDatabase.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -323,6 +333,8 @@
 				4BDB0E010000000000000009 /* MapPointCard.swift */,
 				4BDB10010000000000000003 /* ClusterBubble.swift */,
 				4BDB0E01000000000000000B /* NearbyCarousel.swift */,
+				4BDB16010000000000000003 /* RideSpotDetailsView.swift */,
+				4BDB16010000000000000005 /* MapAttribution.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -393,6 +405,7 @@
 			files = (
 				4B4FCD872709B68500BC520E /* LaunchScreen.storyboard in Resources */,
 				4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */,
+				4BDB16010000000000000008 /* hitchspots.sqlite in Resources */,
 				4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */,
 				4BDB13010000000000000008 /* Localizable.xcstrings in Resources */,
 				4BDB1301000000000000000A /* InfoPlist.xcstrings in Resources */,
@@ -454,6 +467,9 @@
 				4BDB0C01000000000000003A /* AnimatedMeshBackground.swift in Sources */,
 				4BDB0A012F2E000000000001 /* HitchwikiDatabase.swift in Sources */,
 				4BDB11010000000000000002 /* DatabaseUpdater.swift in Sources */,
+				4BDB16010000000000000002 /* SpotsDatabase.swift in Sources */,
+				4BDB16010000000000000004 /* RideSpotDetailsView.swift in Sources */,
+				4BDB16010000000000000006 /* MapAttribution.swift in Sources */,
 				4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
