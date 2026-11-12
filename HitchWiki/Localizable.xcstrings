@@ -1362,6 +1362,17 @@
         }
       }
     },
+    "Waited %@" : {
+      "comment" : "How long one rider waited at a hitchhiking spot",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czekanie: %@"
+          }
+        }
+      }
+    },
     "Welcome to HitchWise" : {
       "localizations" : {
         "pl" : {

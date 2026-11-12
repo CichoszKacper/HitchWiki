@@ -42,7 +42,7 @@ struct RideSpotDetailsView: View {
                     ScrollView {
                         self.commentList(self.details.comments, lineLimit: nil)
                     }
-                    .frame(maxHeight: 280)
+                    .frame(maxWidth: .infinity, maxHeight: 280)
                     .scrollBounceBehavior(.basedOnSize)
                 } else {
                     self.commentList(Array(self.details.comments.prefix(Self.collapsedCommentCount)), lineLimit: 3)
@@ -168,20 +168,28 @@ private struct CommentRow: View {
                         .labelStyle(.titleAndIcon)
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(MapPoint.ratingColor(Double(rating)))
+                        .fixedSize()
                         .accessibilityLabel(String(localized: "Rated \(rating) of 5", comment: "Accessibility: one rider's rating of a spot"))
                 }
-                if let wait = self.comment.waitMinutes {
-                    Label(RideSpotDetailsView.waitText(wait), systemImage: "hourglass")
-                        .labelStyle(.titleAndIcon)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+            }
+            // On their own line, starting at the left, so a long name or a narrow card can't push them out of view.
+            let month = self.comment.month.flatMap(RideSpotDetailsView.monthText)
+            if month != nil || self.comment.waitMinutes != nil {
+                HStack(spacing: 10) {
+                    if let month {
+                        Label(month, systemImage: "calendar")
+                            .fixedSize()
+                    }
+                    if let wait = self.comment.waitMinutes {
+                        Label(String(localized: "Waited \(RideSpotDetailsView.waitText(wait))",
+                                     comment: "How long one rider waited at a hitchhiking spot"),
+                              systemImage: "hourglass")
+                            .fixedSize()
+                    }
                 }
-                Spacer(minLength: 0)
-                if let month = self.comment.month.flatMap(RideSpotDetailsView.monthText) {
-                    Text(month)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
+                .labelStyle(.titleAndIcon)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
             }
             Text(self.comment.text)
                 .font(.callout)
