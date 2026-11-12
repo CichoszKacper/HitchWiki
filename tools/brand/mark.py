@@ -10,7 +10,8 @@ def el(kind, attrs, extra=''):
     a = ' '.join(f'{k.replace("_","-")}="{v}"' for k, v in attrs.items())
     return f'<{kind} {a} {extra}/>'
 
-# --- The hand (200-unit canvas): sleeve on the left, fingers curled to the right, a short broad thumb with a nail.
+# --- The hand (200-unit canvas): sleeve on the left, fingers curled to the right, and a thumb shaped like the
+#     fingers (same width, same rounded ends) standing up, with a small nail.
 SLEEVE = dict(x=34, y=104, width=30, height=78, rx=8)
 FIST = [
     ('rect', dict(x=60, y=100, width=62, height=82, rx=16)),
@@ -19,11 +20,11 @@ FIST = [
     ('rect', dict(x=96, y=139, width=62, height=21, rx=10.5)),
     ('rect', dict(x=94, y=158, width=54, height=22, rx=11)),
 ]
-THUMB = 'M64 106 C58 92 62 74 74 64 C84 55 104 56 108 68 C111 78 104 88 108 102 Z'
-NAIL = 'M84 63 C90 58 101 59 104 66 C105 71 99 73 93 72 C87 71 83 68 84 63 Z'
+THUMB = dict(x=70, y=58, width=22, height=56, rx=11, transform='rotate(-6 81 110)')
+NAIL = dict(x=74, y=61, width=14, height=11, rx=5, transform='rotate(-6 81 110)')
 
 def hand():
-    parts = [('path', dict(d=THUMB))] + FIST
+    parts = [('rect', THUMB)] + FIST
     return ''.join([
         # white die-cut sticker edge: every part stroked thick, fills drawn over it
         '<g stroke="#fff" stroke-width="14" stroke-linejoin="round" fill="#fff">',
@@ -32,8 +33,8 @@ def hand():
         '<g fill="url(#skin)">' + ''.join(el(k, a) for k, a in parts) + '</g>',
         '<g stroke="#C9531E" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round" fill="none">'
         '<path d="M114 121 H156"/><path d="M114 140 H154"/><path d="M112 159 H146"/>'
-        '<path d="M72 104 C80 98 92 97 100 100"/></g>',
-        f'<path d="{NAIL}" fill="#FFE2C4" fill-opacity="0.9" stroke="#E07A3F" stroke-opacity="0.5" stroke-width="1.5"/>',
+        '<path d="M70 104 C76 101 84 100 92 101"/></g>',
+        el('rect', NAIL, 'fill="#FFE2C4" fill-opacity="0.9" stroke="#E07A3F" stroke-opacity="0.5" stroke-width="1.5"'),
     ])
 
 DEFS = '''<defs>
