@@ -1,8 +1,9 @@
 {
   "images" : [
     {
-      "filename" : "LaunchBackground.png",
-      "idiom" : "universal"
+      "filename" : "launch-logo.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {

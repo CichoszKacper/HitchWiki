@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  HitchWise launch screen: the language screen's dusk gradient, the HitchWise mark (a hitchhiker's cardboard
-  sign with a thumbs-up sticker, two layered images from tools/brand/mark.py) and the name.
-  SplashView (Shared/Components/SplashView.swift) starts from exactly this layout and animates the two layers,
-  so keep the sizes and offsets of both in step:
-    LaunchSign + LaunchThumb 210 x 210 pt, centre 56 pt above the screen centre;
-    "HitchWise" system heavy 44 pt, centre 74 pt below the screen centre.
-  (Launch screens can't use runtime attributes or system symbols reliably: everything is plain images.)
+  HitchWise launch screen: the logo (LaunchLogo) in the middle of a plain background that follows the
+  system appearance, white in light mode and black in dark mode. No text.
+  SplashView (Shared/Components/SplashView.swift) starts from exactly this layout: logo 240 x 240 pt,
+  centred on the screen. Keep both in step.
 -->
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
@@ -14,6 +11,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -25,46 +23,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="bgI-mg-001">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                                <imageReference key="image" image="LaunchBackground"/>
-                            </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="sgn-Im-001">
-                                <rect key="frame" x="102" y="287" width="210" height="210"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="lgo-Im-001">
+                                <rect key="frame" x="87" y="328" width="240" height="240"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="210" id="sgn-Cw-001"/>
-                                    <constraint firstAttribute="height" constant="210" id="sgn-Ch-001"/>
+                                    <constraint firstAttribute="width" constant="240" id="lgo-Cw-001"/>
+                                    <constraint firstAttribute="height" constant="240" id="lgo-Ch-001"/>
                                 </constraints>
-                                <imageReference key="image" image="LaunchSign"/>
+                                <imageReference key="image" image="LaunchLogo"/>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="thm-Im-001">
-                                <rect key="frame" x="102" y="287" width="210" height="210"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="210" id="thm-Cw-001"/>
-                                    <constraint firstAttribute="height" constant="210" id="thm-Ch-001"/>
-                                </constraints>
-                                <imageReference key="image" image="LaunchThumb"/>
-                            </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HitchWise" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ttl-Lb-001">
-                                <rect key="frame" x="97" y="495.5" width="220" height="53"/>
-                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="44"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" red="0.20" green="0.20" blue="0.55" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="bgI-mg-001" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="bgI-Ct-001"/>
-                            <constraint firstItem="bgI-mg-001" firstAttribute="bottom" secondItem="Ze5-6b-2t3" secondAttribute="bottom" id="bgI-Ct-002"/>
-                            <constraint firstItem="bgI-mg-001" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="bgI-Ct-003"/>
-                            <constraint firstItem="bgI-mg-001" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="bgI-Ct-004"/>
-                            <constraint firstItem="sgn-Im-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="sgn-Ct-001"/>
-                            <constraint firstItem="sgn-Im-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-56" id="sgn-Ct-002"/>
-                            <constraint firstItem="thm-Im-001" firstAttribute="centerX" secondItem="sgn-Im-001" secondAttribute="centerX" id="thm-Ct-001"/>
-                            <constraint firstItem="thm-Im-001" firstAttribute="centerY" secondItem="sgn-Im-001" secondAttribute="centerY" id="thm-Ct-002"/>
-                            <constraint firstItem="ttl-Lb-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="ttl-Ct-001"/>
-                            <constraint firstItem="ttl-Lb-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="74" id="ttl-Ct-002"/>
+                            <constraint firstItem="lgo-Im-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="lgo-Ct-001"/>
+                            <constraint firstItem="lgo-Im-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="lgo-Ct-002"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -74,8 +46,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchBackground" width="860" height="1864"/>
-        <image name="LaunchSign" width="210" height="210"/>
-        <image name="LaunchThumb" width="210" height="210"/>
+        <image name="LaunchLogo" width="418" height="418"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>
