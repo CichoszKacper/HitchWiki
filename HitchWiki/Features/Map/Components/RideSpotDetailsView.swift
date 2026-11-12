@@ -48,11 +48,8 @@ struct RideSpotDetailsView: View {
                     self.commentList(Array(self.details.comments.prefix(Self.collapsedCommentCount)), lineLimit: 3)
                 }
 
-                if self.details.comments.count > Self.collapsedCommentCount {
-                    Button(self.showsAllComments
-                           ? String(localized: "Show less")
-                           : String(localized: "Show all \(self.details.comments.count) comments",
-                                    comment: "Expands the list of comments about a hitchhiking spot")) {
+                if self.canExpandComments {
+                    Button(self.expandButtonTitle) {
                         withAnimation(Theme.spring) {
                             self.showsAllComments.toggle()
                         }
@@ -79,6 +76,28 @@ struct RideSpotDetailsView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// More comments than are shown folded, or a shown one too long for its three lines.
+    private var canExpandComments: Bool {
+        self.details.comments.count > Self.collapsedCommentCount
+            || self.details.comments.prefix(Self.collapsedCommentCount).contains { Self.isLong($0.text) }
+    }
+
+    private var expandButtonTitle: String {
+        if self.showsAllComments {
+            return String(localized: "Show less")
+        }
+        if self.details.comments.count > Self.collapsedCommentCount {
+            return String(localized: "Show all \(self.details.comments.count) comments",
+                          comment: "Expands the list of comments about a hitchhiking spot")
+        }
+        return String(localized: "Show more")
+    }
+
+    /// Likely cut off at three lines on a phone (~40 characters a line), like SpotDetailsView's fold.
+    private static func isLong(_ text: String) -> Bool {
+        text.count > 110 || text.filter(\.isNewline).count >= 3
     }
 
     /// "Rides from hitchmap.com, hitchwiki.org · ODbL, CC BY-SA 4.0"
