@@ -5,7 +5,7 @@
 //  Every Hitchwiki page with coordinates and every hitchhiking spot on one map: the spots written in the guide
 //  and the ~47,000 where people logged rides (coloured by rating). Points close together are grouped into
 //  bubbles (tap to zoom in); the row at the bottom shows what's nearest to the user. The data's credit
-//  stays visible at the top, as its licence asks.
+//  stays visible at the bottom, above the tab bar, as its licence asks.
 //
 
 import SwiftUI
@@ -60,15 +60,13 @@ struct MapTabView: View {
             .onChange(of: self.viewModel.selectedID) {
                 self.viewModel.selectionChanged()
             }
-            .overlay(alignment: .topLeading) {
-                MapAttribution()
-                    .padding(.leading, Theme.screenPadding)
-                    .padding(.top, 4)
-                    .padding(.trailing, 64)   // clear of the map's buttons
-            }
             .safeAreaInset(edge: .bottom) {
-                self.bottomPanel
-                    .padding(.bottom, 8)
+                VStack(spacing: 6) {
+                    self.bottomPanel
+                    // The data's credit, small, just above the tab bar.
+                    MapAttribution()
+                }
+                .padding(.bottom, 4)
             }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: PageRoute.self) { route in

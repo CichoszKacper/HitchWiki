@@ -13,13 +13,13 @@ struct MapAttribution: View {
         Link(destination: RideSpotDetailsView.copyrightURL) {
             Text("Data © Hitchwiki & Hitchmap contributors · ODbL, CC BY-SA",
                  comment: "Credit shown on the map for the spots and guide data")
-                .font(.caption2.weight(.medium))
+                .font(.system(size: 10, weight: .medium))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .glassBackground(in: .capsule)
+                .padding(.horizontal, 7)
+                .padding(.vertical, 2)
+                .background(.ultraThinMaterial, in: .capsule)
         }
     }
 }
