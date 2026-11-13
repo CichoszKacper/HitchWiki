@@ -91,7 +91,6 @@
 		4B4FCD832709B68500BC520E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B4FCD862709B68500BC520E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B4FCD882709B68500BC520E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B87E7592713556500C73578 /* hitchwiki.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hitchwiki.json; sourceTree = "<group>"; };
 		4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchwikiDatabase.swift; sourceTree = "<group>"; };
 		4BDB0A012F2E000000000004 /* hitchwiki.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchwiki.sqlite; sourceTree = "<group>"; };
 		4BDB0C010000000000000002 /* HitchWikiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchWikiApp.swift; sourceTree = "<group>"; };
@@ -189,7 +188,6 @@
 				4BDB0C010000000000000001 /* App */,
 				4BDB0C010000000000000008 /* Features */,
 				4BDB0C010000000000000025 /* Shared */,
-				4B87E7592713556500C73578 /* hitchwiki.json */,
 				4BDB0A012F2E000000000004 /* hitchwiki.sqlite */,
 				4BDB16010000000000000007 /* hitchspots.sqlite */,
 				4B87E74D27134E9C00C73578 /* Networking */,
