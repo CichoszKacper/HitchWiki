@@ -2,7 +2,7 @@
 //  CountryCard.swift
 //  HitchWiki
 //
-//  "You're in Poland": the country the user is in, on a drifting gradient, with its flag,
+//  "You're in Poland": the country the user is in, on the app's orange accent, with its flag,
 //  the start of its hitchhiking section, a few numbers and the basics (capital, language, money).
 //
 
@@ -10,10 +10,6 @@ import SwiftUI
 
 struct CountryCard: View {
     let country: CountryOverview
-
-    private var palette: [Color] {
-        AnimatedMeshBackground.palette(for: self.country.title)
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -38,13 +34,14 @@ struct CountryCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
             ZStack {
-                AnimatedMeshBackground(seed: self.country.title)
-                // Keeps white text readable on the lighter palettes.
-                LinearGradient(colors: [.black.opacity(0.05), .black.opacity(0.35)], startPoint: .top, endPoint: .bottom)
+                Color.accentColor
+                // A soft light-to-shade sweep so the orange has some depth and white text stays readable.
+                LinearGradient(colors: [.white.opacity(0.12), .clear, .black.opacity(0.22)],
+                               startPoint: .topLeading, endPoint: .bottomTrailing)
             }
         }
         .clipShape(.rect(cornerRadius: Theme.cornerRadius + 4, style: .continuous))
-        .shadow(color: self.palette[1].opacity(0.35), radius: 22, x: 0, y: 12)
+        .shadow(color: Color.accentColor.opacity(0.3), radius: 22, x: 0, y: 12)
         .accessibilityElement(children: .combine)
         .accessibilityHint("Opens the hitchhiking guide")
     }

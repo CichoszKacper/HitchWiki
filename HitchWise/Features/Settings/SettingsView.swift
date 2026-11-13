@@ -91,13 +91,18 @@ struct SettingsView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 8)
-                if self.switchingTo == language {
-                    ProgressView()
-                } else if self.languages.guideLanguage == language {
-                    Image(systemName: "checkmark")
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(Color.accentColor)
+                // Same width on every row, ticked or not, so the description doesn't
+                // re-wrap when the tick appears or goes away.
+                ZStack {
+                    if self.switchingTo == language {
+                        ProgressView()
+                    } else if self.languages.guideLanguage == language {
+                        Image(systemName: "checkmark")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(Color.accentColor)
+                    }
                 }
+                .frame(width: 24)
             }
             .contentShape(.rect)
         }
