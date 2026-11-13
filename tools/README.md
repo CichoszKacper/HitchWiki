@@ -1,19 +1,19 @@
 # Hitchwiki dump tools
 
-Turns `HitchWiki/hitchwiki-full-en.xml` (790 MB, full edit history) into data that's easy to work with.
+Turns `HitchWise/hitchwiki-full-en.xml` (790 MB, full edit history) into data that's easy to work with.
 
 ```sh
 cd tools
 python3 -m venv .venv && .venv/bin/pip install mwparserfromhell mwxml
 
 # 1. Keep only the latest revision of articles (ns 0), templates (10) and categories (14): 790 MB -> 22 MB, ~7 s
-python3 slim_dump.py ../HitchWiki/hitchwiki-full-en.xml output/hitchwiki-latest.xml          # --ns all to keep every namespace
+python3 slim_dump.py ../HitchWise/hitchwiki-full-en.xml output/hitchwiki-latest.xml          # --ns all to keep every namespace
 
 # 2. Structured extraction: ~25 s. --app-db also refreshes the slim copy the iOS app bundles (~20 MB)
-.venv/bin/python extract.py output/hitchwiki-latest.xml output/ --app-db ../HitchWiki/hitchwiki.sqlite
+.venv/bin/python extract.py output/hitchwiki-latest.xml output/ --app-db ../HitchWise/hitchwiki.sqlite
 ```
 
-The app reads `HitchWiki/hitchwiki.sqlite` through `HitchWiki/Networking/HitchwikiDatabase.swift`.
+The app reads `HitchWise/hitchwiki.sqlite` through `HitchWise/Networking/HitchwikiDatabase.swift`.
 That copy has no raw wikitext, duplicate page text or search index; the full `output/hitchwiki.sqlite` has everything.
 
 ## Outputs (`output/`, git-ignored)
@@ -49,7 +49,7 @@ curl -L -o output/pl.xml.gz https://dumps.hitchwiki.org/hitchwiki-current-pl.xml
 python3 slim_dump.py output/pl.xml output/hitchwiki-latest-pl.xml
 .venv/bin/pip install babel
 .venv/bin/python extract.py output/hitchwiki-latest-pl.xml output/pl --language pl \
-    --gazetteer ../HitchWiki/hitchwiki.sqlite --app-db output/hitchwiki-pl.sqlite
+    --gazetteer ../HitchWise/hitchwiki.sqlite --app-db output/hitchwiki-pl.sqlite
 ```
 
 The Polish wiki has no infoboxes, so for languages other than English `extract.py` fills in what the app needs:
@@ -72,13 +72,13 @@ Hitchwiki Maps and liftershalte.info since 2005) and go into their own database,
 ```sh
 .venv/bin/pip install pyarrow
 curl -L -o output/rides.parquet https://huggingface.co/datasets/Hitchwiki/hitchhiking-rides-dataset/resolve/main/rides.parquet
-.venv/bin/python build_spots.py output/rides.parquet ../HitchWiki/hitchspots.sqlite   # ~5 s, ~19 MB
+.venv/bin/python build_spots.py output/rides.parquet ../HitchWise/hitchspots.sqlite   # ~5 s, ~19 MB
 ```
 
 A spot is all rides that started at the same point (rounded to ~1 m, as Hitchmap groups them). Tables:
 `spots` (lat, lng, rides, average rating 1–5, median wait in minutes, last ride month, sources, licences) and
 `comments` (spot_id, newest first, month, nickname, rating, wait, text, source, licence), plus `meta` with
-`kind = 'spots'`. The app reads it through `HitchWiki/Networking/SpotsDatabase.swift`.
+`kind = 'spots'`. The app reads it through `HitchWise/Networking/SpotsDatabase.swift`.
 
 What is left out on purpose: rides with an unknown licence (99 rows marked `xxx` in November 2026), and all personal
 details beyond the nickname a comment was posted under (no gender, age, origin, routes or exact dates; months only).

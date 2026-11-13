@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //  HitchWise
 //
-//  The Settings tab: the guide language (downloads it when needed), the app language
+//  The Settings tab: the account (optional sign-in), the guide language (downloads it when needed), the app language
 //  (iOS keeps it per app, so this opens the system page) and where the content comes from.
 //
 
@@ -18,6 +18,8 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                AccountSection()
+
                 Section {
                     ForEach(AppLanguage.allCases) { language in
                         self.guideRow(language)
@@ -155,4 +157,5 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .environment(DatabaseSync())
+        .environment(AuthManager.forPreviews())
 }

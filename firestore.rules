@@ -1,0 +1,34 @@
+rules_version = '2';
+
+// HitchWise Firestore rules.
+// users/{uid}: one profile per signed-in user, created by the app on sign-in.
+// Each user can only read, write and delete their own profile, and only these fields:
+//   id          – the Firebase Auth uid (same as the document ID)
+//   email       – from the sign-in provider (Google for now); may be missing
+//   lastLoginAt – server timestamp, set on every sign-in and app launch
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function isValidProfile(userId) {
+      let data = request.resource.data;
+      return data.keys().hasOnly(['id', 'email', 'lastLoginAt'])
+        && data.id == userId
+        && (!('email' in data) || data.email is string)
+        && data.lastLoginAt == request.time;
+    }
+
+    match /users/{userId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidProfile(userId);
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -7,16 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AC0F00000000000000000011 /* AccountSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0F00000000000000000001 /* AccountSection.swift */; };
+		AC0F00000000000000000012 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0F00000000000000000002 /* AuthManager.swift */; };
+		AC0F00000000000000000013 /* AuthServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0F00000000000000000003 /* AuthServiceProtocol.swift */; };
+		AC0F00000000000000000014 /* SignInHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0F00000000000000000004 /* SignInHelpers.swift */; };
+		AC0F00000000000000000015 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0F00000000000000000005 /* UserProfile.swift */; };
+		AC0F00000000000000000016 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0F00000000000000000006 /* UserService.swift */; };
+		AC0F00000000000000000220 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AC0F00000000000000000210 /* FirebaseAuth */; };
+		AC0F00000000000000000221 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = AC0F00000000000000000211 /* FirebaseFirestore */; };
+		AC0F00000000000000000222 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AC0F00000000000000000212 /* GoogleSignIn */; };
+		AC0F00000000000000000223 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AC0F00000000000000000213 /* GoogleSignInSwift */; };
 		4B4FCD822709B68500BC520E /* HitchWiki.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */; };
 		4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD832709B68500BC520E /* Assets.xcassets */; };
 		4B4FCD872709B68500BC520E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */; };
 		4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 4B89024A2717499F00C8C4B1 /* Algorithms */; };
 		4BDB0A012F2E000000000001 /* HitchwikiDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */; };
 		4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000004 /* hitchwiki.sqlite */; };
-		4BDB16010000000000000002 /* SpotsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000001 /* SpotsDatabase.swift */; };
-		4BDB16010000000000000004 /* RideSpotDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000003 /* RideSpotDetailsView.swift */; };
-		4BDB16010000000000000006 /* MapAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000005 /* MapAttribution.swift */; };
-		4BDB16010000000000000008 /* hitchspots.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000007 /* hitchspots.sqlite */; };
 		4BDB0C010000000000000003 /* HitchWikiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000002 /* HitchWikiApp.swift */; };
 		4BDB0C010000000000000005 /* AppTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000004 /* AppTab.swift */; };
 		4BDB0C010000000000000007 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000006 /* RootTabView.swift */; };
@@ -41,7 +47,6 @@
 		4BDB0C010000000000000034 /* PressableButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000033 /* PressableButtonStyle.swift */; };
 		4BDB0C010000000000000036 /* Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000035 /* Shimmer.swift */; };
 		4BDB0C010000000000000038 /* StaggeredAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000037 /* StaggeredAppear.swift */; };
-		4BDB15010000000000000002 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB15010000000000000001 /* SplashView.swift */; };
 		4BDB0C01000000000000003A /* AnimatedMeshBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */; };
 		4BDB0D010000000000000002 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0D010000000000000001 /* FlowLayout.swift */; };
 		4BDB0E010000000000000003 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E010000000000000002 /* MapTabView.swift */; };
@@ -66,10 +71,22 @@
 		4BDB13010000000000000006 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB13010000000000000005 /* SettingsView.swift */; };
 		4BDB13010000000000000008 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB13010000000000000007 /* Localizable.xcstrings */; };
 		4BDB1301000000000000000A /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB13010000000000000009 /* InfoPlist.xcstrings */; };
+		4BDB15010000000000000002 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB15010000000000000001 /* SplashView.swift */; };
+		4BDB16010000000000000002 /* SpotsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000001 /* SpotsDatabase.swift */; };
+		4BDB16010000000000000004 /* RideSpotDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000003 /* RideSpotDetailsView.swift */; };
+		4BDB16010000000000000006 /* MapAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000005 /* MapAttribution.swift */; };
+		4BDB16010000000000000008 /* hitchspots.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000007 /* hitchspots.sqlite */; };
+		655AE3B430A66CAB00A05C8C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 655AE3B330A66CAB00A05C8C /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4B4FCD742709B68500BC520E /* HitchWiki.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HitchWiki.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC0F00000000000000000001 /* AccountSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSection.swift; sourceTree = "<group>"; };
+		AC0F00000000000000000002 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		AC0F00000000000000000003 /* AuthServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceProtocol.swift; sourceTree = "<group>"; };
+		AC0F00000000000000000004 /* SignInHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInHelpers.swift; sourceTree = "<group>"; };
+		AC0F00000000000000000005 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		AC0F00000000000000000006 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		4B4FCD742709B68500BC520E /* HitchWise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HitchWise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4FCD812709B68500BC520E /* HitchWiki.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HitchWiki.xcdatamodel; sourceTree = "<group>"; };
 		4B4FCD832709B68500BC520E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B4FCD862709B68500BC520E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -77,10 +94,6 @@
 		4B87E7592713556500C73578 /* hitchwiki.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hitchwiki.json; sourceTree = "<group>"; };
 		4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchwikiDatabase.swift; sourceTree = "<group>"; };
 		4BDB0A012F2E000000000004 /* hitchwiki.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchwiki.sqlite; sourceTree = "<group>"; };
-		4BDB16010000000000000001 /* SpotsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsDatabase.swift; sourceTree = "<group>"; };
-		4BDB16010000000000000003 /* RideSpotDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideSpotDetailsView.swift; sourceTree = "<group>"; };
-		4BDB16010000000000000005 /* MapAttribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapAttribution.swift; sourceTree = "<group>"; };
-		4BDB16010000000000000007 /* hitchspots.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchspots.sqlite; sourceTree = "<group>"; };
 		4BDB0C010000000000000002 /* HitchWikiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchWikiApp.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000004 /* AppTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTab.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000006 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
@@ -105,7 +118,6 @@
 		4BDB0C010000000000000033 /* PressableButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PressableButtonStyle.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000035 /* Shimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmer.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000037 /* StaggeredAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaggeredAppear.swift; sourceTree = "<group>"; };
-		4BDB15010000000000000001 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		4BDB0C010000000000000039 /* AnimatedMeshBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedMeshBackground.swift; sourceTree = "<group>"; };
 		4BDB0D010000000000000001 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		4BDB0E010000000000000002 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
@@ -130,6 +142,12 @@
 		4BDB13010000000000000005 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4BDB13010000000000000007 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		4BDB13010000000000000009 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		4BDB15010000000000000001 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		4BDB16010000000000000001 /* SpotsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsDatabase.swift; sourceTree = "<group>"; };
+		4BDB16010000000000000003 /* RideSpotDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideSpotDetailsView.swift; sourceTree = "<group>"; };
+		4BDB16010000000000000005 /* MapAttribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapAttribution.swift; sourceTree = "<group>"; };
+		4BDB16010000000000000007 /* hitchspots.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchspots.sqlite; sourceTree = "<group>"; };
+		655AE3B330A66CAB00A05C8C /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +156,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */,
+				AC0F00000000000000000220 /* FirebaseAuth in Frameworks */,
+				AC0F00000000000000000221 /* FirebaseFirestore in Frameworks */,
+				AC0F00000000000000000222 /* GoogleSignIn in Frameworks */,
+				AC0F00000000000000000223 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,7 +169,7 @@
 		4B4FCD6B2709B68500BC520E = {
 			isa = PBXGroup;
 			children = (
-				4B4FCD762709B68500BC520E /* HitchWiki */,
+				4B4FCD762709B68500BC520E /* HitchWise */,
 				4B4FCD752709B68500BC520E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -155,14 +177,15 @@
 		4B4FCD752709B68500BC520E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4B4FCD742709B68500BC520E /* HitchWiki.app */,
+				4B4FCD742709B68500BC520E /* HitchWise.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4B4FCD762709B68500BC520E /* HitchWiki */ = {
+		4B4FCD762709B68500BC520E /* HitchWise */ = {
 			isa = PBXGroup;
 			children = (
+				655AE3B330A66CAB00A05C8C /* GoogleService-Info.plist */,
 				4BDB0C010000000000000001 /* App */,
 				4BDB0C010000000000000008 /* Features */,
 				4BDB0C010000000000000025 /* Shared */,
@@ -177,7 +200,7 @@
 				4BDB13010000000000000007 /* Localizable.xcstrings */,
 				4B4FCD802709B68500BC520E /* HitchWiki.xcdatamodeld */,
 			);
-			path = HitchWiki;
+			path = HitchWise;
 			sourceTree = "<group>";
 		};
 		4B87E74D27134E9C00C73578 /* Networking */ = {
@@ -208,25 +231,10 @@
 				4BDB0C01000000000000000E /* Page */,
 				4BDB0C010000000000000022 /* Placeholder */,
 				4BDB1301000000000000000B /* Onboarding */,
+				AC0F00000000000000000100 /* Account */,
 				4BDB1301000000000000000C /* Settings */,
 			);
 			path = Features;
-			sourceTree = "<group>";
-		};
-		4BDB1301000000000000000B /* Onboarding */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB13010000000000000003 /* GuideLanguageOnboarding.swift */,
-			);
-			path = Onboarding;
-			sourceTree = "<group>";
-		};
-		4BDB1301000000000000000C /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB13010000000000000005 /* SettingsView.swift */,
-			);
-			path = Settings;
 			sourceTree = "<group>";
 		};
 		4BDB0C010000000000000009 /* Home */ = {
@@ -237,17 +245,6 @@
 				4BDB1201000000000000000B /* Components */,
 			);
 			path = Home;
-			sourceTree = "<group>";
-		};
-		4BDB1201000000000000000B /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4BDB12010000000000000003 /* HomeSectionHeader.swift */,
-				4BDB12010000000000000005 /* CountryCard.swift */,
-				4BDB12010000000000000007 /* NearbyPlacesRow.swift */,
-				4BDB12010000000000000009 /* RecentPagesList.swift */,
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 		4BDB0C01000000000000000E /* Page */ = {
@@ -339,12 +336,52 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		4BDB1201000000000000000B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB12010000000000000003 /* HomeSectionHeader.swift */,
+				4BDB12010000000000000005 /* CountryCard.swift */,
+				4BDB12010000000000000007 /* NearbyPlacesRow.swift */,
+				4BDB12010000000000000009 /* RecentPagesList.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4BDB1301000000000000000B /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB13010000000000000003 /* GuideLanguageOnboarding.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		4BDB1301000000000000000C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB13010000000000000005 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		AC0F00000000000000000100 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				AC0F00000000000000000001 /* AccountSection.swift */,
+				AC0F00000000000000000002 /* AuthManager.swift */,
+				AC0F00000000000000000003 /* AuthServiceProtocol.swift */,
+				AC0F00000000000000000004 /* SignInHelpers.swift */,
+				AC0F00000000000000000005 /* UserProfile.swift */,
+				AC0F00000000000000000006 /* UserService.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4B4FCD732709B68500BC520E /* HitchWiki */ = {
+		4B4FCD732709B68500BC520E /* HitchWise */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4B4FCD8B2709B68500BC520E /* Build configuration list for PBXNativeTarget "HitchWiki" */;
+			buildConfigurationList = 4B4FCD8B2709B68500BC520E /* Build configuration list for PBXNativeTarget "HitchWise" */;
 			buildPhases = (
 				4B4FCD702709B68500BC520E /* Sources */,
 				4B4FCD712709B68500BC520E /* Frameworks */,
@@ -354,12 +391,16 @@
 			);
 			dependencies = (
 			);
-			name = HitchWiki;
+			name = HitchWise;
 			packageProductDependencies = (
 				4B89024A2717499F00C8C4B1 /* Algorithms */,
+				AC0F00000000000000000210 /* FirebaseAuth */,
+				AC0F00000000000000000211 /* FirebaseFirestore */,
+				AC0F00000000000000000212 /* GoogleSignIn */,
+				AC0F00000000000000000213 /* GoogleSignInSwift */,
 			);
 			productName = HitchWiki;
-			productReference = 4B4FCD742709B68500BC520E /* HitchWiki.app */;
+			productReference = 4B4FCD742709B68500BC520E /* HitchWise.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -376,7 +417,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 4B4FCD6F2709B68500BC520E /* Build configuration list for PBXProject "HitchWiki" */;
+			buildConfigurationList = 4B4FCD6F2709B68500BC520E /* Build configuration list for PBXProject "HitchWise" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -388,12 +429,14 @@
 			mainGroup = 4B4FCD6B2709B68500BC520E;
 			packageReferences = (
 				4B8902492717499F00C8C4B1 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				655AE3B530A66D6400A05C8C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				AC0F00000000000000000200 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = 4B4FCD752709B68500BC520E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4B4FCD732709B68500BC520E /* HitchWiki */,
+				4B4FCD732709B68500BC520E /* HitchWise */,
 			);
 		};
 /* End PBXProject section */
@@ -407,6 +450,7 @@
 				4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */,
 				4BDB16010000000000000008 /* hitchspots.sqlite in Resources */,
 				4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */,
+				655AE3B430A66CAB00A05C8C /* GoogleService-Info.plist in Resources */,
 				4BDB13010000000000000008 /* Localizable.xcstrings in Resources */,
 				4BDB1301000000000000000A /* InfoPlist.xcstrings in Resources */,
 			);
@@ -419,6 +463,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC0F00000000000000000011 /* AccountSection.swift in Sources */,
+				AC0F00000000000000000012 /* AuthManager.swift in Sources */,
+				AC0F00000000000000000013 /* AuthServiceProtocol.swift in Sources */,
+				AC0F00000000000000000014 /* SignInHelpers.swift in Sources */,
+				AC0F00000000000000000015 /* UserProfile.swift in Sources */,
+				AC0F00000000000000000016 /* UserService.swift in Sources */,
 				4BDB0E010000000000000003 /* MapTabView.swift in Sources */,
 				4BDB0E010000000000000005 /* MapViewModel.swift in Sources */,
 				4BDB0E010000000000000007 /* MapPoint+Style.swift in Sources */,
@@ -611,14 +661,15 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7265U2P6NP;
-				INFOPLIST_FILE = HitchWiki/Info.plist;
+				INFOPLIST_FILE = HitchWise/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.kacpercichosz.hitchwikipedia;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kacpercichosz.hitchwise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -633,14 +684,15 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7265U2P6NP;
-				INFOPLIST_FILE = HitchWiki/Info.plist;
+				INFOPLIST_FILE = HitchWise/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.kacpercichosz.hitchwikipedia;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kacpercichosz.hitchwise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -651,7 +703,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4B4FCD6F2709B68500BC520E /* Build configuration list for PBXProject "HitchWiki" */ = {
+		4B4FCD6F2709B68500BC520E /* Build configuration list for PBXProject "HitchWise" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B4FCD892709B68500BC520E /* Debug */,
@@ -660,7 +712,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B4FCD8B2709B68500BC520E /* Build configuration list for PBXNativeTarget "HitchWiki" */ = {
+		4B4FCD8B2709B68500BC520E /* Build configuration list for PBXNativeTarget "HitchWise" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B4FCD8C2709B68500BC520E /* Debug */,
@@ -680,6 +732,22 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		655AE3B530A66D6400A05C8C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.1.1;
+			};
+		};
+		AC0F00000000000000000200 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -687,6 +755,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4B8902492717499F00C8C4B1 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
 			productName = Algorithms;
+		};
+		AC0F00000000000000000210 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 655AE3B530A66D6400A05C8C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		AC0F00000000000000000211 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 655AE3B530A66D6400A05C8C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		AC0F00000000000000000212 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC0F00000000000000000200 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		AC0F00000000000000000213 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC0F00000000000000000200 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 
