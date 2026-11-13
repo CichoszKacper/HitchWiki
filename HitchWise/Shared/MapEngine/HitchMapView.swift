@@ -193,6 +193,8 @@ struct HitchMapView: UIViewRepresentable {
     var showsUserLocation = false
     /// Pan, zoom and taps. Off for decorative maps such as page headers.
     var isInteractive = true
+    /// Petrol stations from downloaded countries (the map's own tiles only have them zoomed right in).
+    var showsFuelStations = true
     /// Called with a marker's id when tapped, or nil when the map is tapped elsewhere.
     var onSelect: ((String?) -> Void)?
 
@@ -207,6 +209,7 @@ struct HitchMapView: UIViewRepresentable {
         coordinator.mapView = mapView
         coordinator.isDark = dark
         coordinator.clustered = self.clustered
+        coordinator.showsFuelStations = self.showsFuelStations
         coordinator.parent = self
         mapView.delegate = coordinator
         mapView.logoView.isHidden = true
@@ -272,12 +275,19 @@ struct HitchMapView: UIViewRepresentable {
         private var markers = [MapMarker]()
         private var markersByID = [String: MapMarker]()
         fileprivate var clustered = false
+        fileprivate var showsFuelStations = true
+        private var fuelTask: Task<Void, Never>?
         private var selectedID: String?
         private var styleIsLoaded = false
         private var shapeTask: Task<Void, Never>?
         private var shapeRevision = 0
 
         private enum ID {
+            static let fuel = "hw-fuel"
+            static let fuelDot = "hw-fuel-dot"
+            static let fuelMotorway = "hw-fuel-motorway"
+            static let fuelIcon = "hw-fuel-icon"
+            static let fuelName = "hw-fuel-name"
             static let markers = "hw-markers"
             static let selected = "hw-selected"
             static let clusterCircle = "hw-cluster-circle"
@@ -293,8 +303,15 @@ struct HitchMapView: UIViewRepresentable {
         func observeConnectivity() {
             NotificationCenter.default.addObserver(self, selector: #selector(self.connectivityChanged),
                                                    name: MapConnectivity.didChange, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(self.connectivityChanged),
+            NotificationCenter.default.addObserver(self, selector: #selector(self.packsChanged),
                                                    name: OfflineMapStore.packsDidChange, object: nil)
+        }
+
+        @objc private func packsChanged() {
+            self.reloadStyle()
+            if self.styleIsLoaded {
+                self.applyFuelStations()
+            }
         }
 
         @objc private func connectivityChanged() {
@@ -388,10 +405,14 @@ struct HitchMapView: UIViewRepresentable {
 
         nonisolated func mapView(_ mapView: MLNMapView, didFinishLoading style: MLNStyle) {
             MainActor.assumeIsolated {
+                if self.showsFuelStations {
+                    self.installFuelLayers(in: style)
+                }
                 self.installLayers(in: style)
                 self.styleIsLoaded = true
                 self.applyMarkers()
                 self.applySelection()
+                self.applyFuelStations()
             }
         }
 
@@ -489,6 +510,84 @@ struct HitchMapView: UIViewRepresentable {
             selectedIcon.iconAllowsOverlap = NSExpression(forConstantValue: true)
             selectedIcon.iconIgnoresPlacement = NSExpression(forConstantValue: true)
             style.addLayer(selectedIcon)
+        }
+
+        /// Petrol stations under the spots: small blue dots, and bigger ones with a pump at motorway services,
+        /// shown from further out because that's where hitchhikers plan long rides.
+        private func installFuelLayers(in style: MLNStyle) {
+            self.registerImage("fuelpump.fill", in: style)
+            let source = MLNShapeSource(identifier: ID.fuel, shape: nil, options: nil)
+            style.addSource(source)
+            let blue = self.isDark ? UIColor(red: 0.36, green: 0.61, blue: 1, alpha: 1) : UIColor(red: 0.17, green: 0.44, blue: 0.84, alpha: 1)
+            let halo = self.isDark ? UIColor(white: 0.1, alpha: 1) : UIColor.white
+
+            let dot = MLNCircleStyleLayer(identifier: ID.fuelDot, source: source)
+            dot.predicate = NSPredicate(format: "motorway != YES")
+            dot.minimumZoomLevel = 10
+            dot.circleColor = NSExpression(forConstantValue: blue)
+            dot.circleRadius = NSExpression(mglJSONObject: ["interpolate", ["linear"], ["zoom"], 10, 2.5, 16, 6])
+            dot.circleStrokeColor = NSExpression(forConstantValue: halo)
+            dot.circleStrokeWidth = NSExpression(forConstantValue: 1.2)
+            style.addLayer(dot)
+
+            let motorway = MLNCircleStyleLayer(identifier: ID.fuelMotorway, source: source)
+            motorway.predicate = NSPredicate(format: "motorway == YES")
+            motorway.minimumZoomLevel = 7
+            motorway.circleColor = NSExpression(forConstantValue: blue)
+            motorway.circleRadius = NSExpression(mglJSONObject: ["interpolate", ["linear"], ["zoom"], 7, 3, 10, 7, 16, 11])
+            motorway.circleStrokeColor = NSExpression(forConstantValue: halo)
+            motorway.circleStrokeWidth = NSExpression(forConstantValue: 1.5)
+            style.addLayer(motorway)
+
+            let icon = MLNSymbolStyleLayer(identifier: ID.fuelIcon, source: source)
+            icon.predicate = NSPredicate(format: "motorway == YES")
+            icon.minimumZoomLevel = 10
+            icon.iconImageName = NSExpression(forConstantValue: "fuelpump.fill")
+            icon.iconScale = NSExpression(forConstantValue: 0.75)
+            icon.iconAllowsOverlap = NSExpression(forConstantValue: true)
+            icon.iconIgnoresPlacement = NSExpression(forConstantValue: true)
+            style.addLayer(icon)
+
+            let name = MLNSymbolStyleLayer(identifier: ID.fuelName, source: source)
+            name.minimumZoomLevel = 13
+            name.text = NSExpression(mglJSONObject: ["coalesce", ["get", "name"], ""])
+            name.textFontNames = NSExpression(forConstantValue: ["Noto Sans Regular"])
+            name.textFontSize = NSExpression(forConstantValue: 11)
+            name.textAnchor = NSExpression(forConstantValue: "top")
+            name.textOffset = NSExpression(forConstantValue: NSValue(cgVector: CGVector(dx: 0, dy: 0.9)))
+            name.textColor = NSExpression(forConstantValue: blue)
+            name.textHaloColor = NSExpression(forConstantValue: halo)
+            name.textHaloWidth = NSExpression(forConstantValue: 1.2)
+            name.textOptional = NSExpression(forConstantValue: true)
+            style.addLayer(name)
+        }
+
+        /// Fills the petrol station layer from the downloaded countries (read off the main thread).
+        private func applyFuelStations() {
+            guard self.showsFuelStations,
+                  let source = self.mapView?.style?.source(withIdentifier: ID.fuel) as? MLNShapeSource else {
+                return
+            }
+            self.fuelTask?.cancel()
+            self.fuelTask = Task {
+                let shape = await Task.detached(priority: .utility) {
+                    let features = MapPackRegistry.shared.fuelStations().map { station -> MLNPointFeature in
+                        let feature = MLNPointFeature()
+                        feature.coordinate = CLLocationCoordinate2D(latitude: station.latitude, longitude: station.longitude)
+                        var attributes: [String: Any] = ["motorway": station.isMotorway]
+                        if let name = station.name {
+                            attributes["name"] = name
+                        }
+                        feature.attributes = attributes
+                        return feature
+                    }
+                    return UncheckedShape(MLNShapeCollectionFeature(shapes: features))
+                }.value
+                guard !Task.isCancelled else {
+                    return
+                }
+                source.shape = shape.value
+            }
         }
 
         /// A white SF Symbol, the icon drawn on markers.

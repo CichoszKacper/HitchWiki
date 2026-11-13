@@ -12,6 +12,16 @@
 import Foundation
 import SQLite3
 
+/// A petrol station from a downloaded country file.
+struct FuelStation: Sendable {
+    let latitude: Double
+    let longitude: Double
+    let name: String?
+    let brand: String?
+    /// At motorway services: where the long rides are.
+    let isMotorway: Bool
+}
+
 /// One downloaded country file, open for reading.
 final class MapPackReader: @unchecked Sendable {
     let id: String
@@ -70,6 +80,28 @@ final class MapPackReader: @unchecked Sendable {
             && tile.south <= self.bounds.north && tile.north >= self.bounds.south
     }
 
+    /// The file's petrol stations (empty for files made before they were added).
+    func fuelStations() -> [FuelStation] {
+        self.lock.lock()
+        defer { self.lock.unlock() }
+        var query: OpaquePointer?
+        guard sqlite3_prepare_v2(self.handle, "SELECT latitude, longitude, name, brand, motorway FROM fuel_stations",
+                                 -1, &query, nil) == SQLITE_OK else {
+            sqlite3_finalize(query)
+            return []
+        }
+        defer { sqlite3_finalize(query) }
+        func text(_ column: Int32) -> String? {
+            sqlite3_column_text(query, column).map { String(cString: $0) }
+        }
+        var stations = [FuelStation]()
+        while sqlite3_step(query) == SQLITE_ROW {
+            stations.append(FuelStation(latitude: sqlite3_column_double(query, 0), longitude: sqlite3_column_double(query, 1),
+                                        name: text(2), brand: text(3), isMotorway: sqlite3_column_int(query, 4) != 0))
+        }
+        return stations
+    }
+
     /// The tile's vector data (uncompressed), or nil if the file doesn't have it.
     func tile(z: Int, x: Int, y: Int) -> Data? {
         guard self.covers(z: z, x: x, y: y) else {
@@ -100,6 +132,8 @@ final class MapPackRegistry: @unchecked Sendable {
 
     private let lock = NSLock()
     private var readers = [MapPackReader]()
+    /// Petrol stations of every open file, read once per set of files.
+    private var stations: [FuelStation]?
 
     /// Opens these files (id → path), closing any that are no longer listed.
     func use(_ packs: [String: URL]) {
@@ -112,6 +146,19 @@ final class MapPackRegistry: @unchecked Sendable {
             }
         }
         self.readers = kept
+        self.stations = nil
+    }
+
+    /// Petrol stations in all downloaded countries.
+    func fuelStations() -> [FuelStation] {
+        self.lock.lock()
+        defer { self.lock.unlock() }
+        if let stations = self.stations {
+            return stations
+        }
+        let stations = self.readers.flatMap { $0.fuelStations() }
+        self.stations = stations
+        return stations
     }
 
     var isEmpty: Bool {

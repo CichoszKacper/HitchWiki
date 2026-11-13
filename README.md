@@ -35,6 +35,9 @@ road numbers and petrol stations stand out; shops and other points of interest a
    tools/.venv/bin/python tools/build_map_packs.py maps/ --upload r2:hitchwise-maps/maps --countries LU,SI
    tools/.venv/bin/python tools/build_map_packs.py maps/ --upload r2:hitchwise-maps/maps
    ```
+   Each file also gets the country's petrol stations from OpenStreetMap (via the free Overpass service; the
+   script waits and retries when it's busy), because the map's tiles only have them at zoom 14. The app draws
+   them as their own layer, with motorway services bigger and visible from further out.
    The first line is a quick test with two small countries; the second does every country (it skips those already
    done, so it can be stopped and started again). Sizes at zoom 13: Luxembourg 27 MB, Slovenia 112 MB, Poland
    ~0.75 GB, Germany ~1.2 GB.

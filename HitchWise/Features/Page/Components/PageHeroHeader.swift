@@ -60,7 +60,7 @@ struct PageHeroHeader: View {
     @ViewBuilder
     private var backdrop: some View {
         if let mapFrame = self.mapFrame {
-            HitchMapView(markers: self.markers, initialRegion: mapFrame.region, isInteractive: false)
+            HitchMapView(markers: self.markers, initialRegion: mapFrame.region, isInteractive: false, showsFuelStations: false)
                 .allowsHitTesting(false)
         } else {
             AnimatedMeshBackground(seed: self.title)

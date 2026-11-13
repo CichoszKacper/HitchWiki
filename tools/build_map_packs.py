@@ -10,7 +10,10 @@ Usage:
 
 Writes:
     <out dir>/<CC>.mbtiles   one per country (ISO code): tiles from zoom 0 to --maxzoom that touch the country
-                             or the 10 km around its border (deleted again after uploading, with --upload)
+                             or the 10 km around its border (deleted again after uploading, with --upload),
+                             plus a `fuel_stations` table: every petrol station in the country, from
+                             OpenStreetMap via Overpass. The map's tiles only have them at zoom 14, which would
+                             make the files ~3x bigger; as a list they're about 1 MB for Germany.
     <out dir>/index.json     the catalogue the app reads: version, maxzoom, and per country its name,
                              bounding box, size and file name (uploaded last, with --upload)
 
@@ -21,12 +24,14 @@ Runs can be stopped and started again: countries already in index.json for the s
 (--force makes them again). A newer planet version makes everything again, and the app offers the update.
 
 Needs: brew install pmtiles rclone; pip install shapely pmtiles
+Overpass is shared and free: the script waits between countries and retries politely when it's busy.
 Country shapes come from Natural Earth (public domain), downloaded on first run.
 """
-import argparse, json, math, os, re, shutil, sqlite3, subprocess, sys, tempfile, urllib.request
+import argparse, json, math, os, re, shutil, sqlite3, subprocess, sys, tempfile, time, urllib.parse, urllib.request
 
 try:
-    from shapely.geometry import mapping, shape
+    from shapely.geometry import Point, Polygon, mapping, shape
+    from shapely.strtree import STRtree
     from pmtiles.reader import MmapSource, Reader, all_tiles
 except ImportError:
     sys.exit('Needs: pip install shapely pmtiles')
@@ -35,6 +40,8 @@ OPENFREEMAP = 'https://btrfs.openfreemap.com'
 NATURAL_EARTH = ('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/'
                  'ne_50m_admin_0_countries.geojson')
 USER_AGENT = 'HitchWise-map-builder/1.0 (offline maps for the HitchWise iOS app)'
+OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter',
+            'https://overpass.private.coffee/api/interpreter']
 # About 10 km, so roads and towns just across the border are on the map too.
 BORDER_BUFFER_DEGREES = 0.1
 
@@ -96,7 +103,8 @@ if os.path.exists(index_path):
     with open(index_path) as f:
         previous = json.load(f)
     if previous.get('version') == version and previous.get('maxzoom') == args.maxzoom:
-        done = {pack['id']: pack for pack in previous['packs']}
+        # Files made before petrol stations were added are made again.
+        done = {pack['id']: pack for pack in previous['packs'] if 'stations' in pack}
 
 
 def country_code(properties):
@@ -119,6 +127,54 @@ def save_index():
     packs = sorted(done.values(), key=lambda pack: pack['name'])
     with open(index_path, 'w') as f:
         json.dump({'version': version, 'maxzoom': args.maxzoom, 'packs': packs}, f, ensure_ascii=False, indent=1)
+
+
+def overpass(query):
+    """Runs an Overpass query, trying each server and waiting longer each time one is busy."""
+    data = urllib.parse.urlencode({'data': query}).encode()
+    for attempt in range(8):
+        url = OVERPASS[attempt % len(OVERPASS)]
+        try:
+            request = urllib.request.Request(url, data=data, headers={'User-Agent': USER_AGENT})
+            with urllib.request.urlopen(request, timeout=400) as response:
+                return json.load(response)
+        except Exception as error:
+            wait = 30 * (attempt + 1)
+            print(f'  Overpass busy or failed ({error}); trying again in {wait} s')
+            time.sleep(wait)
+    sys.exit('Overpass kept failing; run the script again later (finished countries are kept).')
+
+
+def fuel_stations(code):
+    """Every petrol station in the country: position, name, brand, and whether it's at motorway services."""
+    query = f'''[out:json][timeout:360];
+        area["ISO3166-1"="{code}"]["admin_level"="2"]->.country;
+        nwr["amenity"="fuel"](area.country);
+        out center tags qt;
+        way["highway"="services"](area.country);
+        out geom qt;'''
+    elements = overpass(query)['elements']
+    services = []
+    for element in elements:
+        if element.get('tags', {}).get('highway') == 'services' and len(element.get('geometry', [])) >= 3:
+            ring = [(point['lon'], point['lat']) for point in element['geometry']]
+            services.append(Polygon(ring).buffer(0.001))   # ~100 m: pumps drawn just outside the area
+    tree = STRtree(services) if services else None
+
+    stations = []
+    for element in elements:
+        tags = element.get('tags', {})
+        if tags.get('amenity') != 'fuel':
+            continue
+        center = element.get('center') or element
+        if 'lat' not in center:
+            continue
+        lat, lon = center['lat'], center['lon']
+        point = Point(lon, lat)
+        motorway = bool(tree is not None and any(services[i].contains(point) for i in tree.query(point)))
+        stations.append((round(lat, 6), round(lon, 6), tags.get('name') or tags.get('brand'), tags.get('brand'),
+                         int(motorway)))
+    return stations
 
 
 def make_country(code, name, area, path):
@@ -169,10 +225,14 @@ def make_country(code, name, area, path):
             metadata['json'] = json.dumps({'vector_layers': planet_metadata['vector_layers']})
         out.executemany('INSERT INTO metadata VALUES (?, ?)', metadata.items())
         out.execute('CREATE UNIQUE INDEX tile_index ON tiles (zoom_level, tile_column, tile_row)')
+
+        stations = fuel_stations(code)
+        out.execute('CREATE TABLE fuel_stations (latitude REAL, longitude REAL, name TEXT, brand TEXT, motorway INTEGER)')
+        out.executemany('INSERT INTO fuel_stations VALUES (?, ?, ?, ?, ?)', stations)
         out.commit()
         out.execute('VACUUM')
         out.close()
-        return count
+        return count, len(stations), sum(station[4] for station in stations)
 
 
 with open(args.shapes) as f:
@@ -191,16 +251,20 @@ for feature in sorted(features, key=lambda f: f['properties'].get('NAME_EN') or 
     area = geometry.buffer(BORDER_BUFFER_DEGREES)
     path = os.path.join(args.outdir, f'{code}.mbtiles')
 
-    count = make_country(code, name, area, path)
+    count, stations, motorway = make_country(code, name, area, path)
     size = os.path.getsize(path)
-    print(f'{code} {name}: {count:,} tiles, {size / 1e6:.0f} MB')
+    print(f'{code} {name}: {count:,} tiles, {stations:,} petrol stations ({motorway:,} at motorway services), '
+          f'{size / 1e6:.0f} MB')
 
     if args.upload:
         subprocess.run(['rclone', 'copyto', path, f'{args.upload.rstrip("/")}/{code}.mbtiles'], check=True)
         os.remove(path)
-    done[code] = {'id': code, 'name': name, 'bbox': main_part_bbox(geometry), 'bytes': size, 'file': f'{code}.mbtiles'}
+    done[code] = {'id': code, 'name': name, 'bbox': main_part_bbox(geometry), 'bytes': size, 'file': f'{code}.mbtiles',
+                  'stations': stations}
     # Saved after every country, so a stopped run picks up where it left off.
     save_index()
+    # Overpass is a shared, free service: a short pause between countries.
+    time.sleep(5)
 
 save_index()
 if args.upload:
