@@ -12,11 +12,17 @@ struct PlaceholderTabView: View {
 
     var body: some View {
         NavigationStack {
-            ContentUnavailableView {
-                Label(self.tab.title, systemImage: self.tab.systemImage)
-                    .symbolEffect(.breathe)
-            } description: {
-                Text("Coming soon")
+            VStack(alignment: .leading, spacing: 0) {
+                ScreenTitle(self.tab.title)
+                    .padding(.horizontal, Theme.screenPadding)
+                    .padding(.top, 6)
+                ContentUnavailableView {
+                    Label(self.tab.title, systemImage: self.tab.systemImage)
+                        .symbolEffect(.breathe)
+                } description: {
+                    Text("Coming soon")
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .background(Theme.background)
             .navigationTitle(self.tab.title)

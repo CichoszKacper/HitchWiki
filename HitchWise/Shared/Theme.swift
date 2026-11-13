@@ -32,6 +32,25 @@ extension View {
     }
 }
 
+/// A screen's big title, for tabs that hide the navigation bar: the same look as a large
+/// navigation title, without the empty bar above it.
+struct ScreenTitle: View {
+    let text: String
+
+    init(_ text: String) {
+        self.text = text
+    }
+
+    var body: some View {
+        Text(verbatim: self.text)
+            .font(.largeTitle.bold())
+            .foregroundStyle(.primary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+            .accessibilityAddTraits(.isHeader)
+    }
+}
+
 extension View {
     /// For screens without a navigation bar: paints the strip behind the status bar so content
     /// scrolling up under the clock stays readable.

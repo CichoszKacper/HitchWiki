@@ -45,8 +45,9 @@ struct HomeView: View {
                     self.dashboard
                 }
             }
-            // No navigation bar on the home screen, just the search field at the top.
-            // The title stays set so pages opened from here get a "HitchWise" back button.
+            // No navigation bar (it left an empty strip above the title): the title and the search
+            // field sit at the top of the screen instead. The navigation title stays set so pages
+            // opened from here get a "HitchWise" back button.
             .navigationTitle("HitchWise")
             .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .top, spacing: 0) {
@@ -249,13 +250,35 @@ struct HomeView: View {
     }
 }
 
-/// The search field at the top of the home screen, with Cancel while typing.
+/// The "HitchWise" title and the search field at the top of the home screen. The title makes way
+/// while searching, like a navigation bar's large title does, and Cancel shows while typing.
 private struct HomeSearchBar: View {
     @Binding var query: String
     var isFocused: FocusState<Bool>.Binding
     let onCancel: () -> Void
 
+    private var isSearching: Bool {
+        self.isFocused.wrappedValue || !self.query.isEmpty
+    }
+
     var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if !self.isSearching {
+                ScreenTitle("HitchWise")
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+            self.field
+        }
+        .padding(.horizontal, Theme.screenPadding)
+        .padding(.top, 6)
+        .padding(.bottom, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        // Also fills the strip behind the status bar, so content scrolls away under a solid edge.
+        .background(Theme.background)
+        .animation(Theme.spring, value: self.isSearching)
+    }
+
+    private var field: some View {
         HStack(spacing: 10) {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
@@ -280,18 +303,12 @@ private struct HomeSearchBar: View {
             .padding(.vertical, 11)
             .background(Theme.cardBackground, in: .capsule)
 
-            if self.isFocused.wrappedValue || !self.query.isEmpty {
+            if self.isSearching {
                 Button("Cancel", action: self.onCancel)
                     .font(.body.weight(.medium))
                     .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }
-        .padding(.horizontal, Theme.screenPadding)
-        .padding(.top, 6)
-        .padding(.bottom, 10)
-        // Also fills the strip behind the status bar, so content scrolls away under a solid edge.
-        .background(Theme.background)
-        .animation(Theme.spring, value: self.isFocused.wrappedValue)
     }
 }
 

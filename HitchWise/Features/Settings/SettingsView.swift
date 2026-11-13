@@ -18,6 +18,12 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                // The title scrolls with the list, without the navigation bar's empty strip above it.
+                ScreenTitle(AppTab.settings.title)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 4, bottom: 0, trailing: 0))
+                    .listRowSeparator(.hidden)
+
                 AccountSection()
 
                 Section {
@@ -64,7 +70,7 @@ struct SettingsView: View {
                     LabeledContent("Version", value: Self.appVersion)
                 }
             }
-            // No navigation bar: the tab bar already says where you are.
+            // No navigation bar: the title is the first row of the list instead.
             .navigationTitle("Settings")
             .toolbar(.hidden, for: .navigationBar)
             .statusBarBackground()
