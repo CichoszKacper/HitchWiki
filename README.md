@@ -23,17 +23,22 @@ road numbers and petrol stations stand out; shops and other points of interest a
 
 1. Create an R2 bucket and give it a custom domain (R2's `r2.dev` address is rate-limited and not for production).
    Storage is about $0.015/GB a month after the free 10 GB; downloads are free.
-2. Download the newest finished planet (about 105 GB; the newest run with a `done` file in
-   https://btrfs.openfreemap.com/files.txt), keeping its folder name, which becomes the maps' version:
+2. Install the tools and set up rclone with an R2 **Account API token** (Object Read & Write, this bucket only):
    ```
-   mkdir -p planet/20261101_080013_pt
-   curl -L -o planet/20261101_080013_pt/tiles.mbtiles https://btrfs.openfreemap.com/areas/planet/20261101_080013_pt/tiles.mbtiles
+   brew install pmtiles rclone
+   python3 -m venv tools/.venv && tools/.venv/bin/pip install shapely pmtiles
+   rclone config create r2 s3 provider=Cloudflare access_key_id=… secret_access_key=… endpoint=https://<account id>.r2.cloudflarestorage.com acl=private
    ```
-3. Cut the countries (needs `pip install shapely`; `--countries PL,DE` for a few, zoom 13 by default):
+3. Make and upload the countries. Only each country's tiles are downloaded from OpenFreeMap's newest planet (not the
+   whole ~90 GB file), each one is uploaded and deleted straight away, and `index.json` goes up last:
    ```
-   python3 tools/build_map_packs.py planet/20261101_080013_pt/tiles.mbtiles maps/
+   tools/.venv/bin/python tools/build_map_packs.py maps/ --upload r2:hitchwise-maps/maps --countries LU,SI
+   tools/.venv/bin/python tools/build_map_packs.py maps/ --upload r2:hitchwise-maps/maps
    ```
-4. Upload the `.mbtiles` files first, then `index.json`, e.g. `rclone copy maps r2:<bucket>/maps`.
+   The first line is a quick test with two small countries; the second does every country (it skips those already
+   done, so it can be stopped and started again). Sizes at zoom 13: Luxembourg 27 MB, Slovenia 112 MB, Poland
+   ~0.75 GB, Germany ~1.2 GB.
+4. Check `https://<your public URL>/maps/index.json` opens in a browser.
 5. Set `HWMapPacksBaseURL` in `HitchWise/Info.plist` to that folder, e.g. `https://maps.example.com/maps/`.
 
 Re-running with a newer planet changes the version in `index.json`, and the app offers an update for downloaded countries.
