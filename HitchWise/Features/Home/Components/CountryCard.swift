@@ -135,11 +135,12 @@ struct CountryCard: View {
                         .font(.caption2.weight(.bold))
                         .tracking(0.6)
                         .foregroundStyle(.white.opacity(0.7))
+                    // Long values (e.g. two languages) wrap onto more lines at the same size.
                     Text(fact.value)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.white)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 12)
