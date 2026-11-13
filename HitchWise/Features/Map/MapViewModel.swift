@@ -2,13 +2,13 @@
 //  MapViewModel.swift
 //  HitchWiki
 //
-//  Clusters and markers for the visible part of the map, what's near the user, and the selected point.
-//  Points come from the guide (pages and the spots written on them) and from the spots database
-//  (places where people logged rides, with ratings, waits and comments).
+//  Markers for the map, what's near the user, and the selected point. Points come from the guide (pages and
+//  the spots written on them) and from the spots database (places where people logged rides, with ratings,
+//  waits and comments). MapLibre groups them into bubbles itself (see HitchMapView).
 //
 
 import SwiftUI
-import MapKit
+import CoreLocation
 import Observation
 
 /// A point with its distance from the user.
@@ -22,12 +22,9 @@ struct NearbyPoint: Identifiable, Hashable {
 @MainActor
 @Observable
 final class MapViewModel {
-    var position: MapCameraPosition = .userLocation(fallback: .region(MapViewModel.europe))
     var selectedID: String?
-    /// Points drawn as their own marker.
-    private(set) var singles = [MapPoint]()
-    /// Groups of nearby points drawn as one bubble.
-    private(set) var clusters = [MapCluster]()
+    /// Every point, as drawn on the map. Built once per data load.
+    private(set) var markers = [MapMarker]()
     private(set) var nearby = [NearbyPoint]()
     private(set) var selectedPoint: MapPoint?
     /// Directions for the selected point when it's a hitchhiking spot.
@@ -38,11 +35,11 @@ final class MapViewModel {
     private(set) var selectedRideSpotPlace: MapPoint?
     private(set) var isLoadingSpotDetails = false
 
+    /// Moves the map.
+    @ObservationIgnored let controller = MapController()
+
     /// How much of the map the first view of the user's location covers: roughly a city and its outskirts.
     private static let cityDistance: CLLocationDistance = 25_000
-
-    private static let europe = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50, longitude: 12),
-                                                   span: MKCoordinateSpan(latitudeDelta: 22, longitudeDelta: 22))
 
     @ObservationIgnored private let injectedDatabase: HitchwikiDatabase?
     @ObservationIgnored private let injectedSpots: SpotsDatabase?
@@ -51,11 +48,8 @@ final class MapViewModel {
     private var spotsDatabase: SpotsDatabase? { self.injectedSpots ?? SpotsDatabase.shared }
     @ObservationIgnored private var allPoints = [MapPoint]()
     @ObservationIgnored private var pointsByID = [String: MapPoint]()
-    @ObservationIgnored private var region: MKCoordinateRegion? = MapViewModel.europe
-    @ObservationIgnored private var mapSize = CGSize(width: 390, height: 800)
     @ObservationIgnored private var nearbyTask: Task<Void, Never>?
     @ObservationIgnored private var detailsTask: Task<Void, Never>?
-    @ObservationIgnored private var clusterTask: Task<Void, Never>?
     @ObservationIgnored private var nearbyOrigin: CLLocation?
     @ObservationIgnored private var hasCenteredOnUser = false
 
@@ -83,73 +77,24 @@ final class MapViewModel {
         }
         let database = self.database
         let spots = self.spotsDatabase
-        let points = await Task.detached(priority: .userInitiated) {
-            ((try? database?.allMapPoints()) ?? []) + ((try? spots?.allMapPoints()) ?? [])
+        let (points, markers) = await Task.detached(priority: .userInitiated) {
+            let points = ((try? database?.allMapPoints()) ?? []) + ((try? spots?.allMapPoints()) ?? [])
+            return (points, points.map(\.marker))
         }.value
         self.allPoints = points
         self.pointsByID = Dictionary(points.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        self.recluster()
-    }
-
-    /// Call when the map stops moving.
-    func regionChanged(_ region: MKCoordinateRegion) {
-        self.region = region
-        self.recluster()
-    }
-
-    func mapSizeChanged(_ size: CGSize) {
-        guard size.width > 0, size.height > 0, size != self.mapSize else {
-            return
-        }
-        self.mapSize = size
-        self.recluster()
-    }
-
-    /// Zooms the map in to a cluster's points.
-    func zoom(into cluster: MapCluster) {
-        withAnimation(.smooth(duration: 0.7)) {
-            self.position = .region(cluster.region)
-        }
-    }
-
-    private func recluster() {
-        guard let region = self.region, !self.allPoints.isEmpty else {
-            return
-        }
-        // ~55,000 points: group them off the main thread so the map stays smooth. Only the latest request is applied.
-        let points = self.allPoints
-        let mapSize = self.mapSize
-        let selectedID = self.selectedID
-        self.clusterTask?.cancel()
-        self.clusterTask = Task {
-            let result = await Task.detached(priority: .userInitiated) {
-                MapClusterer.cluster(points, in: region, mapSize: mapSize, keepingSeparate: selectedID)
-            }.value
-            guard !Task.isCancelled else {
-                return
-            }
-            withAnimation(.snappy) {
-                self.singles = result.singles
-                self.clusters = result.clusters
-            }
-        }
+        self.markers = markers
     }
 
     /// Recomputes the nearby list when the user has moved more than a few hundred metres.
     /// The first time the user's location arrives, flies the map to their city (not street level).
     /// Does nothing on later location updates, so the map doesn't keep snapping back to the user.
     func centerOnUserIfNeeded(_ location: CLLocation) {
-        // No check for `position.positionedByUser`: MapKit can report the start position as moved
-        // by the user before anyone touched the map, which silently skipped this zoom.
         guard !self.hasCenteredOnUser else {
             return
         }
         self.hasCenteredOnUser = true
-        withAnimation(.smooth(duration: 1.2)) {
-            self.position = .region(MKCoordinateRegion(center: location.coordinate,
-                                                       latitudinalMeters: Self.cityDistance,
-                                                       longitudinalMeters: Self.cityDistance))
-        }
+        self.controller.show(GeoRegion(center: location.coordinate, meters: Self.cityDistance))
     }
 
     func updateNearby(from location: CLLocation) {
@@ -181,6 +126,12 @@ final class MapViewModel {
         }
     }
 
+    /// A marker was tapped on the map (nil: the map itself).
+    func select(_ id: String?) {
+        self.selectedID = id
+        self.selectionChanged()
+    }
+
     /// Keeps `selectedPoint` in step with the map's selection.
     func selectionChanged() {
         let point = self.selectedID.flatMap { self.pointsByID[$0] }
@@ -188,8 +139,6 @@ final class MapViewModel {
             self.selectedPoint = self.selectedID == nil ? nil : (point ?? self.selectedPoint)
         }
         self.loadDetails(for: self.selectedPoint)
-        // The selected point always gets its own marker, even where it would be clustered.
-        self.recluster()
     }
 
     private func loadDetails(for point: MapPoint?) {
@@ -269,13 +218,11 @@ final class MapViewModel {
         if self.pointsByID[point.id] == nil {
             self.allPoints.append(point)
             self.pointsByID[point.id] = point
+            self.markers.append(point.marker)
         }
         self.selectedID = point.id
         self.selectionChanged()
-        withAnimation(.smooth(duration: 0.8)) {
-            self.position = .region(MKCoordinateRegion(center: point.coordinate,
-                                                       span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)))
-        }
+        self.controller.fly(to: point.coordinate, zoom: 14)
     }
 
     func clearSelection() {

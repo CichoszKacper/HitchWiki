@@ -9,58 +9,29 @@
 //
 
 import SwiftUI
-import MapKit
 
 struct MapTabView: View {
     @State private var viewModel = MapViewModel()
     @State private var location = LocationManager()
     @State private var router = Router()
+    @State private var isOnline = MapConnectivity.shared.isOnline
+    @State private var showsOfflineMaps = false
     @Environment(DatabaseSync.self) private var sync
 
     var body: some View {
         NavigationStack(path: self.$router.path) {
-            Map(position: self.$viewModel.position, selection: self.$viewModel.selectedID) {
-                UserAnnotation()
-                ForEach(self.viewModel.clusters) { cluster in
-                    Annotation("", coordinate: cluster.coordinate, anchor: .center) {
-                        Button {
-                            self.viewModel.zoom(into: cluster)
-                        } label: {
-                            ClusterBubble(count: cluster.count, tint: cluster.representative.clusterTint)
-                        }
-                        .buttonStyle(.pressable)
-                    }
-                    .annotationTitles(.hidden)
+            ZStack(alignment: .bottom) {
+                HitchMapView(controller: self.viewModel.controller,
+                             markers: self.viewModel.markers,
+                             clustered: true,
+                             selectedID: self.viewModel.selectedID,
+                             initialRegion: .europe,
+                             showsUserLocation: !self.location.isDenied) { id in
+                    self.viewModel.select(id)
                 }
-                ForEach(self.viewModel.singles) { point in
-                    Marker(point.title, systemImage: point.systemImage, coordinate: point.coordinate)
-                        .tint(point.tint)
-                        // Every ride spot is called "Hitchhiking spot": the colour says more than the title.
-                        .annotationTitles(point.kind == .rideSpot ? .hidden : .automatic)
-                        .tag(point.id)
-                }
-            }
-            .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
-            .mapControls {
-                MapUserLocationButton()
-                MapCompass()
-                MapScaleView()
-            }
-            .onMapCameraChange(frequency: .onEnd) { context in
-                self.viewModel.regionChanged(context.region)
-            }
-            .onGeometryChange(for: CGSize.self) { geometry in
-                geometry.size
-            } action: { size in
-                self.viewModel.mapSizeChanged(size)
-            }
-            .task {
-                await self.viewModel.loadPoints()
-            }
-            .onChange(of: self.viewModel.selectedID) {
-                self.viewModel.selectionChanged()
-            }
-            .safeAreaInset(edge: .bottom) {
+                // Under the status bar, but not under the tab bar.
+                .ignoresSafeArea(edges: .top)
+
                 VStack(spacing: 6) {
                     self.bottomPanel
                     // The data's credit, small, just above the tab bar.
@@ -68,9 +39,37 @@ struct MapTabView: View {
                 }
                 .padding(.bottom, 4)
             }
+            .overlay(alignment: .topTrailing) {
+                self.mapButtons
+            }
+            .overlay(alignment: .top) {
+                if !self.isOnline {
+                    self.offlineBadge
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .animation(Theme.spring, value: self.isOnline)
+            .task {
+                await self.viewModel.loadPoints()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: MapConnectivity.didChange)) { _ in
+                self.isOnline = MapConnectivity.shared.isOnline
+            }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: PageRoute.self) { route in
                 PageView(title: route.title)
+            }
+            .sheet(isPresented: self.$showsOfflineMaps) {
+                NavigationStack {
+                    OfflineMapsView(suggestedCoordinate: self.viewModel.controller.visibleCenter)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") {
+                                    self.showsOfflineMaps = false
+                                }
+                            }
+                        }
+                }
             }
         }
         .environment(self.router)
@@ -94,6 +93,53 @@ struct MapTabView: View {
                 self.viewModel.updateNearby(from: newLocation)
             }
         }
+    }
+
+    /// Go to my location, and download maps.
+    private var mapButtons: some View {
+        VStack(spacing: 0) {
+            Button {
+                if !self.viewModel.controller.centerOnUser(), let location = self.location.location {
+                    self.viewModel.controller.fly(to: location.coordinate, zoom: 13)
+                }
+            } label: {
+                Image(systemName: "location.fill")
+                    .frame(width: 44, height: 44)
+            }
+            .accessibilityLabel(Text("Show my location"))
+            .disabled(self.location.isDenied)
+            Divider()
+                .frame(width: 44)
+            Button {
+                self.showsOfflineMaps = true
+            } label: {
+                Image(systemName: "arrow.down.circle")
+                    .frame(width: 44, height: 44)
+            }
+            .accessibilityLabel(Text("Offline maps"))
+        }
+        .font(.system(size: 17, weight: .semibold))
+        .background(.regularMaterial, in: .rect(cornerRadius: 12, style: .continuous))
+        .shadow(color: .black.opacity(0.12), radius: 8, y: 3)
+        .padding(.trailing, 12)
+        .padding(.top, 8)
+    }
+
+    /// Shown while offline: the map only has what's been downloaded.
+    private var offlineBadge: some View {
+        Button {
+            self.showsOfflineMaps = true
+        } label: {
+            Label(OfflineMapStore.shared.installed.isEmpty ? String(localized: "Offline · Download maps")
+                                                             : String(localized: "Offline · Using downloaded maps"),
+                  systemImage: "wifi.slash")
+                .font(.footnote.weight(.semibold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(.regularMaterial, in: .capsule)
+        }
+        .buttonStyle(.pressable)
+        .padding(.top, 8)
     }
 
     @ViewBuilder

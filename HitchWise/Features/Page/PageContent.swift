@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import MapKit
+import CoreLocation
 
 /// One infobox value shown as a chip.
 struct Fact: Identifiable, Hashable, Sendable {
@@ -50,9 +50,9 @@ struct MapFrame: Hashable, Sendable {
     let latitudeDelta: Double
     let longitudeDelta: Double
 
-    var region: MKCoordinateRegion {
-        MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude),
-                           span: MKCoordinateSpan(latitudeDelta: self.latitudeDelta, longitudeDelta: self.longitudeDelta))
+    var region: GeoRegion {
+        GeoRegion(center: CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude),
+                  latitudeDelta: self.latitudeDelta, longitudeDelta: self.longitudeDelta)
     }
 
     /// Fits all `coordinates`, never zooming in closer than `minimumSpan` degrees.

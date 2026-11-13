@@ -31,6 +31,20 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink {
+                        OfflineMapsView()
+                    } label: {
+                        LabeledContent {
+                            Text(self.offlineMapsSummary)
+                        } label: {
+                            Label("Offline maps", systemImage: "map.fill")
+                        }
+                    }
+                } footer: {
+                    Text("Download countries to see the map without a connection.")
+                }
+
+                Section {
                     Button {
                         self.languages.openLanguageSettings()
                     } label: {
@@ -61,6 +75,12 @@ struct SettingsView: View {
                     Link(destination: RideSpotDetailsView.copyrightURL) {
                         Label("Data licence", systemImage: "doc.text.fill")
                     }
+                    Text("The map is drawn from OpenStreetMap data (© OpenStreetMap contributors, ODbL), with tiles by OpenMapTiles and OpenFreeMap.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Link(destination: MapStyle.copyrightURL) {
+                        Label("Map data licence", systemImage: "doc.text.fill")
+                    }
                     LabeledContent("Version", value: Self.appVersion)
                 }
             }
@@ -71,6 +91,13 @@ struct SettingsView: View {
                 Text("Check your internet connection and try again.")
             }
         }
+    }
+
+    /// "None", "2 countries".
+    private var offlineMapsSummary: String {
+        let count = OfflineMapStore.shared.installed.count
+        return count == 0 ? String(localized: "None", comment: "No offline maps downloaded")
+                          : String(localized: "\(count) countries", comment: "Number of downloaded offline maps")
     }
 
     private func guideRow(_ language: AppLanguage) -> some View {

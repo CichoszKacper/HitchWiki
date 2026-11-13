@@ -4,12 +4,175 @@
     "" : {
 
     },
+    "All countries" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wszystkie kraje"
+          }
+        }
+      }
+    },
+    "Couldn't load the list of maps" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się wczytać listy map"
+          }
+        }
+      }
+    },
+    "Country maps are coming soon" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapy krajów już wkrótce"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń"
+          }
+        }
+      }
+    },
+    "Download" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobierz"
+          }
+        }
+      }
+    },
+    "Download countries to see the map without a connection." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobierz kraje, aby widzieć mapę bez internetu."
+          }
+        }
+      }
+    },
+    "Download failed. Try again." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobieranie nie powiodło się. Spróbuj ponownie."
+          }
+        }
+      }
+    },
+    "Download the countries you're travelling through. The map, place names, roads and petrol stations then work without a connection; spots and the guide always do." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobierz kraje, przez które podróżujesz. Mapa, nazwy miejscowości, drogi i stacje benzynowe będą wtedy działać bez internetu; miejscówki i przewodnik działają zawsze."
+          }
+        }
+      }
+    },
+    "Downloaded" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobrano"
+          }
+        }
+      }
+    },
+    "Downloaded · %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobrano · %@"
+          }
+        }
+      }
+    },
+    "Downloading… %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobieranie… %@"
+          }
+        }
+      }
+    },
     "“%@” isn't in the offline Hitchwiki." : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Strony „%@” nie ma w przewodniku offline."
+          }
+        }
+      }
+    },
+    "%lld countries" : {
+      "comment" : "Number of downloaded offline maps",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld country"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld countries"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld kraj"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld kraje"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld krajów"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld kraju"
+                }
+              }
+            }
           }
         }
       }
@@ -516,17 +679,6 @@
         }
       }
     },
-    "Data © Hitchwiki & Hitchmap contributors · ODbL, CC BY-SA" : {
-      "comment" : "Credit shown on the map for the spots and guide data",
-      "localizations" : {
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dane © współtwórcy Hitchwiki i Hitchmap · ODbL, CC BY-SA"
-          }
-        }
-      }
-    },
     "Data licence" : {
       "localizations" : {
         "pl" : {
@@ -780,6 +932,27 @@
         }
       }
     },
+    "Map data licence" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licencja danych mapy"
+          }
+        }
+      }
+    },
+    "Map © OpenStreetMap, OpenMapTiles, OpenFreeMap" : {
+      "comment" : "Credit shown on the map for the base map; keep the names as they are",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa © OpenStreetMap, OpenMapTiles, OpenFreeMap"
+          }
+        }
+      }
+    },
     "Money" : {
       "comment" : "Country card: the currency",
       "localizations" : {
@@ -846,6 +1019,17 @@
     "Network error. Please check your connection and try again." : {
       "comment" : "Auth error"
     },
+    "None" : {
+      "comment" : "No offline maps downloaded",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak"
+          }
+        }
+      }
+    },
     "Nothing here yet" : {
       "localizations" : {
         "pl" : {
@@ -856,12 +1040,52 @@
         }
       }
     },
+    "Offline maps" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapy offline"
+          }
+        }
+      }
+    },
+    "Offline · Download maps" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline · Pobierz mapy"
+          }
+        }
+      }
+    },
+    "Offline · Using downloaded maps" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline · Używasz pobranych map"
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
+          }
+        }
+      }
+    },
+    "On this iPhone" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na tym iPhonie"
           }
         }
       }
@@ -1128,6 +1352,16 @@
         }
       }
     },
+    "Search countries" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukaj krajów"
+          }
+        }
+      }
+    },
     "See what's around you" : {
       "localizations" : {
         "pl" : {
@@ -1244,6 +1478,16 @@
         }
       }
     },
+    "Show my location" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż moją lokalizację"
+          }
+        }
+      }
+    },
     "Show on map" : {
       "localizations" : {
         "pl" : {
@@ -1283,6 +1527,27 @@
         }
       }
     },
+    "Spots © Hitchwiki & Hitchmap" : {
+      "comment" : "Credit shown on the map for the spots and guide data",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miejscówki © Hitchwiki i Hitchmap"
+          }
+        }
+      }
+    },
+    "Stop download" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatrzymaj pobieranie"
+          }
+        }
+      }
+    },
     "The biggest Hitchwiki, written by hitchhikers from all over the world." : {
       "localizations" : {
         "pl" : {
@@ -1313,6 +1578,16 @@
         }
       }
     },
+    "The map is drawn from OpenStreetMap data (© OpenStreetMap contributors, ODbL), with tiles by OpenMapTiles and OpenFreeMap." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa powstaje z danych OpenStreetMap (© współtwórcy OpenStreetMap, ODbL), z kafelkami OpenMapTiles i OpenFreeMap."
+          }
+        }
+      }
+    },
     "This account has been disabled." : {
       "comment" : "Auth error"
     },
@@ -1320,6 +1595,16 @@
       "comment" : "Auth error"
     },
     "Try Again" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spróbuj ponownie"
+          }
+        }
+      }
+    },
+    "Try again" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1380,6 +1665,26 @@
         }
       }
     },
+    "Update" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktualizuj"
+          }
+        }
+      }
+    },
+    "Update available · %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostępna aktualizacja · %@"
+          }
+        }
+      }
+    },
     "Updating the guide…" : {
       "localizations" : {
         "pl" : {
@@ -1396,6 +1701,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Na razie użyj angielskiego"
+          }
+        }
+      }
+    },
+    "Using %@. Swipe left to delete a map." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zajmują %@. Przesuń w lewo, aby usunąć mapę."
           }
         }
       }
@@ -1442,12 +1757,32 @@
         }
       }
     },
+    "Where you're looking" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tam, gdzie patrzysz"
+          }
+        }
+      }
+    },
     "You can change this anytime in Settings." : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Możesz to zmienić w każdej chwili w Ustawieniach."
+          }
+        }
+      }
+    },
+    "You'll be able to download maps of whole countries here and use them without a connection." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutaj pobierzesz mapy całych krajów i będziesz z nich korzystać bez internetu."
           }
         }
       }

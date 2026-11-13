@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import MapKit
+import MapLibre
 import UIKit
 
 struct NearbyPlacesRow: View {
@@ -143,8 +143,8 @@ struct NearbyPlacesPlaceholder: View {
     }
 }
 
-/// A still map of the area around a place, with a pin in the middle. Snapshots need the network the
-/// first time; until one arrives (or when offline) the place's gradient is shown instead.
+/// A still map of the area around a place, with a pin in the middle. Drawn from a downloaded country map or
+/// from OpenFreeMap; until one arrives (or offline without a download) the place's gradient is shown instead.
 struct PlaceMapThumbnail: View {
     let coordinate: CLLocationCoordinate2D
     let seed: String
@@ -166,6 +166,15 @@ struct PlaceMapThumbnail: View {
                         .resizable()
                         .scaledToFill()
                         .frame(width: geometry.size.width, height: geometry.size.height)
+                        .overlay(alignment: .bottomTrailing) {
+                            Text(verbatim: "© OpenStreetMap")
+                                .font(.system(size: 8, weight: .medium))
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 1)
+                                .background(.ultraThinMaterial, in: .capsule)
+                                .padding(4)
+                        }
                         .transition(.opacity)
                 }
                 Circle()
@@ -196,24 +205,43 @@ struct PlaceMapThumbnail: View {
         guard size.width > 0, size.height > 0 else {
             return
         }
-        let options = MKMapSnapshotter.Options()
-        options.region = MKCoordinateRegion(center: self.coordinate, latitudinalMeters: 12_000, longitudinalMeters: 12_000)
-        options.size = size
-        options.pointOfInterestFilter = .excludingAll
-        let style: UIUserInterfaceStyle = self.colorScheme == .dark ? .dark : .light
-        let scale = self.displayScale
-        options.traitCollection = UITraitCollection { traits in
-            traits.userInterfaceStyle = style
-            traits.displayScale = scale
-        }
-        do {
-            let image = try await MKMapSnapshotter(options: options).start().image
-            Self.cache[key] = image
-            withAnimation(.easeOut(duration: 0.35)) {
-                self.snapshot = image
-            }
-        } catch {
+        let region = GeoRegion(center: self.coordinate, meters: 12_000)
+        let dark = self.colorScheme == .dark
+        let options = MLNMapSnapshotOptions(styleURL: MapConnectivity.shared.styleURL(dark: dark),
+                                            camera: MLNMapCamera(), size: size)
+        options.coordinateBounds = region.bounds
+        options.scale = self.displayScale
+        options.showsLogo = false
+        // A short credit is drawn by the view instead: the full one doesn't fit a card.
+        options.showsAttribution = false
+        guard let image = await Self.snapshot(options) else {
             // Offline or cancelled: keep the gradient.
+            return
+        }
+        Self.cache[key] = image
+        withAnimation(.easeOut(duration: 0.35)) {
+            self.snapshot = image
+        }
+    }
+
+    /// Snapshotters must stay alive until they finish.
+    @MainActor private static var running = Set<MLNMapSnapshotter>()
+
+    @MainActor
+    private static func snapshot(_ options: MLNMapSnapshotOptions) async -> UIImage? {
+        let snapshotter = MLNMapSnapshotter(options: options)
+        self.running.insert(snapshotter)
+        defer { self.running.remove(snapshotter) }
+        return await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                snapshotter.start { snapshot, _ in
+                    continuation.resume(returning: snapshot?.image)
+                }
+            }
+        } onCancel: {
+            Task { @MainActor in
+                snapshotter.cancel()
+            }
         }
     }
 }

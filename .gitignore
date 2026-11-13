@@ -95,3 +95,7 @@ tools/.venv/
 firebase-debug.log
 firebase-debug.*.log
 firestore-debug.log
+
+# Offline map building (tools/build_map_packs.py): the planet download and the cut country files
+/planet/
+/maps/

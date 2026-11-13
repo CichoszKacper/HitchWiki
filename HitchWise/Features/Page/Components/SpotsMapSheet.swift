@@ -14,23 +14,25 @@ struct SpotsMapSheet: View {
     /// The page's sections, to show each spot's directions.
     let sections: [PageSection]
 
-    @State private var position: MapCameraPosition
     @State private var selectedSpotID: Int?
+    @State private var controller = MapController()
+    private let initialRegion: GeoRegion?
     @Environment(\.dismiss) private var dismiss
     @Environment(Router.self) private var router
 
-    private static let spotSpan = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+    /// Zoom when showing one spot: a few streets around it.
+    private static let spotZoom = 15.0
 
     init(title: String, spots: [PageSpot], sections: [PageSection], mapFrame: MapFrame?, focus: PageSpot? = nil) {
         self.title = title
         self.spots = spots
         self.sections = sections
         if let focus {
-            self._position = State(initialValue: .region(MKCoordinateRegion(center: focus.coordinate, span: Self.spotSpan)))
+            self.initialRegion = GeoRegion(center: focus.coordinate, meters: 1_500)
         } else if let mapFrame {
-            self._position = State(initialValue: .region(mapFrame.region))
+            self.initialRegion = mapFrame.region
         } else {
-            self._position = State(initialValue: .automatic)
+            self.initialRegion = MapFrame.fitting(spots.map(\.coordinate), minimumSpan: 0.02)?.region
         }
         self._selectedSpotID = State(initialValue: focus?.id)
     }
@@ -39,21 +41,24 @@ struct SpotsMapSheet: View {
         self.spots.first { $0.id == self.selectedSpotID }
     }
 
+    private var markers: [MapMarker] {
+        let color = (UIColor(named: "AccentColor") ?? .systemOrange).hexString
+        return self.spots.map {
+            MapMarker(id: String($0.id), latitude: $0.latitude, longitude: $0.longitude, color: color,
+                      symbol: "hand.thumbsup.fill", title: $0.name)
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            Map(position: self.$position, selection: self.$selectedSpotID) {
-                ForEach(self.spots) { spot in
-                    Marker(spot.name, systemImage: "hand.thumbsup.fill", coordinate: spot.coordinate)
-                        .tint(Color.accentColor)
-                        .tag(spot.id)
+            HitchMapView(controller: self.controller, markers: self.markers,
+                         selectedID: self.selectedSpotID.map(String.init),
+                         initialRegion: self.initialRegion) { id in
+                withAnimation(Theme.spring) {
+                    self.selectedSpotID = id.flatMap(Int.init)
                 }
             }
-            .mapStyle(.standard(elevation: .realistic))
-            .mapControls {
-                MapCompass()
-                MapPitchToggle()
-                MapScaleView()
-            }
+            .ignoresSafeArea(edges: .bottom)
             .safeAreaInset(edge: .bottom) {
                 if let spot = self.selectedSpot {
                     SpotDetailCard(spot: spot, pageTitle: self.title,
@@ -63,14 +68,16 @@ struct SpotsMapSheet: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                MapAttribution(showsSpotsCredit: false)
+                    .padding(.bottom, 4)
+            }
             .animation(Theme.spring, value: self.selectedSpotID)
             .onChange(of: self.selectedSpotID) { _, newValue in
                 guard let spot = self.spots.first(where: { $0.id == newValue }) else {
                     return
                 }
-                withAnimation(.smooth) {
-                    self.position = .region(MKCoordinateRegion(center: spot.coordinate, span: Self.spotSpan))
-                }
+                self.controller.fly(to: spot.coordinate, zoom: Self.spotZoom)
             }
             .navigationTitle(self.title)
             .navigationBarTitleDisplayMode(.inline)
