@@ -270,8 +270,16 @@ private struct HomeSearchBar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             if !self.isSearching {
-                ScreenTitle("HitchWise")
-                    .transition(.move(edge: .top).combined(with: .opacity))
+                HStack(spacing: 8) {
+                    // The app logo, the same one the launch screen shows.
+                    Image("LaunchLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 44, height: 44)
+                        .accessibilityHidden(true)
+                    ScreenTitle("HitchWise")
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
             }
             self.field
         }
