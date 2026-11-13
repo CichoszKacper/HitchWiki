@@ -74,7 +74,10 @@ struct SettingsView: View {
     }
 
     private func guideRow(_ language: AppLanguage) -> some View {
-        Button {
+        let isSelected = self.languages.guideLanguage == language
+        // A button in a List tints its whole label with the accent colour, so the colours are
+        // set explicitly: orange for the chosen guide, normal text for the others.
+        return Button {
             self.select(language)
         } label: {
             HStack(spacing: 14) {
@@ -84,10 +87,10 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(language.nativeName)
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
                     GuideLanguageDescription(language: language)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(isSelected ? Color.accentColor.opacity(0.85) : Color.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 8)
@@ -96,7 +99,7 @@ struct SettingsView: View {
                 ZStack {
                     if self.switchingTo == language {
                         ProgressView()
-                    } else if self.languages.guideLanguage == language {
+                    } else if isSelected {
                         Image(systemName: "checkmark")
                             .font(.body.weight(.semibold))
                             .foregroundStyle(Color.accentColor)
@@ -107,7 +110,7 @@ struct SettingsView: View {
             .contentShape(.rect)
         }
         .disabled(self.switchingTo != nil)
-        .accessibilityAddTraits(self.languages.guideLanguage == language ? .isSelected : [])
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private func select(_ language: AppLanguage) {
