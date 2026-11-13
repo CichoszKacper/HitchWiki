@@ -21,7 +21,7 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>HWMapPacksBaseURL</key>
-	<string></string>
+	<string>https://pub-d7a4a5affad84f6fb753919f2f179ed2.r2.dev/maps/</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
