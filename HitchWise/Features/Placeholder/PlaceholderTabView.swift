@@ -20,6 +20,7 @@ struct PlaceholderTabView: View {
             }
             .background(Theme.background)
             .navigationTitle(self.tab.title)
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 }

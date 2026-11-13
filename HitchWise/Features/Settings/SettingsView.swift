@@ -64,7 +64,10 @@ struct SettingsView: View {
                     LabeledContent("Version", value: Self.appVersion)
                 }
             }
+            // No navigation bar: the tab bar already says where you are.
             .navigationTitle("Settings")
+            .toolbar(.hidden, for: .navigationBar)
+            .statusBarBackground()
             .alert("Couldn't download the guide", isPresented: self.showsFailure) {
                 Button("OK", role: .cancel) {}
             } message: {

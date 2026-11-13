@@ -33,6 +33,19 @@ extension View {
 }
 
 extension View {
+    /// For screens without a navigation bar: paints the strip behind the status bar so content
+    /// scrolling up under the clock stays readable.
+    func statusBarBackground(_ color: Color = Theme.background) -> some View {
+        self.safeAreaInset(edge: .top, spacing: 0) {
+            // A background ignores the safe area, so this zero-height view fills the status bar strip.
+            Color.clear
+                .frame(height: 0)
+                .background(color)
+        }
+    }
+}
+
+extension View {
     /// Liquid Glass on iOS 26 and later, a translucent material before that.
     @ViewBuilder
     func glassBackground(in shape: some Shape) -> some View {

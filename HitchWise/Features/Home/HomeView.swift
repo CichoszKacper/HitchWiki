@@ -20,6 +20,7 @@ struct HomeView: View {
     @State private var router = Router()
     @State private var location = LocationManager()
     @State private var isSearching = false
+    @FocusState private var isSearchFocused: Bool
     @Environment(DatabaseSync.self) private var sync
     @Environment(\.openURL) private var openURL
     @Namespace private var transition
@@ -44,13 +45,23 @@ struct HomeView: View {
                     self.dashboard
                 }
             }
+            // No navigation bar on the home screen, just the search field at the top.
+            // The title stays set so pages opened from here get a "HitchWise" back button.
             .navigationTitle("HitchWise")
-            // An explicit placement keeps a single search field under the title. Without it, iOS 26
-            // can show the field both in the navigation bar and in the bottom toolbar above the tab bar.
-            .searchable(text: self.$viewModel.query,
-                        isPresented: self.$isSearching,
-                        placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: "Type a city or a country...")
+            .toolbar(.hidden, for: .navigationBar)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                HomeSearchBar(query: self.$viewModel.query, isFocused: self.$isSearchFocused) {
+                    withAnimation(Theme.spring) {
+                        self.viewModel.query = ""
+                        self.isSearchFocused = false
+                    }
+                }
+            }
+            .onChange(of: self.isSearchFocused) { _, isFocused in
+                withAnimation(Theme.spring) {
+                    self.isSearching = isFocused
+                }
+            }
             .onChange(of: self.viewModel.query) {
                 self.viewModel.search()
             }
@@ -99,6 +110,7 @@ struct HomeView: View {
     private func returnToStart() {
         withAnimation(Theme.spring) {
             self.isSearching = false
+            self.isSearchFocused = false
             self.viewModel.query = ""
             self.router.popToRoot()
             self.scrollPosition.scrollTo(edge: .top)
@@ -234,6 +246,52 @@ struct HomeView: View {
                 ContentUnavailableView.search(text: self.viewModel.query)
             }
         }
+    }
+}
+
+/// The search field at the top of the home screen, with Cancel while typing.
+private struct HomeSearchBar: View {
+    @Binding var query: String
+    var isFocused: FocusState<Bool>.Binding
+    let onCancel: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+                TextField("Type a city or a country...", text: self.$query)
+                    .focused(self.isFocused)
+                    .submitLabel(.search)
+                    .autocorrectionDisabled()
+                if !self.query.isEmpty {
+                    Button {
+                        self.query = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Clear")
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+            .background(Theme.cardBackground, in: .capsule)
+
+            if self.isFocused.wrappedValue || !self.query.isEmpty {
+                Button("Cancel", action: self.onCancel)
+                    .font(.body.weight(.medium))
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
+            }
+        }
+        .padding(.horizontal, Theme.screenPadding)
+        .padding(.top, 6)
+        .padding(.bottom, 10)
+        // Also fills the strip behind the status bar, so content scrolls away under a solid edge.
+        .background(Theme.background)
+        .animation(Theme.spring, value: self.isFocused.wrappedValue)
     }
 }
 
