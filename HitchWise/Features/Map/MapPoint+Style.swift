@@ -102,3 +102,14 @@ extension MapPoint {
         }
     }
 }
+
+extension MapPoint {
+    /// How the point is drawn on the map.
+    var marker: MapMarker {
+        MapMarker(id: self.id, latitude: self.latitude, longitude: self.longitude,
+                  color: (self.kind == .spot ? UIColor(named: "AccentColor") ?? UIColor(self.tint) : UIColor(self.tint)).hexString, symbol: self.systemImage,
+                  // Every ride spot is called "Hitchhiking spot": the colour says more than the title.
+                  title: self.kind == .rideSpot ? nil : self.title,
+                  isSmall: self.kind == .rideSpot)
+    }
+}

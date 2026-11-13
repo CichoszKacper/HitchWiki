@@ -17,6 +17,10 @@ struct HitchWikiApp: App {
 
     init() {
         FirebaseApp.configure()
+        // Maps: route their requests through the offline files, and watch the connection.
+        MapTileLoader.install()
+        MapConnectivity.shared.start()
+        OfflineMapStore.shared.start()
         self._auth = State(initialValue: AuthManager())
     }
 

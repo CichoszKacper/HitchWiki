@@ -21,6 +21,7 @@
 		4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD832709B68500BC520E /* Assets.xcassets */; };
 		4B4FCD872709B68500BC520E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */; };
 		4B89024B2717499F00C8C4B1 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 4B89024A2717499F00C8C4B1 /* Algorithms */; };
+		4BDB20010000000000000003 /* MapLibre in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDB20010000000000000002 /* MapLibre */; };
 		4BDB0A012F2E000000000001 /* HitchwikiDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000002 /* HitchwikiDatabase.swift */; };
 		4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB0A012F2E000000000004 /* hitchwiki.sqlite */; };
 		4BDB0C010000000000000003 /* HitchWikiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0C010000000000000002 /* HitchWikiApp.swift */; };
@@ -56,8 +57,6 @@
 		4BDB0E01000000000000000C /* NearbyCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E01000000000000000B /* NearbyCarousel.swift */; };
 		4BDB0E01000000000000000E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0E01000000000000000D /* LocationManager.swift */; };
 		4BDB0F010000000000000002 /* SpotDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB0F010000000000000001 /* SpotDetailsView.swift */; };
-		4BDB10010000000000000002 /* MapClusterer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB10010000000000000001 /* MapClusterer.swift */; };
-		4BDB10010000000000000004 /* ClusterBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB10010000000000000003 /* ClusterBubble.swift */; };
 		4BDB11010000000000000002 /* DatabaseUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB11010000000000000001 /* DatabaseUpdater.swift */; };
 		4BDB11010000000000000004 /* DatabaseSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB11010000000000000003 /* DatabaseSync.swift */; };
 		4BDB11010000000000000006 /* SyncBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB11010000000000000005 /* SyncBanner.swift */; };
@@ -77,6 +76,13 @@
 		4BDB16010000000000000006 /* MapAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000005 /* MapAttribution.swift */; };
 		4BDB16010000000000000008 /* hitchspots.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB16010000000000000007 /* hitchspots.sqlite */; };
 		655AE3B430A66CAB00A05C8C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 655AE3B330A66CAB00A05C8C /* GoogleService-Info.plist */; };
+		4BDB21010000000000000002 /* MapPackReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB21010000000000000001 /* MapPackReader.swift */; };
+		4BDB21010000000000000004 /* MapTileLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB21010000000000000003 /* MapTileLoader.swift */; };
+		4BDB21010000000000000006 /* MapStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB21010000000000000005 /* MapStyle.swift */; };
+		4BDB21010000000000000008 /* HitchMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB21010000000000000007 /* HitchMapView.swift */; };
+		4BDB2101000000000000000A /* OfflineMapStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB21010000000000000009 /* OfflineMapStore.swift */; };
+		4BDB2101000000000000000C /* OfflineMapsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB2101000000000000000B /* OfflineMapsView.swift */; };
+		4BDB21010000000000000012 /* MapGlyphs in Resources */ = {isa = PBXBuildFile; fileRef = 4BDB21010000000000000011 /* MapGlyphs */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -126,8 +132,6 @@
 		4BDB0E01000000000000000B /* NearbyCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyCarousel.swift; sourceTree = "<group>"; };
 		4BDB0E01000000000000000D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		4BDB0F010000000000000001 /* SpotDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailsView.swift; sourceTree = "<group>"; };
-		4BDB10010000000000000001 /* MapClusterer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapClusterer.swift; sourceTree = "<group>"; };
-		4BDB10010000000000000003 /* ClusterBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterBubble.swift; sourceTree = "<group>"; };
 		4BDB11010000000000000001 /* DatabaseUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseUpdater.swift; sourceTree = "<group>"; };
 		4BDB11010000000000000003 /* DatabaseSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseSync.swift; sourceTree = "<group>"; };
 		4BDB11010000000000000005 /* SyncBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncBanner.swift; sourceTree = "<group>"; };
@@ -147,6 +151,13 @@
 		4BDB16010000000000000005 /* MapAttribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapAttribution.swift; sourceTree = "<group>"; };
 		4BDB16010000000000000007 /* hitchspots.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = hitchspots.sqlite; sourceTree = "<group>"; };
 		655AE3B330A66CAB00A05C8C /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4BDB21010000000000000001 /* MapPackReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPackReader.swift; sourceTree = "<group>"; };
+		4BDB21010000000000000003 /* MapTileLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileLoader.swift; sourceTree = "<group>"; };
+		4BDB21010000000000000005 /* MapStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyle.swift; sourceTree = "<group>"; };
+		4BDB21010000000000000007 /* HitchMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitchMapView.swift; sourceTree = "<group>"; };
+		4BDB21010000000000000009 /* OfflineMapStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineMapStore.swift; sourceTree = "<group>"; };
+		4BDB2101000000000000000B /* OfflineMapsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineMapsView.swift; sourceTree = "<group>"; };
+		4BDB21010000000000000011 /* MapGlyphs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MapGlyphs; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +170,7 @@
 				AC0F00000000000000000221 /* FirebaseFirestore in Frameworks */,
 				AC0F00000000000000000222 /* GoogleSignIn in Frameworks */,
 				AC0F00000000000000000223 /* GoogleSignInSwift in Frameworks */,
+				4BDB20010000000000000003 /* MapLibre in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,6 +202,7 @@
 				4BDB0C010000000000000025 /* Shared */,
 				4BDB0A012F2E000000000004 /* hitchwiki.sqlite */,
 				4BDB16010000000000000007 /* hitchspots.sqlite */,
+				4BDB21010000000000000011 /* MapGlyphs */,
 				4B87E74D27134E9C00C73578 /* Networking */,
 				4B4FCD832709B68500BC520E /* Assets.xcassets */,
 				4B4FCD852709B68500BC520E /* LaunchScreen.storyboard */,
@@ -231,6 +244,7 @@
 				4BDB1301000000000000000B /* Onboarding */,
 				AC0F00000000000000000100 /* Account */,
 				4BDB1301000000000000000C /* Settings */,
+				4BDB2101000000000000000E /* OfflineMaps */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -287,6 +301,7 @@
 				4BDB12010000000000000001 /* RecentPages.swift */,
 				4BDB11010000000000000003 /* DatabaseSync.swift */,
 				4BDB0C01000000000000002A /* PageLink+URL.swift */,
+				4BDB2101000000000000000D /* MapEngine */,
 				4BDB0C01000000000000002C /* Components */,
 			);
 			path = Shared;
@@ -316,7 +331,6 @@
 				4BDB0E010000000000000002 /* MapTabView.swift */,
 				4BDB0E010000000000000004 /* MapViewModel.swift */,
 				4BDB0E010000000000000006 /* MapPoint+Style.swift */,
-				4BDB10010000000000000001 /* MapClusterer.swift */,
 				4BDB0E010000000000000008 /* Components */,
 			);
 			path = Map;
@@ -326,7 +340,6 @@
 			isa = PBXGroup;
 			children = (
 				4BDB0E010000000000000009 /* MapPointCard.swift */,
-				4BDB10010000000000000003 /* ClusterBubble.swift */,
 				4BDB0E01000000000000000B /* NearbyCarousel.swift */,
 				4BDB16010000000000000003 /* RideSpotDetailsView.swift */,
 				4BDB16010000000000000005 /* MapAttribution.swift */,
@@ -374,6 +387,26 @@
 			path = Account;
 			sourceTree = "<group>";
 		};
+		4BDB2101000000000000000D /* MapEngine */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB21010000000000000001 /* MapPackReader.swift */,
+				4BDB21010000000000000003 /* MapTileLoader.swift */,
+				4BDB21010000000000000005 /* MapStyle.swift */,
+				4BDB21010000000000000007 /* HitchMapView.swift */,
+			);
+			path = MapEngine;
+			sourceTree = "<group>";
+		};
+		4BDB2101000000000000000E /* OfflineMaps */ = {
+			isa = PBXGroup;
+			children = (
+				4BDB21010000000000000009 /* OfflineMapStore.swift */,
+				4BDB2101000000000000000B /* OfflineMapsView.swift */,
+			);
+			path = OfflineMaps;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -396,6 +429,7 @@
 				AC0F00000000000000000211 /* FirebaseFirestore */,
 				AC0F00000000000000000212 /* GoogleSignIn */,
 				AC0F00000000000000000213 /* GoogleSignInSwift */,
+				4BDB20010000000000000002 /* MapLibre */,
 			);
 			productName = HitchWiki;
 			productReference = 4B4FCD742709B68500BC520E /* HitchWise.app */;
@@ -429,6 +463,7 @@
 				4B8902492717499F00C8C4B1 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				655AE3B530A66D6400A05C8C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				AC0F00000000000000000200 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				4BDB20010000000000000001 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */,
 			);
 			productRefGroup = 4B4FCD752709B68500BC520E /* Products */;
 			projectDirPath = "";
@@ -447,6 +482,7 @@
 				4B4FCD872709B68500BC520E /* LaunchScreen.storyboard in Resources */,
 				4BDB0A012F2E000000000003 /* hitchwiki.sqlite in Resources */,
 				4BDB16010000000000000008 /* hitchspots.sqlite in Resources */,
+				4BDB21010000000000000012 /* MapGlyphs in Resources */,
 				4B4FCD842709B68500BC520E /* Assets.xcassets in Resources */,
 				655AE3B430A66CAB00A05C8C /* GoogleService-Info.plist in Resources */,
 				4BDB13010000000000000008 /* Localizable.xcstrings in Resources */,
@@ -461,6 +497,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BDB21010000000000000002 /* MapPackReader.swift in Sources */,
+				4BDB21010000000000000004 /* MapTileLoader.swift in Sources */,
+				4BDB21010000000000000006 /* MapStyle.swift in Sources */,
+				4BDB21010000000000000008 /* HitchMapView.swift in Sources */,
+				4BDB2101000000000000000A /* OfflineMapStore.swift in Sources */,
+				4BDB2101000000000000000C /* OfflineMapsView.swift in Sources */,
 				AC0F00000000000000000011 /* AccountSection.swift in Sources */,
 				AC0F00000000000000000012 /* AuthManager.swift in Sources */,
 				AC0F00000000000000000013 /* AuthServiceProtocol.swift in Sources */,
@@ -470,9 +512,7 @@
 				4BDB0E010000000000000003 /* MapTabView.swift in Sources */,
 				4BDB0E010000000000000005 /* MapViewModel.swift in Sources */,
 				4BDB0E010000000000000007 /* MapPoint+Style.swift in Sources */,
-				4BDB10010000000000000002 /* MapClusterer.swift in Sources */,
 				4BDB0E01000000000000000A /* MapPointCard.swift in Sources */,
-				4BDB10010000000000000004 /* ClusterBubble.swift in Sources */,
 				4BDB0E01000000000000000C /* NearbyCarousel.swift in Sources */,
 				4BDB0E01000000000000000E /* LocationManager.swift in Sources */,
 				4BDB0C010000000000000003 /* HitchWikiApp.swift in Sources */,
@@ -746,6 +786,14 @@
 				minimumVersion = 10.1.0;
 			};
 		};
+		4BDB20010000000000000001 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/maplibre/maplibre-gl-native-distribution";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.31.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -773,6 +821,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AC0F00000000000000000200 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		4BDB20010000000000000002 /* MapLibre */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BDB20010000000000000001 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */;
+			productName = MapLibre;
 		};
 /* End XCSwiftPackageProductDependency section */
 

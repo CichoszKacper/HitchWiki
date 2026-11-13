@@ -8,7 +8,6 @@
 //
 
 import SwiftUI
-import MapKit
 
 struct PageHeroHeader: View {
     let title: String
@@ -50,17 +49,19 @@ struct PageHeroHeader: View {
         .frame(height: Self.height)
     }
 
+    private var markers: [MapMarker] {
+        let color = (UIColor(named: "AccentColor") ?? .systemOrange).hexString
+        return self.spots.map {
+            MapMarker(id: String($0.id), latitude: $0.latitude, longitude: $0.longitude, color: color,
+                      symbol: "hand.thumbsup.fill", title: nil)
+        }
+    }
+
     @ViewBuilder
     private var backdrop: some View {
         if let mapFrame = self.mapFrame {
-            Map(initialPosition: .region(mapFrame.region), interactionModes: []) {
-                ForEach(self.spots) { spot in
-                    Marker("", systemImage: "hand.thumbsup.fill", coordinate: spot.coordinate)
-                        .tint(Color.accentColor)
-                }
-            }
-            .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
-            .allowsHitTesting(false)
+            HitchMapView(markers: self.markers, initialRegion: mapFrame.region, isInteractive: false)
+                .allowsHitTesting(false)
         } else {
             AnimatedMeshBackground(seed: self.title)
                 .overlay(alignment: .topTrailing) {
