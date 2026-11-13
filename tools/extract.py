@@ -3,7 +3,7 @@
 
 Usage:
     python3 -m venv .venv && .venv/bin/pip install mwparserfromhell mwxml
-    .venv/bin/python extract.py output/hitchwiki-latest.xml output/ [--app-db ../HitchWiki/hitchwiki.sqlite]
+    .venv/bin/python extract.py output/hitchwiki-latest.xml output/ [--app-db ../HitchWise/hitchwiki.sqlite]
                      [--version 202610311200] [--source-sha256 <hash of the dump>] [--language pl]
 
 Writes:
@@ -16,14 +16,14 @@ import mwxml, mwparserfromhell as mwp
 import argparse
 _ap = argparse.ArgumentParser()
 _ap.add_argument('src'); _ap.add_argument('outdir')
-_ap.add_argument('--app-db', help='also write a slim copy (no raw wikitext) for bundling in the iOS app, e.g. ../HitchWiki/hitchwiki.sqlite')
+_ap.add_argument('--app-db', help='also write a slim copy (no raw wikitext) for bundling in the iOS app, e.g. ../HitchWise/hitchwiki.sqlite')
 _ap.add_argument('--version', type=int, help='data version stored in the meta table (default: time of the newest edit in the dump as YYYYMMDDHHMM); the app updates to a higher one')
 _ap.add_argument('--source-sha256', default='', help='SHA-256 of the dump this was built from, stored in the meta table')
 _ap.add_argument('--min-version', type=int, default=0, help='never use a lower version than this (the workflow passes the '
                                      'last published version + 1, so a rebuild of the same dump with a better parser still reaches the app)')
 _ap.add_argument('--language', default='en', help="which Hitchwiki the dump is from ('en', 'pl'), stored in the meta table; the app checks it")
 _ap.add_argument('--gazetteer', help='an English hitchwiki.sqlite; pages of another language without coordinates borrow them '
-                                     'from the English page with the same title or a redirect to it (e.g. ../HitchWiki/hitchwiki.sqlite)')
+                                     'from the English page with the same title or a redirect to it (e.g. ../HitchWise/hitchwiki.sqlite)')
 _args = _ap.parse_args()
 src, outdir = _args.src, _args.outdir
 MAP_RE = re.compile(r"""<map[^>]*?lat=['"]([-\d.]+)['"][^>]*?lng=['"]([-\d.]+)['"]""", re.I)

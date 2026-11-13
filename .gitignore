@@ -70,10 +70,10 @@ venv/
 # ---------------------------------------------------------------
 # Hitchwiki data
 # Dumps and intermediate files are too big for git; rebuild them with tools/.
-# HitchWiki/hitchwiki.sqlite is NOT ignored: the app bundles it.
+# HitchWise/hitchwiki.sqlite is NOT ignored: the app bundles it.
 # ---------------------------------------------------------------
-HitchWiki/hitchwiki-full-en.xml
-HitchWiki/hitchwiki.json
+HitchWise/hitchwiki-full-en.xml
+HitchWise/hitchwiki.json
 *.xml.bz2
 *.xml.gz
 tools/output/
@@ -87,3 +87,11 @@ tools/.venv/
 *.swp
 *~
 .claude/settings.local.json
+
+# ---------------------------------------------------------------
+# Firebase CLI
+# ---------------------------------------------------------------
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log

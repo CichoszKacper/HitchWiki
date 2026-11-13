@@ -143,7 +143,7 @@ jobs:
           python3 tools/slim_dump.py work/dump.xml work/hitchwiki-latest.xml
           # Other languages borrow city positions from the English database bundled in the repo.
           gazetteer=()
-          if [ "$LANGUAGE" != "en" ]; then gazetteer=(--gazetteer HitchWiki/hitchwiki.sqlite); fi
+          if [ "$LANGUAGE" != "en" ]; then gazetteer=(--gazetteer HitchWise/hitchwiki.sqlite); fi
           python3 tools/extract.py work/hitchwiki-latest.xml work/output --language "$LANGUAGE" "${gazetteer[@]}" \
             --min-version "${{ steps.previous.outputs.min_version }}" \
             --app-db work/hitchwiki.sqlite --source-sha256 "${{ steps.dump.outputs.sha256 }}"
