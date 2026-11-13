@@ -1,0 +1,47 @@
+# Builds the app for the iOS Simulator on every push and pull request that touches it, so a change that
+# doesn't compile shows up before it reaches Xcode on a Mac. No signing, no tests yet.
+
+name: Build
+
+on:
+  push:
+    paths:
+      - 'HitchWise/**'
+      - 'HitchWise.xcodeproj/**'
+      - '.github/workflows/build.yml'
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest Xcode
+        run: |
+          xcode=$(ls -d /Applications/Xcode_*.app | sort -V | tail -n 1)
+          echo "Using ${xcode}"
+          sudo xcode-select -s "${xcode}"
+          xcodebuild -version
+
+      - name: Build for the simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project HitchWise.xcodeproj \
+            -scheme HitchWise \
+            -destination 'generic/platform=iOS Simulator' \
+            -skipPackagePluginValidation -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee build.log | grep -E '(error|warning: .*(MapLibre|deprecated)|BUILD (SUCCEEDED|FAILED))' || true
+          grep -q 'BUILD SUCCEEDED' build.log
+
+      - name: Errors
+        if: failure()
+        run: grep -E ': error:' build.log | sort -u | head -n 100 || true
