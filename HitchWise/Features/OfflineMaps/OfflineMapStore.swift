@@ -105,7 +105,8 @@ final class OfflineMapStore {
            let packs = try? JSONDecoder().decode([InstalledMapPack].self, from: data) {
             self.installed = Dictionary(packs.map { ($0.info.id, $0) }, uniquingKeysWith: { first, _ in first })
         }
-        self.registerFiles(notify: false)
+        // Opened straight away (a few small SQLite opens), so the first map already uses them.
+        MapPackRegistry.shared.use(self.files())
     }
 
     /// Call at launch: opens the downloaded files so the map can use them straight away.
