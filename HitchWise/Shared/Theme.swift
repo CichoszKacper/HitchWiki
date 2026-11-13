@@ -32,6 +32,38 @@ extension View {
     }
 }
 
+/// A screen's big title, for tabs that hide the navigation bar: the same look as a large
+/// navigation title, without the empty bar above it.
+struct ScreenTitle: View {
+    let text: String
+
+    init(_ text: String) {
+        self.text = text
+    }
+
+    var body: some View {
+        Text(verbatim: self.text)
+            .font(.largeTitle.bold())
+            .foregroundStyle(.primary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+            .accessibilityAddTraits(.isHeader)
+    }
+}
+
+extension View {
+    /// For screens without a navigation bar: paints the strip behind the status bar so content
+    /// scrolling up under the clock stays readable.
+    func statusBarBackground(_ color: Color = Theme.background) -> some View {
+        self.safeAreaInset(edge: .top, spacing: 0) {
+            // A background ignores the safe area, so this zero-height view fills the status bar strip.
+            Color.clear
+                .frame(height: 0)
+                .background(color)
+        }
+    }
+}
+
 extension View {
     /// Liquid Glass on iOS 26 and later, a translucent material before that.
     @ViewBuilder

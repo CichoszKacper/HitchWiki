@@ -2,7 +2,7 @@
 //  CountryCard.swift
 //  HitchWiki
 //
-//  "You're in Poland": the country the user is in, on a drifting gradient, with its flag,
+//  "You're in Poland": the country the user is in, on glossy black with an orange edge, with its flag,
 //  the start of its hitchhiking section, a few numbers and the basics (capital, language, money).
 //
 
@@ -11,9 +11,7 @@ import SwiftUI
 struct CountryCard: View {
     let country: CountryOverview
 
-    private var palette: [Color] {
-        AnimatedMeshBackground.palette(for: self.country.title)
-    }
+    private static let shape = RoundedRectangle(cornerRadius: Theme.cornerRadius + 4, style: .continuous)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -38,13 +36,25 @@ struct CountryCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
             ZStack {
-                AnimatedMeshBackground(seed: self.country.title)
-                // Keeps white text readable on the lighter palettes.
-                LinearGradient(colors: [.black.opacity(0.05), .black.opacity(0.35)], startPoint: .top, endPoint: .bottom)
+                // Glossy black: deep black with a lift at the top...
+                LinearGradient(colors: [Color(white: 0.17), Color(white: 0.03)], startPoint: .top, endPoint: .bottom)
+                // ...and a sheen over the top half that ends in a soft line, like lacquer.
+                LinearGradient(stops: [
+                    .init(color: .white.opacity(0.16), location: 0),
+                    .init(color: .white.opacity(0.05), location: 0.42),
+                    .init(color: .clear, location: 0.48)
+                ], startPoint: .top, endPoint: .bottom)
             }
         }
-        .clipShape(.rect(cornerRadius: Theme.cornerRadius + 4, style: .continuous))
-        .shadow(color: self.palette[1].opacity(0.35), radius: 22, x: 0, y: 12)
+        .clipShape(Self.shape)
+        .overlay {
+            Self.shape
+                .strokeBorder(
+                    LinearGradient(colors: [Color.accentColor, Color.accentColor.opacity(0.6)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing),
+                    lineWidth: 1.5)
+        }
+        .shadow(color: Color.accentColor.opacity(0.25), radius: 20, x: 0, y: 10)
         .accessibilityElement(children: .combine)
         .accessibilityHint("Opens the hitchhiking guide")
     }
@@ -56,7 +66,7 @@ struct CountryCard: View {
                     .font(.caption.weight(.heavy))
                     .textCase(.uppercase)
                     .tracking(1.2)
-                    .foregroundStyle(.white.opacity(0.85))
+                    .foregroundStyle(Color.accentColor)
                 Text(self.country.title)
                     .font(.system(size: 36, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
@@ -125,11 +135,12 @@ struct CountryCard: View {
                         .font(.caption2.weight(.bold))
                         .tracking(0.6)
                         .foregroundStyle(.white.opacity(0.7))
+                    // Long values (e.g. two languages) wrap onto more lines at the same size.
                     Text(fact.value)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.white)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 12)

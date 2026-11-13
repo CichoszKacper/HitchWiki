@@ -18,6 +18,12 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                // The title scrolls with the list, without the navigation bar's empty strip above it.
+                ScreenTitle(AppTab.settings.title)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 4, bottom: 0, trailing: 0))
+                    .listRowSeparator(.hidden)
+
                 AccountSection()
 
                 Section {
@@ -84,7 +90,10 @@ struct SettingsView: View {
                     LabeledContent("Version", value: Self.appVersion)
                 }
             }
+            // No navigation bar: the title is the first row of the list instead.
             .navigationTitle("Settings")
+            .toolbar(.hidden, for: .navigationBar)
+            .statusBarBackground()
             .alert("Couldn't download the guide", isPresented: self.showsFailure) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -101,7 +110,10 @@ struct SettingsView: View {
     }
 
     private func guideRow(_ language: AppLanguage) -> some View {
-        Button {
+        let isSelected = self.languages.guideLanguage == language
+        // A button in a List tints its whole label with the accent colour, so the colours are
+        // set explicitly: orange for the chosen guide, normal text for the others.
+        return Button {
             self.select(language)
         } label: {
             HStack(spacing: 14) {
@@ -111,25 +123,30 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(language.nativeName)
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
                     GuideLanguageDescription(language: language)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(isSelected ? Color.accentColor.opacity(0.85) : Color.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 8)
-                if self.switchingTo == language {
-                    ProgressView()
-                } else if self.languages.guideLanguage == language {
-                    Image(systemName: "checkmark")
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(Color.accentColor)
+                // Same width on every row, ticked or not, so the description doesn't
+                // re-wrap when the tick appears or goes away.
+                ZStack {
+                    if self.switchingTo == language {
+                        ProgressView()
+                    } else if isSelected {
+                        Image(systemName: "checkmark")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(Color.accentColor)
+                    }
                 }
+                .frame(width: 24)
             }
             .contentShape(.rect)
         }
         .disabled(self.switchingTo != nil)
-        .accessibilityAddTraits(self.languages.guideLanguage == language ? .isSelected : [])
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private func select(_ language: AppLanguage) {
