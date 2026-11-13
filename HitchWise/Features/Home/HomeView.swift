@@ -38,26 +38,32 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack(path: self.$router.path) {
-            Group {
-                if self.showsAllResults {
-                    self.searchResults
-                } else {
-                    self.dashboard
-                }
-            }
             // No navigation bar (it left an empty strip above the title): the title and the search
-            // field sit at the top of the screen instead. The navigation title stays set so pages
-            // opened from here get a "HitchWise" back button.
-            .navigationTitle("HitchWise")
-            .toolbar(.hidden, for: .navigationBar)
-            .safeAreaInset(edge: .top, spacing: 0) {
+            // field sit at the top of the screen instead.
+            // The search field stays outside the part that swaps between the dashboard and the
+            // results, so it isn't rebuilt (and doesn't lose focus) when searching starts.
+            VStack(spacing: 0) {
                 HomeSearchBar(query: self.$viewModel.query, isFocused: self.$isSearchFocused) {
                     withAnimation(Theme.spring) {
                         self.viewModel.query = ""
                         self.isSearchFocused = false
                     }
                 }
+                // A ZStack, not a Group: modifiers on a Group are copied onto each branch, which
+                // registered the page destination again every time the branch changed.
+                ZStack {
+                    if self.showsAllResults {
+                        self.searchResults
+                    } else {
+                        self.dashboard
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .background(Theme.background)
+            // Still set so pages opened from here get a "HitchWise" back button.
+            .navigationTitle("HitchWise")
+            .toolbar(.hidden, for: .navigationBar)
             .onChange(of: self.isSearchFocused) { _, isFocused in
                 withAnimation(Theme.spring) {
                     self.isSearching = isFocused
